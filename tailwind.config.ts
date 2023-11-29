@@ -17,6 +17,10 @@ const config: Config = {
       },
     },
     extend: {
+      spacing: {
+        "sidebar-collapse": "var(--sidebar-collapse-width)",
+        sidebar: "var(--sidebar-width)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

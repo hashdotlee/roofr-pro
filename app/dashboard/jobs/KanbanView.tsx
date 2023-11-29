@@ -12,8 +12,6 @@ export default function KanbanView() {
 
 function KanbanTab() {
   return (
-    <div className="flex flex-col grow-0 shrink-0 w-[300px] bg-slate-300">
-      
-    </div>
+    <div className="flex flex-col grow-0 shrink-0 w-[300px] bg-slate-300"></div>
   );
 }

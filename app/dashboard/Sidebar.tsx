@@ -14,8 +14,8 @@ export default function Sidebar() {
       className={cn(
         "left-0 top-0 h-screen transition-all duration-300 ease-in-out",
         {
-          "w-64": !collapsed,
-          "w-16": collapsed,
+          "w-sidebar": !collapsed,
+          "w-sidebar-collapse": collapsed,
         }
       )}
       aria-label="sidebar"

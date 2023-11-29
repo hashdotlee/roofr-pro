@@ -1,19 +1,20 @@
+'use client'
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LuKanbanSquare } from "react-icons/lu";
 import { FaListUl } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
-import { FaPlus } from "react-icons/fa6";
+import { LuKanbanSquare } from "react-icons/lu";
 
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import KanbanView from "./KanbanView";
+import NewJobDialog from "./NewJobDialog";
 
 export default function Jobs() {
   return (
@@ -70,10 +71,7 @@ function Action() {
         </Select>
       </div>
 
-      <Button>
-        <FaPlus className="w-4 h-4 pr-1" />
-        <span className="text-sm">New Job</span>
-      </Button>
+      <NewJobDialog />
     </div>
   );
 }

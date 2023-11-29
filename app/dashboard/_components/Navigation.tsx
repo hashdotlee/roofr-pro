@@ -1,25 +1,33 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { RxDashboard } from "react-icons/rx";
-import { usePathname } from "next/navigation";
-import { GoPeople } from "react-icons/go";
-import slugify from "slugify";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { GoPeople } from "react-icons/go";
+import { RxDashboard } from "react-icons/rx";
 
-const navs = [
+export type TNavItem = {
+  label: string;
+  icon: React.ReactNode;
+  path: string;
+};
+
+const navs: TNavItem[] = [
   {
     label: "Jobs",
     icon: <RxDashboard />,
+    path: "/dashboard/jobs",
   },
   {
     label: "Customers",
     icon: <GoPeople />,
+    path: "/dashboard/customers",
   },
 ];
 
 export default function Navigation({ collapsed }: { collapsed: boolean }) {
   return (
-    <div className={cn("flex flex-col gap-2 mt-4 justify-start min-w-full pt-2")}>
+    <div
+      className={cn("flex flex-col gap-2 mt-2 justify-start min-w-full pt-2")}
+    >
       {navs.map((nav, index) => (
         <NavItem key={index} {...nav} collapsed={collapsed} />
       ))}
@@ -31,18 +39,14 @@ function NavItem({
   label,
   icon,
   collapsed,
-}: {
-  label: string;
-  icon: React.ReactNode;
-  collapsed: boolean;
-}) {
-  const pathname = usePathname();
+  path,
+}: TNavItem & { collapsed: boolean }) {
   return (
-    <Link href={`${pathname}/${slugify(label, { lower: true })}`} passHref>
+    <Link href={path} passHref>
       <Button
         variant="ghost"
         className={cn(
-          "w-full flex flex-row gap-3 justify-start items-center p-2.5"
+          "w-full flex flex-row gap-3 justify-start items-center p-2.5",
         )}
       >
         <span className="text-xl">{icon}</span>
