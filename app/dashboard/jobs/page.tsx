@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FaListUl } from "react-icons/fa";
@@ -7,14 +7,15 @@ import { LuKanbanSquare } from "react-icons/lu";
 
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import KanbanView from "./KanbanView";
 import NewJobDialog from "./NewJobDialog";
+import Link from "next/link";
 
 export default function Jobs() {
   return (
