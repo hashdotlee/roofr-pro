@@ -1,104 +1,79 @@
-import JobItem from "./JobItem";
-import { useDrop } from "react-dnd";
+import { JobStatus } from "@/types/job";
+import KanbanTab, { IKanbanTab } from "./_components/KanbanTab";
+import { useJobStore } from "@/lib/stores/jobStore";
+import { cn } from "@/lib/utils";
 
-interface KanbanTab {
-  id: string;
-  name: string;
-}
-const tabs: KanbanTab[] = [
+const tabs: IKanbanTab[] = [
   {
     id: "new_lead",
     name: "New Lead",
+    type: JobStatus.NEW_LEAD,
   },
   {
     id: "appointment_scheduled",
     name: "Appointment Scheduled",
+    type: JobStatus.APPOINTMENT_SCHEDULED,
   },
   {
     id: "proposal_sent",
     name: "Proposal Sent/Presented",
+    type: JobStatus.PROPOSAL_SENT,
   },
   {
     id: "proposal_signed",
     name: "Proposal Signed",
+    type: JobStatus.PROPOSAL_SIGNED,
   },
   {
     id: "pre_production",
     name: "Pre-Production",
+    type: JobStatus.PRE_PRODUCTION,
   },
   {
     id: "post_production",
     name: "Post-Production",
+    type: JobStatus.POST_PRODUCTION,
   },
   {
     id: "payment",
     name: "Payment/Ivoicing",
+    type: JobStatus.PAYMENT,
   },
   {
     id: "job_completed",
     name: "Job Completed",
+    type: JobStatus.JOB_COMPLETED,
   },
   {
     id: "lost",
     name: "Lost",
+    type: JobStatus.LOST,
   },
   {
     id: "unqualified",
     name: "Unqualified",
-  },
-];
-
-const jobs = [
-  {
-    id: 1,
-    name: "Job 1",
-    status: "new_lead",
-  },
-  {
-    id: 2,
-    name: "Job 2",
-    status: "new_lead",
-  },
-  {
-    id: 3,
-    name: "Job 3",
-    status: "new_lead",
+    type: JobStatus.UNQUALIFIED,
   },
 ];
 
 export default function KanbanView() {
-  const [{ isOver }, drop] = useDrop({
-    accept: "JOB_ITEM",
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-  });
+  const jobs = useJobStore((state) => state.jobs);
 
   return (
-    <div className="overflow-scroll mt-8 -mx-8 pl-8">
-      <div className="flex flex-row gap-3 h-[calc(100vh-12rem)]">
+    <div
+      className={cn(
+        "overflow-scroll h-[calc(100vh-12rem)] mt-8 -mx-8 pl-8 focus:outline-none pb-8",
+        "scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-gray-100"
+      )}
+    >
+      <div className="flex flex-row gap-3 min-h-full">
         {tabs.map((tab) => (
-          <KanbanTab key={tab.id} tab={tab} />
+          <KanbanTab
+            key={tab.id}
+            tab={tab}
+            jobs={jobs.filter((job) => job.status === tab.type)}
+          />
         ))}
-      </div>
-    </div>
-  );
-}
-
-function KanbanTab({ tab }: { tab: KanbanTab }) {
-  return (
-    <div className="flex flex-col grow-0 shrink-0 w-[300px] bg-gray-50">
-      <div className="flex items-center p-4 border-b justify-between sticky">
-        <div className="text-neutral-600 flex gap-1 items-center text-sm">
-          <span className="font-semibold truncate">{tab.name}</span>
-          <span className="font-semibold">(0)</span>
-        </div>
-        <div className="text-xs font-semibold text-neutral-600">$0.00</div>
-      </div>
-      <div className="flex flex-col gap-4 p-4">
-        {jobs.map(
-          (item) => item.status === tab.id && <JobItem key={item.id} job={item} />,
-        )}
       </div>
     </div>
   );

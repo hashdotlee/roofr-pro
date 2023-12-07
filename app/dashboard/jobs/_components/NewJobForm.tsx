@@ -6,9 +6,7 @@ import * as z from "zod";
 
 import CustomComboBox from "@/components/custom/ComboBox";
 import { Button } from "@/components/ui/button";
-import {
-    Form
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 
 const addresses = [
   { label: "English", value: "en" },

@@ -1,11 +1,11 @@
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTrigger
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { FaPlus } from "react-icons/fa";
-import { NewJobForm } from "./NewJobForm";
+import { NewJobForm } from "./_components/NewJobForm";
 
 export default function NewJobDialog() {
   return (
@@ -18,7 +18,7 @@ export default function NewJobDialog() {
         <DialogHeader className="text-2xl mx-auto font-semibold my-4 text-center">
           New Job
         </DialogHeader>
-        <NewJobForm/>
+        <NewJobForm />
       </DialogContent>
     </Dialog>
   );

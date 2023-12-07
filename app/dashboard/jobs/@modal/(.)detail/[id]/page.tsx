@@ -1,6 +1,11 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import JobDetail from "../../../detail/[id]/page";
 import { useRouter } from "next/navigation";
 
@@ -16,6 +21,9 @@ export default function JobDetailModal() {
       }}
     >
       <DialogContent className="max-w-[80vw] h-[80vh] flex flex-col">
+        <DialogHeader>
+          <DialogClose className="mb-3" />
+        </DialogHeader>
         <JobDetail />
       </DialogContent>
     </Dialog>

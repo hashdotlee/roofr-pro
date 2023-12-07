@@ -1,16 +1,18 @@
 import { useDrag } from "react-dnd";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { JobStatus } from "@/types/job";
 
 export type Job = {
   id: number;
   name: string;
-  status: string;
+  status: JobStatus;
 };
 
 export default function JobItem({ job }: { job: Job }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "JOB_ITEM",
+    item: { id: job.id, status: job.status },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
