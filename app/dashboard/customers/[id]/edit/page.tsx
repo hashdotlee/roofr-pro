@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import CustomerForm from "../../_components/CustomerForm";
 import { Trash } from "lucide-react";
+import NewJobDialog from "@/app/dashboard/jobs/_components/NewJobDialog";
 
 export default function EditCustomerPage({
   params: { id },
@@ -18,6 +19,8 @@ export default function EditCustomerPage({
         <div className="w-[400px]">
           <h3 className="font-semibold">Jobs</h3>
           <span>There are no jobs associated with this customer.</span>
+          <div className="mt-4"></div>
+          <NewJobDialog />
         </div>
       </div>
     </div>

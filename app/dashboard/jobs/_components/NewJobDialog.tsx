@@ -5,7 +5,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { FaPlus } from "react-icons/fa";
-import { NewJobForm } from "./_components/NewJobForm";
+import { NewJobForm } from "./NewJobForm";
 
 export default function NewJobDialog() {
   return (

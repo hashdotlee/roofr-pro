@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import KanbanView from "./KanbanView";
-import NewJobDialog from "./NewJobDialog";
+import NewJobDialog from "./_components/NewJobDialog";
 
 export default function Jobs() {
   return (
