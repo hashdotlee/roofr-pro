@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,23 +11,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  CircleDot,
-  Dot,
-  MoreHorizontal,
-  PlusCircle,
-  Search,
-} from "lucide-react";
+import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Customers() {
+  const router = useRouter();
   return (
-    <div>
+    <div className="h-screen w-full py-8 px-8 overflow-x-hidden">
       <div className="flex items-center justify-between">
         <Label className="flex items-center border px-4 focus-visible:ring-transparent rounded-md bg-white">
           <Search className="w-4 h-4" />
           <Input placeholder="Search customer" className="border-0" />
         </Label>
-        <Button className="gap-2">
+        <Button
+          className="gap-2"
+          onClick={() => router.push(`/dashboard/customers/new`)}
+        >
           <PlusCircle /> Add Customer
         </Button>
       </div>
@@ -41,7 +42,10 @@ export default function Customers() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow className="cursor-pointer">
+            <TableRow
+              className="cursor-pointer"
+              onClick={() => router.push(`/dashboard/customers/${11}/edit`)}
+            >
               <TableCell>John Doe</TableCell>
               <TableCell>08123456789</TableCell>
               <TableCell>

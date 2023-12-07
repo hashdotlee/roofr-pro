@@ -6,10 +6,10 @@ import {
   DialogContent,
   DialogHeader,
 } from "@/components/ui/dialog";
-import JobDetailPage from "../../../detail/[id]/page";
 import { useRouter } from "next/navigation";
+import CreateCustomerPage from "../../new/page";
 
-export default function JobDetailModal() {
+export default function CreateCustomerModal() {
   const router = useRouter();
   return (
     <Dialog
@@ -20,11 +20,11 @@ export default function JobDetailModal() {
         }
       }}
     >
-      <DialogContent className="max-w-[80vw] h-[80vh] flex flex-col">
+      <DialogContent className="max-w-[60vw] max-h-[70vh] overflow-y-auto flex flex-col">
         <DialogHeader>
           <DialogClose className="mb-3" />
         </DialogHeader>
-        <JobDetailPage />
+        <CreateCustomerPage />
       </DialogContent>
     </Dialog>
   );

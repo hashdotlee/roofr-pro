@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/select";
 import KanbanView from "./KanbanView";
 import NewJobDialog from "./NewJobDialog";
-import Link from "next/link";
 
 export default function Jobs() {
   return (

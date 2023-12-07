@@ -4,13 +4,14 @@ import { Clipboard, PenIcon, Plus, Trash, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
 import NoteList from "./NoteList";
-import JobDetails from "./JobDetail";
+import JobDetail from "./JobDetail";
 import TasksList from "./TaskList";
 import Measurement from "./Measurements";
 import Proposal from "./Proposal";
 import Attachment from "./Attachment";
 import InstantEstimate from "./InstantEstimate";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const InView = ({
   children,
@@ -36,12 +37,12 @@ const InView = ({
   );
 };
 
-export default function JobDetail() {
+export default function JobDetailPage() {
   const tabs = [
     {
       id: "job_details",
       name: "Job details",
-      content: <JobDetails />,
+      content: <JobDetail />,
     },
     {
       id: "tasks",
@@ -112,13 +113,10 @@ export default function JobDetail() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              className={`flex
-            ${
-              activeTab === tab.id
-                ? "border-b-2 border-blue-700"
-                : "border-b-2 border-transparent"
-            }
-            py-2 flex-col items-center gap-1`}
+              className={cn(`flex py-2 flex-col items-center gap-1`, {
+                "border-b-2 border-blue-700": activeTab === tab.id,
+                "border-b-2 border-transparent": activeTab !== tab.id,
+              })}
               onClick={() => {
                 handleTabChange(tab.id);
               }}

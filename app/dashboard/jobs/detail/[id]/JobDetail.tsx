@@ -1,8 +1,7 @@
-import CustomComboBox from "@/components/custom/ComboBox";
 import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Form } from "@/components/ui/form";
-import { Lightbulb, LightbulbIcon } from "lucide-react";
+import { LightbulbIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 export default function JobDetails() {
