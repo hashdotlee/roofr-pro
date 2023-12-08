@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import CustomerForm from "../../_components/CustomerForm";
-import { Trash } from "lucide-react";
 import NewJobDialog from "@/app/dashboard/jobs/_components/NewJobDialog";
+import DeleteCustomerDialog from "../../_components/DeleteCustomerDialog";
 
 export default function EditCustomerPage({
   params: { id },
@@ -14,7 +13,7 @@ export default function EditCustomerPage({
       <div className="flex flex-row gap-12 mt-4 justify-start items-start">
         <div className="w-[400px] space-y-2">
           <CustomerForm />
-          <DeleteButton />
+          <DeleteCustomerDialog />
         </div>
         <div className="w-[400px]">
           <h3 className="font-semibold">Jobs</h3>
@@ -24,13 +23,5 @@ export default function EditCustomerPage({
         </div>
       </div>
     </div>
-  );
-}
-
-function DeleteButton() {
-  return (
-    <Button variant={"destructive"} className="w-full flex gap-2 items-center">
-      <Trash className="w-4 h-4" /> Delete Customer
-    </Button>
   );
 }
