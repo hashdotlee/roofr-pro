@@ -1,30 +1,34 @@
 "use client";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import JobDetailPage from "../../../detail/[id]/page";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function JobDetailModal() {
   const router = useRouter();
+  const [open, setOpen] = useState(true);
+
   return (
     <Dialog
-      defaultOpen
-      onOpenChange={(open) => {
-        if (!open) {
+      open={open}
+      onOpenChange={(_open) => {
+        if (!_open) {
           router.back();
         }
       }}
     >
-      <DialogContent className="max-w-[80vw] h-[80vh] flex flex-col">
-        <DialogHeader>
-          <DialogClose className="mb-3" />
-        </DialogHeader>
-        <JobDetailPage />
+      <DialogContent
+        className="max-w-[80vw] h-[80vh] flex flex-col"
+        hasCloseButton={false}
+      >
+        <JobDetailPage
+          isModal={true}
+          handleClose={() => {
+            setOpen(false);
+            router.back();
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

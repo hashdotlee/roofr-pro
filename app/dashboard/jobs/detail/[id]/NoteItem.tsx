@@ -3,9 +3,9 @@ export default function NoteItem() {
     <div className="p-4 bg-yellow-50 rounded-md">
       <div className="flex justify-between">
         <div className="font-semibold text-sm">
-          Le Viet Hoang{" "}
+          <span className="mr-2">Le Viet Hoang</span>
           <span className="text-xs text-neutral-500 font-normal">
-            add a note
+            added a note
           </span>
         </div>
         <div className="text-xs text-neutral-500">Today at 10:00 AM</div>

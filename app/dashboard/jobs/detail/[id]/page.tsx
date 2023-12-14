@@ -12,6 +12,7 @@ import Attachment from "./Attachment";
 import InstantEstimate from "./InstantEstimate";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { IoMdClose } from "react-icons/io";
 
 const InView = ({
   children,
@@ -37,7 +38,13 @@ const InView = ({
   );
 };
 
-export default function JobDetailPage() {
+export default function JobDetailPage({
+  isModal = false,
+  handleClose,
+}: {
+  isModal?: boolean;
+  handleClose?: () => void;
+}) {
   const tabs = [
     {
       id: "job_details",
@@ -92,18 +99,28 @@ export default function JobDetailPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="text-2xl font-semibold">
-              Fenchurch Street, London, England{" "}
+              Fenchurch Street, London, England
             </div>
             <button>
               <PenIcon className="w-5 h-5 text-blue-400" />
             </button>
           </div>
-          <button className="p-2 bg-blue-700 rounded-full text-white flex justify-center items-center">
-            <Plus className="w-5 h-5" />
-          </button>
+          <div className="flex flex-row gap-2">
+            <button className="p-2 bg-blue-700 rounded-full text-white flex justify-center items-center w-10 h-10">
+              <Plus className="w-5 h-5" />
+            </button>
+            {isModal && (
+              <button
+                onClick={handleClose!}
+                className="p-2 rounded-full text-white flex justify-center items-center border-2 border-transparent hover:border-red-800"
+              >
+                <IoMdClose className="w-5 h-5 text-red-800" />
+              </button>
+            )}
+          </div>
         </div>
         <div className="flex gap-3 text-xs items-center">
-          <span>5 days ago</span>
+          <span>New to stage</span>
           <span className="p-1 bg-gray-100 rounded-md flex gap-2 items-center">
             <Clipboard className="w-4 h-4" /> Tasks 0/1
           </span>
@@ -153,7 +170,6 @@ export default function JobDetailPage() {
           <div className="flex justify-between items-center p-4 border rounded-md">
             <div className="text-sm font-semibold">Customer Contact</div>
             <button className="rounded-full bg-gray-100 flex items-center gap-2 text-xs px-4 py-2">
-              {" "}
               <UserPlus className="w-4 h-4" /> Add Customer
             </button>
           </div>
