@@ -19,8 +19,7 @@ export const authConfig = {
           : NextResponse.redirect(new URL("/api", nextUrl.origin));
       }
 
-      if (!isLoggedIn)
-        return NextResponse.redirect(new URL("/login", nextUrl.origin));
+      if (!isLoggedIn) return false;
       if (isHomePage)
         return NextResponse.redirect(new URL("/dashboard", nextUrl.origin));
       if (isDashboardPage)

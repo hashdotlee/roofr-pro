@@ -20,12 +20,17 @@ export class Account {
   @prop()
   public address?: string;
 
+  @prop()
+  public avatar?: string;
+
   @prop({
+    type: () => String,
     required: true,
     enum: Roles,
-    default: Roles.CONTRACTOR,
+    default: () => Roles.CONTRACTOR,
   })
   public role!: Roles;
 }
 
-export const AccountModel = getModelForClass(Account);
+export const AccountModel =
+  mongoose.models.Account || getModelForClass(Account);

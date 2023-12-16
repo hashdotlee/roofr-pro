@@ -29,29 +29,31 @@ export default function Sidebar() {
         aria-label="sidebar"
       >
         <div className="flex h-full flex-col border-r px-3 py-4">
-          <div className="pb-2 border-b flex flex-row items-center gap-2 mb-4">
-            <Button
-              variant={"ghost"}
-              className="rounded-full h-10 w-10 p-4"
-              onClick={() => setCollapsed(!collapsed)}
-            >
-              <span className="text-2xl">
-                <IoIosMenu />
-              </span>
-            </Button>
-            <h1
-              className={cn(
-                "text-2xl font-bold transition-all duration-200 ease-in-out",
-                {
-                  "opacity-100": !collapsed,
-                  "opacity-0": collapsed,
-                  invisible: collapsed,
-                }
-              )}
-              aria-label="logo"
-            >
-              LOGO
-            </h1>
+          <div className="flex flex-col border-b mb-4">
+            <div className="pb-2 flex flex-row items-center gap-2">
+              <Button
+                variant={"ghost"}
+                className="rounded-full h-10 w-10 p-4"
+                onClick={() => setCollapsed(!collapsed)}
+              >
+                <span className="text-2xl">
+                  <IoIosMenu />
+                </span>
+              </Button>
+              <h1
+                className={cn(
+                  "text-2xl font-bold transition-all duration-200 ease-in-out",
+                  {
+                    "opacity-100": !collapsed,
+                    "opacity-0": collapsed,
+                    invisible: collapsed,
+                  }
+                )}
+                aria-label="logo"
+              >
+                LOGO
+              </h1>
+            </div>
           </div>
 
           <ProfileMenu />

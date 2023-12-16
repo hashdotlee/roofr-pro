@@ -20,4 +20,5 @@ export class Customter {
   public createdAt?: Date;
 }
 
-export const CustomerModel = getModelForClass(Customter);
+export const CustomerModel =
+  mongoose.models.Customter || getModelForClass(Customter);
