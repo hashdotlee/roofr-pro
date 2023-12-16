@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { GoPeople } from "react-icons/go";
 import { RxDashboard } from "react-icons/rx";
+import { useCollapsed } from "../Sidebar";
 
 export type TNavItem = {
   label: string;
@@ -23,7 +24,8 @@ const navs: TNavItem[] = [
   },
 ];
 
-export default function Navigation({ collapsed }: { collapsed: boolean }) {
+export default function Navigation() {
+  const collapsed = useCollapsed();
   return (
     <div
       className={cn("flex flex-col gap-2 mt-2 justify-start min-w-full pt-2")}
@@ -46,7 +48,7 @@ function NavItem({
       <Button
         variant="ghost"
         className={cn(
-          "w-full flex flex-row gap-3 justify-start items-center p-2.5",
+          "w-full flex flex-row gap-3 justify-start items-center p-2.5"
         )}
       >
         <span className="text-xl">{icon}</span>

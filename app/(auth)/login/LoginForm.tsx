@@ -55,11 +55,9 @@ export default function LoginForm() {
     try {
       setLoading(true);
       const res: AuthResponse | undefined = await login({
-        redirect: false,
         email: values.email,
         password: values.password,
       });
-      alert(JSON.stringify(res));
       if (!res?.ok) throw res;
       toast({
         title: "Login Successful!",
@@ -67,9 +65,9 @@ export default function LoginForm() {
         variant: "default",
       });
       setApiError(undefined);
-      // setTimeout(() => {
-      //   router.push(`${pathname}/dashboard`);
-      // }, 800);
+      setTimeout(() => {
+        router.push(`${pathname}/../dashboard`);
+      }, 800);
     } catch (error: any) {
       setApiError(error?.message);
       toast({

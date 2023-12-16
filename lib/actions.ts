@@ -12,14 +12,16 @@ export type AuthResponse = {
 
 export async function login(options: Record<string, any>) {
   try {
-    await signIn("credentials", options);
+    await signIn("credentials", {
+      ...options,
+      redirect: false,
+    });
     return {
       ok: true,
       message: "Welcome back!",
       status: StatusCodes.OK,
     } satisfies AuthResponse;
   } catch (error) {
-    console.log(error);
     if (error instanceof AuthError && error.type === "CredentialsSignin") {
       return {
         ok: false,
@@ -36,5 +38,11 @@ export async function login(options: Record<string, any>) {
 }
 
 export async function logout() {
-  await signOut();
+  try {
+    await signOut({
+      redirect: false,
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }

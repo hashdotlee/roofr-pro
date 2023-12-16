@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { prop } from "@typegoose/typegoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 
 export class Customter {
   public _id!: mongoose.Types.ObjectId;
@@ -19,3 +19,5 @@ export class Customter {
   @prop({ default: Date.now() })
   public createdAt?: Date;
 }
+
+export const CustomerModel = getModelForClass(Customter);

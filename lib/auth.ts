@@ -16,7 +16,7 @@ export const {
         const user = {
           id: "1",
           email: "john@gmail.com",
-          name: "Le Viet Dat",
+          name: "John Doe",
           password: "88888888",
         };
 

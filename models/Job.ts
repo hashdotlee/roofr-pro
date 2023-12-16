@@ -1,4 +1,4 @@
-import { prop } from "@typegoose/typegoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 
 import mongoose from "mongoose";
 
@@ -8,14 +8,14 @@ export class Job {
   @prop()
   public jobDetails?: JobDetails;
 
-  @prop()
+  @prop({ type: () => [Task] })
   public tasks?: Task[];
 
   @prop()
   public attachments?: string[];
 
-  @prop()
-  public notes?: string[];
+  @prop({ type: () => [Note] })
+  public notes?: Note[];
 }
 
 class JobDetails {
@@ -50,3 +50,5 @@ class Note {
   @prop({ required: true })
   public content!: string;
 }
+
+export const JobModel = getModelForClass(Job);
