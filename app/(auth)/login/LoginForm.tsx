@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { AuthResponse, login } from "@/lib/actions";
+import { AuthResponse, login } from "@/actions/auth";
 import { useToast } from "@/components/ui/use-toast";
 import { usePathname, useRouter } from "next/navigation";
 import CustomAlert from "@/components/custom/CustomAlert";

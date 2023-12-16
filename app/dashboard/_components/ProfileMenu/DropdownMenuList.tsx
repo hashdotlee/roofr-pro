@@ -1,6 +1,6 @@
 "use client";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { logout } from "@/lib/actions";
+import { logout } from "@/actions/auth";
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

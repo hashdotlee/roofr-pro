@@ -13,9 +13,6 @@ export class Customter {
   @prop()
   public phone?: string;
 
-  @prop()
-  public address?: string;
-
   @prop({ default: Date.now() })
   public createdAt?: Date;
 }
