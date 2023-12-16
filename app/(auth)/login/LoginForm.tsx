@@ -62,7 +62,7 @@ export default function LoginForm() {
       toast({
         title: "Login Successful!",
         description: res.message,
-        variant: "default",
+        variant: "success",
       });
       setApiError(undefined);
       setTimeout(() => {

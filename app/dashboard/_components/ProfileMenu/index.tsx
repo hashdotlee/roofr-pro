@@ -1,21 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logout } from "@/lib/actions";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Loader2, LogOut, PowerIcon, User } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import { useCollapsed } from "../../Sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import { getAbbreviation } from "@/lib/text";
-import { useRouter } from "next/navigation";
-import { signOut } from "@/lib/auth";
 import DropdownMenuList from "./DropdownMenuList";
 
 export default function index() {
@@ -30,7 +25,6 @@ export default function index() {
       </div>
     );
 
-  if (!user) return null;
   return (
     <>
       <DropdownMenu>

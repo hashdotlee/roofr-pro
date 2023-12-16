@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { logout } from "@/lib/actions";
 import { LogOut, User } from "lucide-react";
