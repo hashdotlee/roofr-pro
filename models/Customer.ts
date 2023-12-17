@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { getModelForClass, prop } from "@typegoose/typegoose";
 
-export class Customter {
+export class Customer {
   public _id!: mongoose.Types.ObjectId;
 
   @prop({ required: true })
@@ -18,4 +18,5 @@ export class Customter {
 }
 
 export const CustomerModel =
-  mongoose.models.Customter || getModelForClass(Customter);
+  mongoose.models.Customer ||
+  getModelForClass(Customer, { schemaOptions: { versionKey: false } });

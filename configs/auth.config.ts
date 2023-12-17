@@ -4,18 +4,8 @@ import { NextURL } from "next/dist/server/web/next-url";
 import { NextRequest, NextResponse } from "next/server";
 
 const apiRoutes = {
-  [Roles.ADMIN]: [
-    {
-      path: "/api/customers",
-      methods: ["GET", "POST", "PATCH", "DELETE"],
-    },
-  ],
-  [Roles.CONTRACTOR]: [
-    {
-      path: "/api/customers",
-      methods: ["GET"],
-    },
-  ],
+  [Roles.ADMIN]: ["/api/customers"],
+  [Roles.CONTRACTOR]: ["/api/customers"],
 };
 
 export const authConfig = {
@@ -46,9 +36,8 @@ function authorizeAPIRoutes(
     return NextResponse.redirect(new URL("/api", nextUrl.origin));
 
   const role = auth?.user?.role;
-  const isAuthorized = apiRoutes[role as Roles].some(
-    (route) =>
-      nextUrl.pathname.startsWith(route.path) && route.methods.includes(method)
+  const isAuthorized = apiRoutes[role as Roles].some((route) =>
+    nextUrl.pathname.startsWith(route)
   );
   return isAuthorized;
 }

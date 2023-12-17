@@ -11,11 +11,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { PlusCircle, Search } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  ComposeCustomerDTO,
+  toComposeCustomerDTO,
+} from "@/dtos/compose-customer.dto";
 
 export default function Customers() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [customers, setCustomers] = useState<ComposeCustomerDTO[]>([]);
+  const pathname = usePathname();
+
+  const fetchCustomers = async () => {
+    const res = await fetch("/api/customers", {});
+    const data = await res.json();
+    setCustomers(data.map(toComposeCustomerDTO));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  useEffect(() => {
+    if (pathname === "/dashboard/customers") {
+      fetchCustomers();
+    }
+  }, [pathname]);
+
   return (
     <div className="h-screen w-full py-8 px-8 overflow-x-hidden">
       <div className="flex items-center justify-between">
@@ -30,35 +56,60 @@ export default function Customers() {
           <PlusCircle /> Add Customer
         </Button>
       </div>
-      <div className="mt-8">
+      <div className="mt-8 rounded-xl border-2 border-gray-300">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="border-b-gray-400">
               <TableHead>Customer Name</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Create On</TableHead>
+              <TableHead>Created On</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow
-              className="cursor-pointer"
-              onClick={() => router.push(`/dashboard/customers/${11}/edit`)}
-            >
-              <TableCell>John Doe</TableCell>
-              <TableCell>08123456789</TableCell>
-              <TableCell>
-                <a href="mailto:hashdotlee@gmail.com">hashdotlee</a>
-              </TableCell>
-              <TableCell>2021-09-01</TableCell>
-              <TableCell>
-                <MoreHorizontal className="w-4 h-4" />
-              </TableCell>
-            </TableRow>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center">
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : customers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center">
+                  No customers found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              customers.map((customer, index) => (
+                <CustomerRow {...customer} key={index} />
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
     </div>
+  );
+}
+
+function CustomerRow({
+  _id,
+  fullname,
+  phone,
+  email,
+  createdOn,
+}: ComposeCustomerDTO) {
+  const router = useRouter();
+
+  return (
+    <TableRow
+      className="cursor-pointer text-base"
+      onClick={() => router.push(`/dashboard/customers/${_id}/edit`)}
+    >
+      <TableCell className="font-bold">{fullname || "N/A"}</TableCell>
+      <TableCell>{phone || "N/A"}</TableCell>
+      <TableCell>{email || "N/A"}</TableCell>
+      <TableCell>{createdOn || "N/A"}</TableCell>
+    </TableRow>
   );
 }

@@ -51,4 +51,6 @@ class Note {
   public content!: string;
 }
 
-export const JobModel = mongoose.models.Job || getModelForClass(Job);
+export const JobModel =
+  mongoose.models.Job ||
+  getModelForClass(Job, { schemaOptions: { versionKey: false } });

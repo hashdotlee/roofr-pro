@@ -18,8 +18,6 @@ export default function index() {
   const { data: session, status } = useSession();
   const user = session?.user;
 
-  console.log(user);
-
   if (status === "loading")
     return (
       <div className="flex flex-row justify-center items-center mt-4">

@@ -1,3 +1,4 @@
+import { ComposeMode } from "@/dtos/compose-customer.dto";
 import CustomerForm from "../_components/CustomerForm";
 
 export default function CreateCustomerPage() {
@@ -6,7 +7,7 @@ export default function CreateCustomerPage() {
       <h2 className="text-2xl font-semibold">New Customer</h2>
       <div className="flex flex-row gap-12 mt-4 justify-start items-start">
         <div className="w-[400px]">
-          <CustomerForm />
+          <CustomerForm mode={ComposeMode.Create} />
         </div>
         <div className="w-[400px]">
           <h3 className="font-semibold">Jobs</h3>

@@ -33,4 +33,5 @@ export class Account {
 }
 
 export const AccountModel =
-  mongoose.models.Account || getModelForClass(Account);
+  mongoose.models.Account ||
+  getModelForClass(Account, { schemaOptions: { versionKey: false } });

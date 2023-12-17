@@ -1,18 +1,19 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { handleZodCreddentials } from "../utils";
+import { handleZodCredentials } from "./utils";
+import { Types } from "mongoose";
 
-export const getParsedId = (req: NextRequest) => {
-  return handleZodCreddentials(
+export const getParsedId = (id: string) => {
+  return handleZodCredentials(
     z
       .string()
-      .regex(/^[0-9]+$/)
-      .safeParse(req.nextUrl.searchParams.get("id"))
+      .refine((val) => Types.ObjectId.isValid(val))
+      .safeParse(id)
   );
 };
 
 export const getParsedCustomer = (req: NextRequest) => {
-  return handleZodCreddentials(
+  return handleZodCredentials(
     z
       .object({
         fullname: z.string(),
