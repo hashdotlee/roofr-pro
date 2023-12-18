@@ -1,11 +1,16 @@
 import { useJobStore } from "@/lib/stores/jobStore";
 import { useEffect, useState } from "react";
 
+export enum SortBy {
+  LAST_UPDATED = "updatedAt",
+  JOB_VALUE = "jobValue",
+}
+
 interface JobFilter {
   search?: string;
   updatedAt?: string;
   stage?: string[];
-  sortBy?: string;
+  sortBy?: SortBy;
 }
 
 export const useJobs = (initFilter?: JobFilter) => {

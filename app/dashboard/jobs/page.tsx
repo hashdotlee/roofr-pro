@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useJobs } from "@/hooks/useJobs";
+import { SortBy, useJobs } from "@/hooks/useJobs";
 import { JobStage } from "@/types/job";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDownIcon } from "lucide-react";
@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import KanbanView from "./KanbanView";
 import NewJobDialog from "./(components)/NewJobDialog";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function Jobs() {
   const { filter, setFilter } = useJobs({
@@ -74,7 +75,7 @@ export default function Jobs() {
 const formSchema = z.object({
   updatedAt: z.string().optional(),
   stage: z.string().array(),
-  sortBy: z.string().optional(),
+  sortBy: z.nativeEnum(SortBy).optional(),
   search: z.string().optional(),
 });
 
@@ -96,13 +97,43 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
       ],
     },
   });
-  const onSubmit = (data: any) => {
+  const onSubmit = useDebouncedCallback(() => {
     const newData = form.getValues();
+    const { updatedAt, search } = newData;
+    if (search) {
+      newData.search = search.toLowerCase().replace(/\\/g, "");
+    }
+    if (updatedAt) {
+      const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+      switch (updatedAt) {
+        case "today":
+          newData.updatedAt = new Date().toISOString();
+          break;
+        case "yesterday":
+          newData.updatedAt = new Date(Date.now() - oneDay).toISOString();
+          break;
+        case "last-7-days":
+          newData.updatedAt = new Date(Date.now() - oneDay * 7).toISOString();
+          break;
+        case "last-30-days":
+          newData.updatedAt = new Date(Date.now() - oneDay * 30).toISOString();
+          break;
+        case "last-90-days":
+          newData.updatedAt = new Date(Date.now() - oneDay * 90).toISOString();
+          break;
+        case "last-year":
+          newData.updatedAt = new Date(Date.now() - oneDay * 365).toISOString();
+          break;
+        case "older":
+          newData.updatedAt = new Date("1970-01-01").toISOString();
+          break;
+      }
+    }
     setFilter({
       ...filter,
       ...newData,
     });
-  };
+  }, 500);
   return (
     <div className="w-full mt-6 flex flex-row gap-3 items-center justify-between">
       <Form {...form}>
@@ -178,7 +209,10 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
                                     value={stage}
                                   />
                                 </FormControl>
-                                <Label htmlFor={`stage-${i}`} className="m-0 cursor-pointer hover:text-neutral-700">
+                                <Label
+                                  htmlFor={`stage-${i}`}
+                                  className="m-0 cursor-pointer hover:text-neutral-700"
+                                >
                                   {stage}
                                 </Label>
                               </FormItem>
@@ -198,8 +232,8 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
               control={form.control}
               selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500 hover:text-blue-700"
               options={[
-                { label: "Last updated", value: "last-updated" },
-                { label: "Job value", value: "job-value" },
+                { label: "Last updated", value: SortBy.LAST_UPDATED },
+                { label: "Job value", value: SortBy.JOB_VALUE },
               ]}
               placeholder="Sort by"
             />

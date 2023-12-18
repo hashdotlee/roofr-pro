@@ -28,13 +28,18 @@ export const GET = catchAsync(async (req) => {
 
   if (search) {
     query.where({
-      title: new RegExp(search, "i"),
+      address: new RegExp(search, "i"),
     });
   }
 
   if (updatedAt) {
     query.where({
-      updatedAt: new RegExp(updatedAt, "i"),
+      updatedAt: {
+        $lte: new Date(updatedAt),
+        $gte: new Date(
+          new Date(updatedAt).setDate(new Date(updatedAt).getDate() - 1),
+        ),
+      },
     });
   }
 
