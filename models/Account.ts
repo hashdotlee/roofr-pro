@@ -8,7 +8,7 @@ export class Account {
   @prop({ required: true })
   public email!: string;
 
-  @prop({ required: true })
+  @prop({ required: true, select: false })
   public password!: string;
 
   @prop()

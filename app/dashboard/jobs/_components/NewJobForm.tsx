@@ -4,21 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import CustomComboBox from "@/components/custom/ComboBox";
+import { createJob } from "@/actions/job";
+import Input from "@/components/custom/Input";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-
-const addresses = [
-  { label: "English", value: "en" },
-  { label: "French", value: "fr" },
-  { label: "German", value: "de" },
-  { label: "Spanish", value: "es" },
-  { label: "Portuguese", value: "pt" },
-  { label: "Russian", value: "ru" },
-  { label: "Japanese", value: "ja" },
-  { label: "Korean", value: "ko" },
-  { label: "Chinese", value: "zh" },
-];
+import { Label } from "@/components/ui/label";
+import { useJobs } from "@/hooks/useJobs";
+import toast from "react-hot-toast";
 
 const FormSchema = z.object({
   address: z.string({
@@ -31,24 +23,34 @@ export function NewJobForm() {
     resolver: zodResolver(FormSchema),
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
+  const { toggleRefetch } = useJobs();
+
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      await createJob(data.address);
+      toast.success("Job created successfully");
+      toggleRefetch();
+      form.reset();
+    } catch (error) {
+      const e = error as Error;
+      if (e.message) toast.error(e.message);
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <CustomComboBox
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Label htmlFor="address" className="fon-semibold text-base">
+          Address
+        </Label>
+        <Input
           name="address"
-          label="Address"
+          placeholder="Enter address"
+          inputClassName="w-full"
+          containerClassName="my-3"
           control={form.control}
-          options={addresses}
-          placeholder="Select an address"
-          description="Select an address from the list."
-          selectClassName="w-full"
-          contentClassName="max-w-[29rem] w-[calc(100vw-3rem)] p-0"
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full mt-3">
           Submit
         </Button>
       </form>

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { getModelForClass, prop } from "@typegoose/typegoose";
 
 export class Customer {
-  public _id!: mongoose.Types.ObjectId;
+  public _id!: mongoose.Schema.Types.ObjectId;
 
   @prop({ required: true })
   public fullname!: string;
@@ -12,6 +12,9 @@ export class Customer {
 
   @prop()
   public phone?: string;
+
+  @prop({select: false})
+  public ssn?: string;
 
   @prop({ default: Date.now() })
   public createdAt?: Date;

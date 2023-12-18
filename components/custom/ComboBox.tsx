@@ -1,15 +1,7 @@
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useState } from "react";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { Control } from "react-hook-form";
 import { Button } from "../ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "../ui/command";
 import {
   FormControl,
   FormDescription,
@@ -18,7 +10,9 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { useState } from "react";
 
 export default function CustomComboBox({
   options,
@@ -27,7 +21,10 @@ export default function CustomComboBox({
   label,
   description,
   selectClassName,
+  inputValue,
   contentClassName,
+  onInputChange,
+  onValueChange,
   placeholder,
 }: {
   control: Control<any>;
@@ -39,25 +36,30 @@ export default function CustomComboBox({
   label: string;
   description?: string;
   selectClassName?: string;
+  onInputChange?: (value: string) => void;
+  inputValue?: string;
   contentClassName?: string;
+  onValueChange?: (value: string) => void;
   placeholder?: string;
 }) {
-
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <FormItem className="flex flex-col w-full">
           <FormLabel>{label}</FormLabel>
-          <Popover>
+          <Popover open={open}>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
                   variant="outline"
                   role="combobox"
+                  onClick={() => {
+                    setOpen(!open);
+                  }}
                   className={cn(
                     "w-[200px] justify-between",
                     !field.value && "text-muted-foreground mt-2",
@@ -65,39 +67,61 @@ export default function CustomComboBox({
                   )}
                 >
                   {field.value
-                    ? options.find((option) => option.value === field.value)
-                        ?.label
+                    ? options?.find((option) => option.value === field.value)
+                        ?.label ?? field.value
                     : placeholder}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className={cn("p-0", contentClassName)}>
-              <Command>
-                <CommandInput placeholder={placeholder} />
-                <CommandEmpty>No option found.</CommandEmpty>
-                <CommandGroup>
+            <PopoverContent className={cn("p-2 border", contentClassName)}>
+              <div>
+                <Input
+                  placeholder={placeholder}
+                  className="border-0 border-b focus-visible:ring-0 rounded-none"
+                  value={inputValue}
+                  onChange={(e) => {
+                    onInputChange && onInputChange(e.target.value);
+                  }}
+                />
+                <div>
                   {options.map((option) => (
-                    <CommandItem
+                    <Button
                       value={option.label}
                       key={option.value}
-                      onSelect={() => {
+                      onClick={() => {
                         field.onChange(option.value);
+                        onValueChange && onValueChange(option.value);
+                        setOpen(false);
                       }}
+                      className="w-full justify-start border-0 text-left bg-transparent hover:bg-gray-100 rounded-none text-current"
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
+                          "mr-2 grow-0 shrink-0 h-4 w-4",
                           option.value === field.value
                             ? "opacity-100"
                             : "opacity-0",
                         )}
                       />
-                      {label}
-                    </CommandItem>
+                      {option.label}
+                    </Button>
                   ))}
-                </CommandGroup>
-              </Command>
+                  {inputValue && (
+                    <Button
+                      onClick={() => {
+                        field.onChange(inputValue);
+                        onValueChange && onValueChange(inputValue);
+                        setOpen(false);
+                      }}
+                      className="w-full justify-start border-0 text-left bg-transparent hover:bg-gray-100 rounded-none text-current"
+                    >
+                      <Plus className={cn("mr-2 grow-0 shrink-0 h-4 w-4")} />
+                      Add {inputValue}
+                    </Button>
+                  )}
+                </div>
+              </div>
             </PopoverContent>
           </Popover>
           {description && <FormDescription>{description}</FormDescription>}

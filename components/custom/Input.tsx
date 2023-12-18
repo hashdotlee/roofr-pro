@@ -9,12 +9,14 @@ export default function CustomInput({
   inputClassName,
   containerClassName,
   control,
+  disabled,
   name,
 }: {
-  label: string;
+  label?: string;
   placeholder?: string;
   inputClassName?: string;
   containerClassName?: string;
+  disabled?: boolean;
   control: Control<any>;
   name: string;
 }) {
@@ -24,11 +26,13 @@ export default function CustomInput({
       control={control}
       render={({ field }) => (
         <FormItem className={cn("flex flex-col", containerClassName)}>
-          <FormLabel>{label}</FormLabel>
+          {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <Input
               {...field}
               placeholder={placeholder}
+              disabled={disabled}
+              id={name}
               className={cn("w-[200px] justify-between", inputClassName)}
             />
           </FormControl>

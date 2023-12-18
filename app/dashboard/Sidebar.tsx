@@ -6,6 +6,7 @@ import { createContext, useContext, useState } from "react";
 import { IoIosMenu } from "react-icons/io";
 import ProfileMenu from "./_components/ProfileMenu";
 import Navigation from "./_components/Navigation";
+import Link from "next/link";
 
 const CollapsedSidebarContext = createContext(false);
 
@@ -24,7 +25,7 @@ export default function Sidebar() {
           {
             "w-sidebar": !collapsed,
             "w-sidebar-collapse": collapsed,
-          }
+          },
         )}
         aria-label="sidebar"
       >
@@ -40,19 +41,20 @@ export default function Sidebar() {
                   <IoIosMenu />
                 </span>
               </Button>
-              <h1
+              <Link
+                href={"/dashboard/jobs"}
                 className={cn(
                   "text-2xl font-bold transition-all duration-200 ease-in-out",
                   {
                     "opacity-100": !collapsed,
                     "opacity-0": collapsed,
                     invisible: collapsed,
-                  }
+                  },
                 )}
                 aria-label="logo"
               >
                 LOGO
-              </h1>
+              </Link>
             </div>
           </div>
 

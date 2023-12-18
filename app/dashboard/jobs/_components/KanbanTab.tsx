@@ -3,6 +3,7 @@ import JobItem, { Job } from "./JobItem";
 import { JobStatus } from "@/types/job";
 import { cn } from "@/lib/utils";
 import { useJobStore } from "@/lib/stores/jobStore";
+import { updateJob } from "@/actions/job";
 
 export interface IKanbanTab {
   id: string;
@@ -21,9 +22,11 @@ export default function KanbanTab({
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "JOB_ITEM",
-    drop: (item: { id: number; status: JobStatus }) => {
-      console.log(item);
+    drop: (item: { id: string; status: JobStatus }) => {
       moveJob(item.id, tab.type);
+      updateJob(item.id, {
+        status: tab.type,
+      });
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
@@ -36,7 +39,7 @@ export default function KanbanTab({
         "flex flex-col grow-0 shrink-0 w-[320px] bg-gray-200 relative rounded-xl",
         {
           "bg-green-200": isOver,
-        }
+        },
       )}
       ref={drop}
     >
@@ -51,7 +54,7 @@ export default function KanbanTab({
       <div className={cn("flex flex-col gap-4 p-4")}>
         {jobs.map(
           (item) =>
-            item.status === tab.type && <JobItem key={item.id} job={item} />
+            item.status === tab.type && <JobItem key={item.id} job={item} />,
         )}
       </div>
     </div>

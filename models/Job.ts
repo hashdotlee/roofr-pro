@@ -1,26 +1,26 @@
-import { getModelForClass, prop } from "@typegoose/typegoose";
+import { JobStatus } from "@/types/job";
+import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 import mongoose from "mongoose";
 
-export class Job {
-  public _id!: mongoose.Types.ObjectId;
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    versionKey: false,
+  },
+})
+export class Job extends TimeStamps {
+  public _id!: mongoose.Schema.Types.ObjectId;
 
-  @prop()
-  public jobDetails?: JobDetails;
+  @prop({ required: true })
+  public address!: string;
 
-  @prop({ type: () => [Task] })
-  public tasks?: Task[];
-
-  @prop()
-  public attachments?: string[];
-
-  @prop({ type: () => [Note] })
-  public notes?: Note[];
-}
-
-class JobDetails {
   @prop()
   public assignee?: any;
+
+  @prop({ default: JobStatus.NEW_LEAD, required: true, enum: JobStatus })
+  public status!: string;
 
   @prop()
   public stage?: string;
@@ -33,6 +33,18 @@ class JobDetails {
 
   @prop()
   public details?: string;
+
+  @prop({ type: () => [Task] })
+  public tasks?: Task[];
+
+  @prop()
+  public attachments?: string[];
+
+  @prop()
+  public customerId: mongoose.Schema.Types.ObjectId;
+
+  @prop({ type: () => [Note] })
+  public notes?: Note[];
 }
 
 class Task {
@@ -41,16 +53,26 @@ class Task {
 
   @prop()
   public creator?: any;
+
+  @prop({ default: false })
+  done?: boolean;
+
+  @prop()
+  description?: string;
+
+  @prop()
+  assignee?: mongoose.Schema.Types.ObjectId;
+
+  @prop()
+  dueDate?: Date;
 }
 
 class Note {
   @prop({ required: true })
-  public writer!: any;
+  public writer!: mongoose.Schema.Types.ObjectId;
 
   @prop({ required: true })
   public content!: string;
 }
 
-export const JobModel =
-  mongoose.models.Job ||
-  getModelForClass(Job, { schemaOptions: { versionKey: false } });
+export const JobModel = mongoose.models.Job || getModelForClass(Job);

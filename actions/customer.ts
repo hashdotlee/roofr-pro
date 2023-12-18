@@ -7,6 +7,7 @@ interface ICustomerPayload {
   fullname: string;
   email?: string;
   phone?: string;
+  ssn?: string;
 }
 
 type TCustomerResponse = {
@@ -58,7 +59,7 @@ export const updateCustomer = async (
 export const deleteCustomer = async (id: string) => {
   try {
     await dbConnect();
-    const customer = await CustomerModel.findByIdAndDelete(id);
+    await CustomerModel.findByIdAndDelete(id);
     return {
       ok: true,
       message: "Delete Successfully!",

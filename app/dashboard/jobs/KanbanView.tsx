@@ -2,6 +2,9 @@ import { JobStatus } from "@/types/job";
 import KanbanTab, { IKanbanTab } from "./_components/KanbanTab";
 import { useJobStore } from "@/lib/stores/jobStore";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useJobs } from "@/hooks/useJobs";
 
 const tabs: IKanbanTab[] = [
   {
@@ -57,13 +60,15 @@ const tabs: IKanbanTab[] = [
 ];
 
 export default function KanbanView() {
-  const jobs = useJobStore((state) => state.jobs);
+  useJobs();
+
+  const jobsFromStore = useJobStore((state) => state.jobs);
 
   return (
     <div
       className={cn(
         "overflow-scroll h-[calc(100vh-12rem)] mt-8 -mx-8 pl-8 focus:outline-none pb-8",
-        "scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-gray-100"
+        "scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-gray-100",
       )}
     >
       <div className="flex flex-row gap-3 min-h-full">
@@ -71,7 +76,7 @@ export default function KanbanView() {
           <KanbanTab
             key={tab.id}
             tab={tab}
-            jobs={jobs.filter((job) => job.status === tab.type)}
+            jobs={jobsFromStore.filter((job) => job.status === tab.type)}
           />
         ))}
       </div>

@@ -64,12 +64,14 @@ export const {
       if (user) {
         token.role = user.role;
         token.picture = user.image;
+        token.id = user.id;
       }
       return token;
     },
     session({ session, token }) {
       session.user.role = token.role as Roles;
       session.user.image = token.picture;
+      session.user.id = token.id as string;
       return session;
     },
   },

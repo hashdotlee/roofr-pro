@@ -1,18 +1,13 @@
-import { useDrag } from "react-dnd";
+import { getTimeAgo } from "@/lib/utils";
+import { Job } from "@/models/Job";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { JobStatus } from "@/types/job";
-
-export type Job = {
-  id: number;
-  name: string;
-  status: JobStatus;
-};
+import { useDrag } from "react-dnd";
 
 export default function JobItem({ job }: { job: Job }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "JOB_ITEM",
-    item: { id: job.id, status: job.status },
+    item: { id: job._id, status: job.status },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -25,17 +20,17 @@ export default function JobItem({ job }: { job: Job }) {
       className={`w-full flex flex-col min-h-20 bg-white cursor-pointer border rounded-md ${
         isDragging ? "opacity-50" : ""
       }`}
-      onClick={() => router.push(`/dashboard/jobs/detail/${job.id}`)}
+      onClick={() => router.push(`/dashboard/jobs/detail/${job._id}`)}
       ref={drag}
     >
       <div className="font-semibold p-4 text-sm border-b text-gray-800">
-        {job.name}
+        {job.address}
       </div>
       <div className="flex justify-between px-4 py-2 bg-gray-100 items-center">
         <div></div>
         <div className="flex items-center ml-auto gap-2">
           <div className="text-[10px] font-semibold text-gray-400">
-            Updated 3 hours ago
+            Updated {getTimeAgo(job.updatedAt)} 
           </div>
           <Image
             src="/default_avatar.svg"

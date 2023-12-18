@@ -1,9 +1,9 @@
 "use client";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import JobDetailPage from "../../../detail/[id]/page";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import JobDetailPage from "../../../detail/[id]/JobDetailPage";
 
 export default function JobDetailModal() {
   const router = useRouter();
@@ -22,13 +22,7 @@ export default function JobDetailModal() {
         className="max-w-[80vw] h-[80vh] flex flex-col"
         hasCloseButton={false}
       >
-        <JobDetailPage
-          isModal={true}
-          handleClose={() => {
-            setOpen(false);
-            router.back();
-          }}
-        />
+        <JobDetailPage hasCloseButton />
       </DialogContent>
     </Dialog>
   );
