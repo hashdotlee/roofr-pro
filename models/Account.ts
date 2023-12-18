@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
-import { getModelForClass, prop } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { Roles } from "@/types/account";
 
+@modelOptions({ schemaOptions: { collection: "accounts", versionKey: false } })
 export class Account {
   public _id!: mongoose.Types.ObjectId;
 
@@ -33,5 +34,4 @@ export class Account {
 }
 
 export const AccountModel =
-  mongoose.models.Account ||
-  getModelForClass(Account, { schemaOptions: { versionKey: false } });
+  mongoose.models.Account || getModelForClass(Account);
