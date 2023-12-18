@@ -39,8 +39,11 @@ export const GET = catchAsync(async (req) => {
   }
 
   if (stage) {
+    const stages = stage.split(",");
     query.where({
-      stage: new RegExp(stage, "i"),
+      stage: {
+        $in: stages,
+      },
     });
   }
 

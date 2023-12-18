@@ -7,17 +7,39 @@ import { LuKanbanSquare } from "react-icons/lu";
 
 import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
-import { Form } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useJobs } from "@/hooks/useJobs";
 import { JobStage } from "@/types/job";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronDownIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import KanbanView from "./KanbanView";
 import NewJobDialog from "./(components)/NewJobDialog";
 
 export default function Jobs() {
+  const { filter, setFilter } = useJobs({
+    stage: [
+      JobStage.NEW_LEAD,
+      JobStage.APPOINTMENT_SCHEDULED,
+      JobStage.PROPOSAL_SENT,
+      JobStage.PROPOSAL_SIGNED,
+      JobStage.PRE_PRODUCTION,
+      JobStage.POST_PRODUCTION,
+      JobStage.PAYMENT,
+      JobStage.JOB_COMPLETED,
+      JobStage.LOST,
+      JobStage.UNQUALIFIED,
+    ],
+  });
+
   return (
     <div className="h-screen w-full py-4 px-8 overflow-x-hidden">
       <Tabs defaultValue="kanban">
@@ -38,10 +60,10 @@ export default function Jobs() {
           </TabsTrigger>
         </TabsList>
 
-        <Action />
+        <Action filter={filter} setFilter={setFilter} />
 
         <TabsContent value="kanban">
-          <KanbanView />
+          <KanbanView filter={filter} />
         </TabsContent>
         <TabsContent value="listview">Coming soon!</TabsContent>
       </Tabs>
@@ -50,34 +72,37 @@ export default function Jobs() {
 }
 
 const formSchema = z.object({
-  updated: z.string().optional(),
-  stage: z.string().optional(),
+  updatedAt: z.string().optional(),
+  stage: z.string().array(),
   sortBy: z.string().optional(),
   search: z.string().optional(),
 });
 
-function Action() {
+function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      stage: [
+        JobStage.NEW_LEAD,
+        JobStage.APPOINTMENT_SCHEDULED,
+        JobStage.PROPOSAL_SENT,
+        JobStage.PROPOSAL_SIGNED,
+        JobStage.PRE_PRODUCTION,
+        JobStage.POST_PRODUCTION,
+        JobStage.PAYMENT,
+        JobStage.JOB_COMPLETED,
+        JobStage.LOST,
+        JobStage.UNQUALIFIED,
+      ],
+    },
   });
-  const { filter, setFilter } = useJobs();
   const onSubmit = (data: any) => {
-<<<<<<< HEAD
-      console.log(data);
-    setFilter({
-      ...filter,
-      ...data,
-    });
-  };
-=======
     const newData = form.getValues();
     setFilter({
       ...filter,
       ...newData,
     });
   };
-
->>>>>>> 4d52def (resolve conflict)
   return (
     <div className="w-full mt-6 flex flex-row gap-3 items-center justify-between">
       <Form {...form}>
@@ -100,9 +125,9 @@ function Action() {
 
           <div>
             <CustomSelect
-              name="updated"
+              name="updatedAt"
               control={form.control}
-              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
+              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500 hover:text-blue-700"
               options={[
                 { label: "Today", value: "today" },
                 { label: "Yesterday", value: "yesterday" },
@@ -112,53 +137,66 @@ function Action() {
                 { label: "Last year", value: "last-year" },
                 { label: "Older", value: "older" },
               ]}
-              placeholder="Updated"
+              placeholder="Updated At"
             />
           </div>
-<<<<<<< HEAD
-=======
-          <Input placeholder="Search jobs" className="ps-12" />
-        </div>
-
           <div>
-            <CustomSelect
-              name="updated"
-              control={form.control}
-              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Last 7 days", value: "last-7-days" },
-                { label: "Last 30 days", value: "last-30-days" },
-                { label: "Last 90 days", value: "last-90-days" },
-                { label: "Last year", value: "last-year" },
-                { label: "Older", value: "older" },
-              ]}
-              placeholder="Updated"
-            />
-          </div>
->>>>>>> 4d52def (resolve conflict)
-          <div>
-            <CustomSelect
+            <FormField
               name="stage"
               control={form.control}
-              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
-              options={Object.entries(JobStage).map((stage) => ({
-                label: stage[1],
-<<<<<<< HEAD
-                value: stage[0],
-=======
-                value: stage[1],
->>>>>>> 4d52def (resolve conflict)
-              }))}
-              placeholder="Stage"
+              render={() => (
+                <FormItem>
+                  <Popover>
+                    <PopoverTrigger className="flex items-center border-0 hover:bg-transparent hover:text-blue-700 gap-2 text-sm font-semibold text-blue-500">
+                      <span>Stages</span>
+                      <ChevronDownIcon className="w-4 h-4" />
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <div className="flex flex-col gap-4">
+                        {Object.values(JobStage).map((stage, i) => (
+                          <FormField
+                            name="stage"
+                            control={form.control}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start gap-2 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    key={stage}
+                                    id={`stage-${i}`}
+                                    checked={field.value?.includes(stage)}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        field.onChange([...field.value, stage]);
+                                      } else {
+                                        field.onChange(
+                                          field.value?.filter(
+                                            (item: any) => item !== stage,
+                                          ),
+                                        );
+                                      }
+                                    }}
+                                    value={stage}
+                                  />
+                                </FormControl>
+                                <Label htmlFor={`stage-${i}`} className="m-0 cursor-pointer hover:text-neutral-700">
+                                  {stage}
+                                </Label>
+                              </FormItem>
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
             />
           </div>
           <div>
             <CustomSelect
               name="sortBy"
               control={form.control}
-              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
+              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500 hover:text-blue-700"
               options={[
                 { label: "Last updated", value: "last-updated" },
                 { label: "Job value", value: "job-value" },
