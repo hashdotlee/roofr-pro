@@ -4,7 +4,7 @@ import { JobStage } from "@/types/job";
 import { cn } from "@/lib/utils";
 import { useJobStore } from "@/lib/stores/jobStore";
 import { updateJob } from "@/actions/job";
-import { Job } from "@/models/Job";
+import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 
 export interface IKanbanTab {
   id: string;
@@ -17,7 +17,7 @@ export default function KanbanTab({
   jobs,
 }: {
   tab: IKanbanTab;
-  jobs: Job[];
+  jobs: ComposeJobDTO[];
 }) {
   const moveJob = useJobStore((state) => state.moveJob);
 
