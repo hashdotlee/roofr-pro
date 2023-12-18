@@ -1,6 +1,6 @@
 import { useParams } from "next/navigation";
-import EditTaskDialog from "./EditTaskDialog";
-import DeleteTaskDialog from "./DeleteTaskDialog";
+import EditTaskDialog from "../dialogs/EditTaskDialog";
+import DeleteTaskDialog from "../dialogs/DeleteTaskDialog";
 
 export default function TaskItem({
   task,

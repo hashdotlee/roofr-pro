@@ -14,7 +14,7 @@ import { useJobStore } from "@/lib/stores/jobStore";
 import { Job } from "@/models/Job";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PenIcon } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -25,7 +25,13 @@ const formSchema = z.object({
   }),
 });
 
-export default function EditAddressDialog({ job }: { job: Job | null }) {
+export default function EditAddressDialog({
+  job,
+  setJob,
+}: {
+  job: Job | null;
+  setJob: Dispatch<SetStateAction<Job | null>>;
+}) {
   const [open, setOpen] = useState(false);
   const modifyJob = useJobStore((state) => state.modifyJob);
 
@@ -51,12 +57,16 @@ export default function EditAddressDialog({ job }: { job: Job | null }) {
           <form
             action={async () => {
               const res = await updateJob(String(job?._id), form.getValues());
-
               if (res.code === 200) {
+                setJob({
+                  ...job!,
+                  address: form.getValues().address!,
+                });
                 modifyJob(String(job?._id), {
-                  address: form.getValues().address,
+                  address: form.getValues().address!,
                 });
                 toast.success(res.message);
+                setOpen(false);
               } else toast.error(res.message);
             }}
           >

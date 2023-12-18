@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { createContext, useContext, useState } from "react";
 import { IoIosMenu } from "react-icons/io";
-import ProfileMenu from "./_components/ProfileMenu";
-import Navigation from "./_components/Navigation";
+import ProfileMenu from "./(components)/ProfileMenu";
+import Navigation from "./(components)/Navigation";
 import Link from "next/link";
 
 const CollapsedSidebarContext = createContext(false);

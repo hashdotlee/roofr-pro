@@ -1,6 +1,7 @@
 import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Form } from "@/components/ui/form";
+import { JobStage } from "@/types/job";
 import { LightbulbIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -31,11 +32,11 @@ export default function JobDetails() {
             name="stage"
             label="Stage"
             control={form.control}
-            options={[
-              { label: "John Doe", value: "john-doe" },
-              { label: "Jane Doe", value: "jane-doe" },
-            ]}
-            placeholder="Stage"
+            options={Object.values(JobStage).map((stage) => ({
+              label: stage,
+              value: stage,
+            }))}
+            // placeholder="Stage"
           />
           <CustomInput
             name="source"
@@ -53,7 +54,7 @@ export default function JobDetails() {
           />
           <div className="p-3 bg-blue-200/50 flex items-center border border-blue-500 gap-4 text-xs col-span-2 rounded-md self-end">
             <LightbulbIcon className="h-4 w-4 text-yellow-500" /> Job value will
-            help you to prioritize your jobs,
+            help you to prioritize your jobs.
           </div>
           <CustomInput
             name="details"

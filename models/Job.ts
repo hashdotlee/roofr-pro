@@ -36,7 +36,7 @@ export class Job extends TimeStamps {
   @prop({ type: () => [Task] })
   public tasks?: Task[];
 
-  @prop()
+  @prop({ type: [String] })
   public attachments?: string[];
 
   @prop()

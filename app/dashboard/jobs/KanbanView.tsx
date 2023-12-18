@@ -2,7 +2,7 @@ import { useJobs } from "@/hooks/useJobs";
 import { useJobStore } from "@/lib/stores/jobStore";
 import { cn } from "@/lib/utils";
 import { JobStage } from "@/types/job";
-import KanbanTab, { IKanbanTab } from "./_components/KanbanTab";
+import KanbanTab, { IKanbanTab } from "./(components)/KanbanTab";
 
 const stages: IKanbanTab[] = [
   {

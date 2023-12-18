@@ -10,7 +10,7 @@ import {
 import { Form } from "@/components/ui/form";
 import { Pencil } from "lucide-react";
 import { useForm } from "react-hook-form";
-import AssigneePopover from "./AssigneePopover";
+import AssigneePopover from "../tabs/AssigneePopover";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import toast from "react-hot-toast";

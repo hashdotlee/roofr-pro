@@ -1,5 +1,5 @@
 import CustomerForm from "../../_components/CustomerForm";
-import NewJobDialog from "@/app/dashboard/jobs/_components/NewJobDialog";
+import NewJobDialog from "@/app/dashboard/jobs/(components)/NewJobDialog";
 import DeleteCustomerDialog from "../../_components/DeleteCustomerDialog";
 import { ComposeMode } from "@/dtos/compose-customer.dto";
 

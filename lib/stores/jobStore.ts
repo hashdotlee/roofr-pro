@@ -6,6 +6,7 @@ const defaultJobs: Job[] = [];
 
 interface JobState {
   jobs: Job[];
+  findJob: (jobId: string) => Job | undefined;
   setJobs: (jobs: Job[]) => void;
   modifyJob: (jobId: string, jobPayload: Partial<Omit<Job, "_id">>) => void;
   moveJob: (jobId: string, stage: JobStage) => void;
@@ -13,6 +14,8 @@ interface JobState {
 
 export const useJobStore = create<JobState>((set, get) => ({
   jobs: defaultJobs,
+  findJob: (jobId: string) =>
+    get().jobs.find((job) => job._id.toString() === jobId),
   setJobs: (jobs: Job[]) => set({ jobs }),
   modifyJob: (jobId: string, jobPayload: Partial<Omit<Job, "_id">>) => {
     const jobs = get().jobs;

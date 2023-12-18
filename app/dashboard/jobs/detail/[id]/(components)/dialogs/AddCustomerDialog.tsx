@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-  name: z.string().nonempty({
+  name: z.string().min(1, {
     message: "Please select a customer.",
   }),
   email: z.string().email({
@@ -39,7 +39,7 @@ export const AddCustomerModal = () => {
   });
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const customer = customers.find(
-      (customer) => customer._id.toString() === data.name,
+      (customer) => customer._id.toString() === data.name
     );
     if (customer) {
       updateJob(jobId, {
@@ -82,7 +82,7 @@ export const AddCustomerModal = () => {
               selectClassName="max-w-md w-full"
               onValueChange={(value) => {
                 const customer = customers.find(
-                  (customer) => customer._id.toString() === value,
+                  (customer) => customer._id.toString() === value
                 );
                 if (customer) {
                   form.setValue("email", customer.email || "");

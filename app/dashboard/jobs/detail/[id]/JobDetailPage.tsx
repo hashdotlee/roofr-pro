@@ -6,17 +6,50 @@ import { Clipboard, Plus, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import Attachment from "./Attachment";
-import DeleteJobDialog from "./DeleteJobDialog";
-import InstantEstimate from "./InstantEstimate";
-import JobDetail from "./JobDetail";
-import Measurement from "./Measurements";
-import NoteList from "./NoteList";
-import Proposal from "./Proposal";
-import TasksList from "./TaskList";
+import Attachment from "./(components)/tabs/Attachment";
+import DeleteJobDialog from "./(components)/dialogs/DeleteJobDialog";
+import InstantEstimate from "./(components)/tabs/InstantEstimate";
+import JobDetail from "./(components)/tabs/JobDetail";
+import Measurement from "./(components)/tabs/Measurement";
+import NoteList from "./(components)/NoteList";
+import Proposal from "./(components)/tabs/Proposal";
+import TasksList from "./(components)/tabs/TaskList";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { AddCustomerModal } from "./AddCustomerDialog";
-import EditAddressDialog from "./EditAddressDialog";
+import { AddCustomerModal } from "./(components)/dialogs/AddCustomerDialog";
+import EditAddressDialog from "./(components)/dialogs/EditAddressDialog";
+
+const getTabs = (job: Job | null) => [
+  {
+    id: "job_details",
+    name: "Job details",
+    content: <JobDetail />,
+  },
+  {
+    id: "tasks",
+    name: "Tasks",
+    content: <TasksList />,
+  },
+  {
+    name: "Measurements",
+    id: "measurements",
+    content: <Measurement />,
+  },
+  {
+    name: "Proposals",
+    id: "proposals",
+    content: <Proposal />,
+  },
+  {
+    name: "Attachments",
+    id: "attachments",
+    content: <Attachment />,
+  },
+  {
+    name: "Instances Estimates",
+    id: "instances_estimates",
+    content: <InstantEstimate />,
+  },
+];
 
 const InView = ({
   children,
@@ -48,6 +81,8 @@ export default function JobDetailPage({
   hasCloseButton?: boolean;
 }) {
   const [job, setJob] = useState<Job | null>(null);
+  const tabs = getTabs(job);
+
   const jobId = useParams().id as string;
   useEffect(() => {
     async function fetchJob() {
@@ -57,38 +92,6 @@ export default function JobDetailPage({
     }
     fetchJob();
   }, [jobId]);
-  const tabs = [
-    {
-      id: "job_details",
-      name: "Job details",
-      content: <JobDetail />,
-    },
-    {
-      id: "tasks",
-      name: "Tasks",
-      content: <TasksList />,
-    },
-    {
-      name: "Measurements",
-      id: "measurements",
-      content: <Measurement />,
-    },
-    {
-      name: "Proposals",
-      id: "proposals",
-      content: <Proposal />,
-    },
-    {
-      name: "Attachments",
-      id: "attachments",
-      content: <Attachment />,
-    },
-    {
-      name: "Instances Estimates",
-      id: "instances_estimates",
-      content: <InstantEstimate />,
-    },
-  ];
 
   const [activeTab, setActiveTab] = useState(tabs[0].id);
 
@@ -111,7 +114,7 @@ export default function JobDetailPage({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="text-2xl font-semibold">{job?.address}</div>
-            {job ? <EditAddressDialog job={job} /> : null}
+            {job ? <EditAddressDialog job={job} setJob={setJob} /> : null}
           </div>
           <div className="flex flex-row gap-2">
             <button className="p-2 bg-blue-700 rounded-full text-white flex justify-center items-center w-10 h-10">
@@ -129,7 +132,7 @@ export default function JobDetailPage({
         <div className="flex gap-3 text-xs items-center mt-2">
           <span>New to stage</span>
           <span className="p-1 bg-gray-100 rounded-md flex gap-2 items-center">
-            <Clipboard className="w-4 h-4" /> Tasks 0/1
+            <Clipboard className="w-4 h-4 font-semibold" /> Tasks 0/1
           </span>
           <span>Updated {getTimeAgo(job?.updatedAt?.toString())}</span>
         </div>

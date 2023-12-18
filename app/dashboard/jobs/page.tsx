@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import KanbanView from "./KanbanView";
-import NewJobDialog from "./_components/NewJobDialog";
+import NewJobDialog from "./(components)/NewJobDialog";
 
 export default function Jobs() {
   return (
