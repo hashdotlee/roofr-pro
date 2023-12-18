@@ -14,12 +14,7 @@ async function getUser(
   try {
     await dbConnect();
 
-    const users = await AccountModel.find({}).exec();
-    console.log("users", users);
-
     const user = await AccountModel.findOne({ email }).select("+password");
-
-    console.log("user", user);
 
     if (!user) return null;
 

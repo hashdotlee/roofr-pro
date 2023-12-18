@@ -1,14 +1,15 @@
 import { JobStage } from "@/types/job";
-import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import type { Ref } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { Account } from "./Account";
 import { Customer } from "./Customer";
 
 @modelOptions({
   schemaOptions: {
+    collection: "jobs",
     timestamps: true,
     versionKey: false,
   },
