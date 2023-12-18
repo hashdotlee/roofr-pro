@@ -10,15 +10,18 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import useJob from "@/hooks/useJob";
 import { useJobs } from "@/hooks/useJobs";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export default function DeleteJobDialog({ jobId }: { jobId: string }) {
+export default function DeleteJobDialog() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { job } = useJob();
+  const jobId = String(job?._id);
   const { toggleRefetch } = useJobs();
 
   return (

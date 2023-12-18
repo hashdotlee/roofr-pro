@@ -10,6 +10,19 @@ export default function NoteList() {
   const [content, setContent] = useState("");
   const jobId = useParams().id as string;
   const { notes = [], toggleRefetch } = useNotes(jobId);
+
+  const handleEnter = () => {
+    fetch(`/api/jobs/${jobId}/notes`, {
+      method: "POST",
+      body: JSON.stringify({
+        content,
+      }),
+    }).then(() => {
+      setContent("");
+      toggleRefetch();
+    });
+  };
+
   return (
     <>
       <div className="flex overflow-y-auto flex-col gap-2">
@@ -24,20 +37,13 @@ export default function NoteList() {
           onChange={(e) => setContent(e.target.value)}
           placeholder="Add new note..."
           className="py-8"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleEnter();
+          }}
         />
         <Button
           className=" absolute rounded-none right-4 text-blue-700 top-1/2 bg-transparent hover:bg-transparent p-0 -translate-y-1/2"
-          onClick={() => {
-            fetch(`/api/jobs/${jobId}/notes`, {
-              method: "POST",
-              body: JSON.stringify({
-                content,
-              }),
-            }).then(() => {
-              setContent("");
-              toggleRefetch();
-            });
-          }}
+          onClick={handleEnter}
         >
           <SendIcon className="w-5 h-5" />
         </Button>

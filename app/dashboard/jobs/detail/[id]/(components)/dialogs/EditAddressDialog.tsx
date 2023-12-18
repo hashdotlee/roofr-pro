@@ -10,11 +10,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
+import useJob from "@/hooks/useJob";
 import { useJobStore } from "@/lib/stores/jobStore";
-import { Job } from "@/models/Job";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PenIcon } from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -25,13 +25,8 @@ const formSchema = z.object({
   }),
 });
 
-export default function EditAddressDialog({
-  job,
-  setJob,
-}: {
-  job: Job | null;
-  setJob: Dispatch<SetStateAction<Job | null>>;
-}) {
+export default function EditAddressDialog() {
+  const { job, setJob } = useJob();
   const [open, setOpen] = useState(false);
   const modifyJob = useJobStore((state) => state.modifyJob);
 

@@ -13,7 +13,7 @@ export class Customer {
   @prop()
   public phone?: string;
 
-  @prop({select: false})
+  @prop({ select: false })
   public ssn?: string;
 
   @prop({ default: Date.now() })

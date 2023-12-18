@@ -1,10 +1,10 @@
+import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import { getTimeAgo } from "@/lib/utils";
-import { Job } from "@/models/Job";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useDrag } from "react-dnd";
 
-export default function JobItem({ job }: { job: Job }) {
+export default function JobItem({ job }: { job: ComposeJobDTO }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "JOB_ITEM",
     item: { id: job._id, stage: job.stage },

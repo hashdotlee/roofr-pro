@@ -1,5 +1,11 @@
+"use client";
+import { JobProvider } from "@/hooks/useJob";
 import JobDetailPage from "./JobDetailPage";
 
 export default function Page() {
-  return <JobDetailPage hasCloseButton={false} />;
+  return (
+    <JobProvider>
+      <JobDetailPage hasCloseButton={false} />
+    </JobProvider>
+  );
 }

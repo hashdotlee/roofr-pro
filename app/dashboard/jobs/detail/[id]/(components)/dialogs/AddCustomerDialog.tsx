@@ -43,7 +43,7 @@ export const AddCustomerModal = () => {
     );
     if (customer) {
       updateJob(jobId, {
-        customerId: customer._id,
+        customer: customer._id.toString(),
       });
     } else {
       await createCustomer({
@@ -53,7 +53,7 @@ export const AddCustomerModal = () => {
         ssn: data.ssn,
       }).then((res) => {
         updateJob(jobId, {
-          customerId: res.data._id,
+          customer: res.data._id,
         });
       });
     }
@@ -132,11 +132,11 @@ export const AddCustomerModal = () => {
 
             <CustomInput
               name="ssn"
-              label="SSN Number"
+              label="SSN (4 digits)"
               inputClassName="w-full"
               control={form.control}
               disabled={isDisabled}
-              placeholder="SSN Number"
+              placeholder="SSN"
             />
 
             <Button type="submit" className="w-full mt-3">

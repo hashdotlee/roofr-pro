@@ -3,8 +3,9 @@ import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import type { Ref } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { Account } from "./Account";
+import { Customer } from "./Customer";
 
 @modelOptions({
   schemaOptions: {
@@ -39,14 +40,14 @@ export class Job extends TimeStamps {
   @prop({ type: [String] })
   public attachments?: string[];
 
-  @prop()
-  public customerId: mongoose.Schema.Types.ObjectId;
+  @prop({ ref: () => Customer, type: () => String })
+  public customer: Ref<Customer, string>;
 
   @prop({ type: () => [Note] })
   public notes?: Note[];
 }
 
-class Task {
+export class Task extends TimeStamps {
   @prop({ required: true })
   public title!: string;
 
@@ -59,16 +60,16 @@ class Task {
   @prop()
   description?: string;
 
-  @prop()
-  assignee?: mongoose.Schema.Types.ObjectId;
+  @prop({ ref: () => Account })
+  assignee?: Ref<Account>;
 
   @prop()
   dueDate?: Date;
 }
 
-class Note {
-  @prop({ required: true })
-  public writer!: mongoose.Schema.Types.ObjectId;
+export class Note extends TimeStamps {
+  @prop({ required: true, ref: () => Account })
+  public writer!: Ref<Account>;
 
   @prop({ required: true })
   public content!: string;

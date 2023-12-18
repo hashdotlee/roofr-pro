@@ -1,14 +1,17 @@
-import { Job } from "@/models/Job";
+import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import { JobStage } from "@/types/job";
 import { create } from "zustand";
 
-const defaultJobs: Job[] = [];
+const defaultJobs: ComposeJobDTO[] = [];
 
 interface JobState {
-  jobs: Job[];
-  findJob: (jobId: string) => Job | undefined;
-  setJobs: (jobs: Job[]) => void;
-  modifyJob: (jobId: string, jobPayload: Partial<Omit<Job, "_id">>) => void;
+  jobs: ComposeJobDTO[];
+  findJob: (jobId: string) => ComposeJobDTO | undefined;
+  setJobs: (jobs: ComposeJobDTO[]) => void;
+  modifyJob: (
+    jobId: string,
+    jobPayload: Partial<Omit<ComposeJobDTO, "_id">>
+  ) => void;
   moveJob: (jobId: string, stage: JobStage) => void;
 }
 
@@ -16,8 +19,11 @@ export const useJobStore = create<JobState>((set, get) => ({
   jobs: defaultJobs,
   findJob: (jobId: string) =>
     get().jobs.find((job) => job._id.toString() === jobId),
-  setJobs: (jobs: Job[]) => set({ jobs }),
-  modifyJob: (jobId: string, jobPayload: Partial<Omit<Job, "_id">>) => {
+  setJobs: (jobs: ComposeJobDTO[]) => set({ jobs }),
+  modifyJob: (
+    jobId: string,
+    jobPayload: Partial<Omit<ComposeJobDTO, "_id">>
+  ) => {
     const jobs = get().jobs;
     const oldJob = jobs.find((job) => job._id.toString() === jobId);
     if (oldJob) {

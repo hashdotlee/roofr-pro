@@ -1,10 +1,8 @@
 "use client";
 
 import { cn, getTimeAgo } from "@/lib/utils";
-import { Job } from "@/models/Job";
 import { Clipboard, Plus, X } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useInView } from "react-intersection-observer";
 import Attachment from "./(components)/tabs/Attachment";
 import DeleteJobDialog from "./(components)/dialogs/DeleteJobDialog";
@@ -17,12 +15,13 @@ import TasksList from "./(components)/tabs/TaskList";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { AddCustomerModal } from "./(components)/dialogs/AddCustomerDialog";
 import EditAddressDialog from "./(components)/dialogs/EditAddressDialog";
+import useJob from "@/hooks/useJob";
 
-const getTabs = (job: Job | null) => [
+const tabs = [
   {
     id: "job_details",
     name: "Job details",
-    content: <JobDetail job />,
+    content: <JobDetail />,
   },
   {
     id: "tasks",
@@ -64,7 +63,7 @@ const InView = ({
 }) => {
   const { ref } = useInView({
     onChange: onChange,
-    root: document.getElementById("job_detail_root"),
+    root: document?.getElementById("job_detail_root"),
     rootMargin: "-10% 0px -90% 0px",
   });
 
@@ -80,24 +79,11 @@ export default function JobDetailPage({
 }: {
   hasCloseButton?: boolean;
 }) {
-  const [job, setJob] = useState<Job | null>(null);
-  const tabs = getTabs(job);
-
-  const jobId = useParams().id as string;
-  useEffect(() => {
-    async function fetchJob() {
-      const res = await fetch(`/api/jobs/${jobId}`);
-      const data = await res.json();
-      setJob(data);
-    }
-    fetchJob();
-  }, [jobId]);
-
   const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const { job } = useJob();
 
   const handleTabChange = (id: string) => {
     setActiveTab(id);
-
     const element = document.getElementById(id);
 
     if (element) {
@@ -114,7 +100,7 @@ export default function JobDetailPage({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="text-2xl font-semibold">{job?.address}</div>
-            {job ? <EditAddressDialog job={job} setJob={setJob} /> : null}
+            {job?.address && <EditAddressDialog />}
           </div>
           <div className="flex flex-row gap-2">
             <button className="p-2 bg-blue-700 rounded-full text-white flex justify-center items-center w-10 h-10">
@@ -169,7 +155,7 @@ export default function JobDetailPage({
               {tab.content}
             </InView>
           ))}
-          <DeleteJobDialog jobId={jobId} />
+          <DeleteJobDialog />
         </div>
         <div className="flex flex-col gap-4 w-1/3 h-full overflow-hidden">
           <div className="flex justify-between items-center p-4 border rounded-md">

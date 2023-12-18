@@ -1,15 +1,16 @@
 import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Form } from "@/components/ui/form";
+import useJob from "@/hooks/useJob";
 import { JobStage } from "@/types/job";
 import { LightbulbIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-export default function JobDetails({
-  assignee, stage, source, jobValue, details
-}: any) {
+export default function JobDetails() {
+  const { job } = useJob();
   const form = useForm({});
   const onSubmit = (data: any) => console.log(data);
+
   return (
     <>
       <div className="text-lg font-semibold leading-3 text-left">
@@ -26,9 +27,9 @@ export default function JobDetails({
             control={form.control}
             options={[
               { label: "John Doe", value: "john-doe" },
-              { label: "Jane Doe", value: "jane-doe" },
+              { label: "Jane Doe", value: "jane-doe" },   
             ]}
-            placeholder="Assignee"
+            placeholder={`${job?.assignee?.firstName} ${job?.assignee?.lastName}`}
           />
           <CustomSelect
             name="stage"
@@ -38,7 +39,7 @@ export default function JobDetails({
               label: stage,
               value: stage,
             }))}
-            // placeholder="Stage"
+            placeholder={job?.stage}
           />
           <CustomInput
             name="source"

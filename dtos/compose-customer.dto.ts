@@ -5,11 +5,8 @@ export enum ComposeMode {
   Edit = "edit",
 }
 
-export interface ComposeCustomerDTO {
+export interface ComposeCustomerDTO extends Omit<Customer, "_id" | "createdAt"> {
   _id: string;
-  fullname: string;
-  phone?: string;
-  email?: string;
   createdOn: string;
 }
 

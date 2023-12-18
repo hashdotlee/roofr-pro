@@ -32,6 +32,11 @@ const formSchema = z.object({
     .refine(validator.isMobilePhone, "This is not a valid phone number.")
     .optional()
     .or(z.literal("")),
+  ssn: z
+    .string()
+    .regex(/^\d{4}$/)
+    .optional()
+    .or(z.literal("")),
 });
 
 export default function CustomerForm({
@@ -124,6 +129,25 @@ export default function CustomerForm({
               <FormLabel>Phone (optional)</FormLabel>
               <FormControl>
                 <Input placeholder="Enter phone" {...field} type="tel" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="ssn"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>SSN (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter last 4 SSN digits"
+                  {...field}
+                  type="number"
+                  max={4}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
