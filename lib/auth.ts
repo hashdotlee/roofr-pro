@@ -13,6 +13,7 @@ async function getUser(
 ): Promise<Account | null> {
   try {
     await dbConnect();
+    console.log(AccountModel);
     const user = await AccountModel.findOne({ email }).select("+password");
 
     console.log("user", user);
@@ -23,8 +24,8 @@ async function getUser(
     return user;
   } catch (error) {
     const e = error as Error;
-    console.error("Failed to fetch user:", error);
-    return null;
+    console.error("Failed to fetch user:", e.message);
+    throw e;
   }
 }
 
