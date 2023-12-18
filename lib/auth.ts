@@ -9,7 +9,7 @@ import { Roles } from "@/types/account";
 
 async function getUser(
   email: string,
-  password: string
+  password: string,
 ): Promise<Account | null> {
   try {
     await dbConnect();
@@ -22,8 +22,9 @@ async function getUser(
 
     return user;
   } catch (error) {
+    const e = error as Error;
     console.error("Failed to fetch user:", error);
-    throw new Error("Failed to fetch user.");
+    return null;
   }
 }
 
@@ -48,7 +49,7 @@ export const {
         if (!parsedCredentials.success) return null;
 
         const { email, password } = parsedCredentials.data;
-        
+
         console.log("email", email);
 
         const user = await getUser(email, password);
