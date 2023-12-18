@@ -10,9 +10,9 @@ interface JobFilter {
 
 export const useJobs = (initFilter?: JobFilter) => {
   const [filter, setFilter] = useState(initFilter);
-  const [jobs, setJobs] = useState([]);
   const [refetch, setRefetch] = useState(false);
   const updateJobs = useJobStore((state) => state.updateJobs);
+  const jobFromStore = useJobStore((state) => state.jobs);
   const toggleRefetch = () => setRefetch((prev) => !prev);
   useEffect(() => {
     async function fetchJobs() {
@@ -25,7 +25,6 @@ export const useJobs = (initFilter?: JobFilter) => {
       const res = await fetch(`/api/jobs?${params.toString()}`);
       const { data } = await res.json();
       updateJobs(data);
-      setJobs(data);
     }
     fetchJobs();
   }, [refetch, filter]);
@@ -33,6 +32,6 @@ export const useJobs = (initFilter?: JobFilter) => {
     toggleRefetch,
     filter,
     setFilter,
-    jobs,
+    jobs: jobFromStore,
   };
 };
