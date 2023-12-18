@@ -13,7 +13,7 @@ async function getUser(
 ): Promise<Account | null> {
   try {
     await dbConnect();
-    const user = await AccountModel.findOne({ email });
+    const user = await AccountModel.findOne({ email }).select("+password");
 
     const passwordsMatch = await bcrypt.compare(password, user.password);
     if (!passwordsMatch) return null;

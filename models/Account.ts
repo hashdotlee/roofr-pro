@@ -11,11 +11,11 @@ export class Account {
   @prop({ required: true, select: false })
   public password!: string;
 
-  @prop()
-  public firstName?: string;
+  @prop({ required: true })
+  public firstName!: string;
 
-  @prop()
-  public lastName?: string;
+  @prop({ required: true })
+  public lastName!: string;
 
   @prop()
   public address?: string;
