@@ -48,8 +48,8 @@ export default function InstantEstimate() {
         </div>
       </div>
       <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-4 mt-4 grid-cols-1">
-        {metrics.map((metric) => (
-          <div className="text-sm font-semibold">
+        {metrics.map((metric, i) => (
+          <div key={i} className="text-sm font-semibold">
             <div className="text-gray-500 my-1">{metric.name}</div>
             <div>{metric.value}</div>
           </div>

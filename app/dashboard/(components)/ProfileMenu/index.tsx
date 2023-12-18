@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import { getAbbreviation } from "@/lib/text";
 import DropdownMenuList from "./DropdownMenuList";
 
-export default function index() {
+export default function ProfileMenu() {
   const collapsed = useCollapsed();
   const { data: session, status } = useSession();
   const user = session?.user;

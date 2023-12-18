@@ -186,6 +186,7 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
                       <div className="flex flex-col gap-4">
                         {Object.values(JobStage).map((stage, i) => (
                           <FormField
+                            key={stage}
                             name="stage"
                             control={form.control}
                             render={({ field }) => (

@@ -13,8 +13,8 @@ export default function NoteList() {
   return (
     <>
       <div className="flex overflow-y-auto flex-col gap-2">
-        {notes.map((note) => (
-          <NoteItem note={note} />
+        {notes.map((note: any) => (
+          <NoteItem key={note?._id} note={note} />
         ))}
       </div>
       <label htmlFor="add_note" className="relative">
