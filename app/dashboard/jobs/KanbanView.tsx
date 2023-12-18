@@ -58,9 +58,9 @@ const stages: IKanbanTab[] = [
 ];
 
 export default function KanbanView() {
-  useJobs();
+  const { jobs, filter } = useJobs();
 
-  const jobsFromStore = useJobStore((state) => state.jobs);
+  console.log(filter);
 
   return (
     <div
@@ -70,6 +70,7 @@ export default function KanbanView() {
       )}
     >
       <div className="flex flex-row gap-3 min-h-full">
+<<<<<<< HEAD
         {stages.map((tab) => (
           <KanbanTab
             key={tab.id}
@@ -77,6 +78,18 @@ export default function KanbanView() {
             jobs={jobsFromStore.filter((job) => job.stage === tab.type)}
           />
         ))}
+=======
+        {tabs.map(
+          (tab) =>
+            tab.type === filter?.stage && (
+              <KanbanTab
+                key={tab.id}
+                tab={tab}
+                jobs={jobs.filter((job) => job.stage === tab.type)}
+              />
+            ),
+        )}
+>>>>>>> 4d52def (resolve conflict)
       </div>
     </div>
   );

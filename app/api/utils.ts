@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ApiError } from "next/dist/server/api-utils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const catchAsync =
   (fn: (...props: any) => Promise<any>) => async (...props: any) => {

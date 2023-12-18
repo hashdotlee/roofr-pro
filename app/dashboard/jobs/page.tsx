@@ -62,12 +62,22 @@ function Action() {
   });
   const { filter, setFilter } = useJobs();
   const onSubmit = (data: any) => {
+<<<<<<< HEAD
       console.log(data);
     setFilter({
       ...filter,
       ...data,
     });
   };
+=======
+    const newData = form.getValues();
+    setFilter({
+      ...filter,
+      ...newData,
+    });
+  };
+
+>>>>>>> 4d52def (resolve conflict)
   return (
     <div className="w-full mt-6 flex flex-row gap-3 items-center justify-between">
       <Form {...form}>
@@ -105,6 +115,29 @@ function Action() {
               placeholder="Updated"
             />
           </div>
+<<<<<<< HEAD
+=======
+          <Input placeholder="Search jobs" className="ps-12" />
+        </div>
+
+          <div>
+            <CustomSelect
+              name="updated"
+              control={form.control}
+              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Last 7 days", value: "last-7-days" },
+                { label: "Last 30 days", value: "last-30-days" },
+                { label: "Last 90 days", value: "last-90-days" },
+                { label: "Last year", value: "last-year" },
+                { label: "Older", value: "older" },
+              ]}
+              placeholder="Updated"
+            />
+          </div>
+>>>>>>> 4d52def (resolve conflict)
           <div>
             <CustomSelect
               name="stage"
@@ -112,7 +145,11 @@ function Action() {
               selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
               options={Object.entries(JobStage).map((stage) => ({
                 label: stage[1],
+<<<<<<< HEAD
                 value: stage[0],
+=======
+                value: stage[1],
+>>>>>>> 4d52def (resolve conflict)
               }))}
               placeholder="Stage"
             />
