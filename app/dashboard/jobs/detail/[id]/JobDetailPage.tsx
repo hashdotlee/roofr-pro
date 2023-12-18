@@ -2,7 +2,7 @@
 
 import { cn, getTimeAgo } from "@/lib/utils";
 import { Job } from "@/models/Job";
-import { Clipboard, PenIcon, Plus, UserPlus, X } from "lucide-react";
+import { Clipboard, Plus, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
@@ -16,6 +16,7 @@ import Proposal from "./Proposal";
 import TasksList from "./TaskList";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { AddCustomerModal } from "./AddCustomerDialog";
+import EditAddressDialog from "./EditAddressDialog";
 
 const InView = ({
   children,
@@ -108,11 +109,9 @@ export default function JobDetailPage({
     <>
       <div>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <div className="text-2xl font-semibold">{job?.address}</div>
-            <button>
-              <PenIcon className="w-5 h-5 text-blue-400" />
-            </button>
+            {job ? <EditAddressDialog job={job} /> : null}
           </div>
           <div className="flex flex-row gap-2">
             <button className="p-2 bg-blue-700 rounded-full text-white flex justify-center items-center w-10 h-10">
@@ -127,7 +126,7 @@ export default function JobDetailPage({
             )}
           </div>
         </div>
-        <div className="flex gap-3 text-xs items-center">
+        <div className="flex gap-3 text-xs items-center mt-2">
           <span>New to stage</span>
           <span className="p-1 bg-gray-100 rounded-md flex gap-2 items-center">
             <Clipboard className="w-4 h-4" /> Tasks 0/1

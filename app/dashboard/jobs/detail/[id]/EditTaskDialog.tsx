@@ -19,7 +19,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
-  title: z.string().nonempty({
+  title: z.string().min(1, {
     message: "Please enter a title.",
   }),
   description: z.string().optional(),
@@ -63,7 +63,7 @@ export default function EditTaskDialog({ task, toggleRefetch }: any) {
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
       <DialogTrigger asChild>
         <Pencil
           onClick={() => setOpen(true)}

@@ -1,8 +1,10 @@
 import { JobStage } from "@/types/job";
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import type { Ref } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 import mongoose from "mongoose";
+import { Account } from "./Account";
 
 @modelOptions({
   schemaOptions: {
@@ -16,8 +18,8 @@ export class Job extends TimeStamps {
   @prop({ required: true })
   public address!: string;
 
-  @prop()
-  public assignee?: any;
+  @prop({ ref: () => Account })
+  public assignee?: Ref<Account>;
 
   @prop({ default: JobStage.NEW_LEAD, required: true, enum: JobStage })
   public stage!: string;
@@ -48,8 +50,8 @@ class Task {
   @prop({ required: true })
   public title!: string;
 
-  @prop()
-  public creator?: any;
+  @prop({ ref: () => Account })
+  public creator?: Ref<Account>;
 
   @prop({ default: false })
   done?: boolean;

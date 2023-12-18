@@ -1,7 +1,5 @@
-import { Trash } from "lucide-react";
 import { useParams } from "next/navigation";
 import EditTaskDialog from "./EditTaskDialog";
-import { useTasks } from "@/hooks/useTasks";
 import DeleteTaskDialog from "./DeleteTaskDialog";
 
 export default function TaskItem({
