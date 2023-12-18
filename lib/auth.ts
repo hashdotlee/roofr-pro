@@ -13,10 +13,15 @@ async function getUser(
 ): Promise<Account | null> {
   try {
     await dbConnect();
-    console.log(AccountModel);
+
+    const users = await AccountModel.find({}).exec();
+    console.log("users", users);
+
     const user = await AccountModel.findOne({ email }).select("+password");
 
     console.log("user", user);
+
+    if (!user) return null;
 
     const passwordsMatch = await bcrypt.compare(password, user.password);
     if (!passwordsMatch) return null;
@@ -24,7 +29,7 @@ async function getUser(
     return user;
   } catch (error) {
     const e = error as Error;
-    console.error("Failed to fetch user:", e.message);
+    console.error("Failed to fetch user:", e);
     throw e;
   }
 }
