@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-interface NoteItem {
+interface NoteItemDTO {
   _id: string;
   content: string;
   writer?: {
@@ -10,7 +10,7 @@ interface NoteItem {
   };
 }
 interface NoteItemProps {
-  note: NoteItem;
+  note: NoteItemDTO;
 }
 
 export default function NoteItem({ note }: NoteItemProps) {

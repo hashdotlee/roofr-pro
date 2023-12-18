@@ -3,6 +3,7 @@ import { JobModel } from "@/models/Job";
 import { catchAsync } from "../utils";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { Roles } from "@/types/account";
 
 export const GET = catchAsync(async (req) => {
   await dbConnect();
@@ -59,7 +60,7 @@ export const GET = catchAsync(async (req) => {
   }
 
   const role = session.user.role;
-  if (role === "admin") {
+  if (role === Roles.ADMIN) {
     const jobs = await query.exec();
     return NextResponse.json({
       code: 200,

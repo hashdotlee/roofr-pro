@@ -5,7 +5,9 @@ import { JobStage } from "@/types/job";
 import { LightbulbIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-export default function JobDetails() {
+export default function JobDetails({
+  assignee, stage, source, jobValue, details
+}: any) {
   const form = useForm({});
   const onSubmit = (data: any) => console.log(data);
   return (

@@ -11,7 +11,7 @@ import DeleteJobDialog from "./(components)/dialogs/DeleteJobDialog";
 import InstantEstimate from "./(components)/tabs/InstantEstimate";
 import JobDetail from "./(components)/tabs/JobDetail";
 import Measurement from "./(components)/tabs/Measurement";
-import NoteList from "./(components)/NoteList";
+import NoteList from "./(components)/sidebar/NoteList";
 import Proposal from "./(components)/tabs/Proposal";
 import TasksList from "./(components)/tabs/TaskList";
 import { DialogClose } from "@radix-ui/react-dialog";
@@ -22,7 +22,7 @@ const getTabs = (job: Job | null) => [
   {
     id: "job_details",
     name: "Job details",
-    content: <JobDetail />,
+    content: <JobDetail job />,
   },
   {
     id: "tasks",
