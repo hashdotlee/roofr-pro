@@ -5,16 +5,18 @@ import { FaListUl } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import { LuKanbanSquare } from "react-icons/lu";
 
+import CustomSelect from "@/components/custom/Select";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { JobStatus } from "@/types/job";
+import { useForm } from "react-hook-form";
 import KanbanView from "./KanbanView";
 import NewJobDialog from "./_components/NewJobDialog";
+import { infer, z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useJobs } from "@/hooks/useJobs";
+import CustomInput from "@/components/custom/Input";
 
 export default function Jobs() {
   return (
@@ -48,29 +50,86 @@ export default function Jobs() {
   );
 }
 
+const formSchema = z.object({
+  updated: z.string(),
+  stage: z.string(),
+  sortBy: z.string(),
+});
+
 function Action() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    mode: "onChange",
+  });
+  const { filter, setFilter } = useJobs();
+  const onSubmit = (data: any) => {
+    setFilter({
+      ...filter,
+      ...data,
+    });
+  };
   return (
     <div className="w-full mt-6 flex flex-row gap-3 items-center justify-between">
-      <div className="flex flex-row gap-3 items-center justify-start">
-        <div className="relative">
-          <div className="absolute top-3 ps-4 text-gray-500 text-lg">
-            <IoIosSearch />
+      <Form {...form}>
+        <form
+          onChange={form.handleSubmit(onSubmit)}
+          className="flex gap-3 flex-row items-center justify-start"
+        >
+          <Label className="relative block shrink-0">
+            <div className="absolute top-3 ps-4 text-gray-500 text-lg">
+              <IoIosSearch />
+            </div>
+            <CustomInput
+              name="search"
+              placeholder="Search jobs"
+              control={form.control}
+              inputClassName="ps-12"
+            />
+          </Label>
+
+          <div>
+            <CustomSelect
+              name="updated"
+              control={form.control}
+              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Last 7 days", value: "last-7-days" },
+                { label: "Last 30 days", value: "last-30-days" },
+                { label: "Last 90 days", value: "last-90-days" },
+                { label: "Last year", value: "last-year" },
+                { label: "Older", value: "older" },
+              ]}
+              placeholder="Updated"
+            />
           </div>
-          <Input placeholder="Search jobs" className="ps-12" />
-        </div>
-
-        <Select>
-          <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder="Theme" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="light">Light</SelectItem>
-            <SelectItem value="dark">Dark</SelectItem>
-            <SelectItem value="system">System</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
+          <div>
+            <CustomSelect
+              name="stage"
+              control={form.control}
+              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
+              options={Object.values(JobStatus).map((status) => ({
+                label: status,
+                value: status,
+              }))}
+              placeholder="Stage"
+            />
+          </div>
+          <div>
+            <CustomSelect
+              name="sortBy"
+              control={form.control}
+              selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
+              options={[
+                { label: "Last updated", value: "last-updated" },
+                { label: "Job value", value: "job-value" },
+              ]}
+              placeholder="Sort by"
+            />
+          </div>
+        </form>
+      </Form>
       <NewJobDialog />
     </div>
   );

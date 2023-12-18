@@ -1,10 +1,8 @@
-import { JobStatus } from "@/types/job";
-import KanbanTab, { IKanbanTab } from "./_components/KanbanTab";
+import { useJobs } from "@/hooks/useJobs";
 import { useJobStore } from "@/lib/stores/jobStore";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { useJobs } from "@/hooks/useJobs";
+import { JobStatus } from "@/types/job";
+import KanbanTab, { IKanbanTab } from "./_components/KanbanTab";
 
 const tabs: IKanbanTab[] = [
   {
