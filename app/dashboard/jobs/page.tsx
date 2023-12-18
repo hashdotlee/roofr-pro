@@ -5,18 +5,17 @@ import { FaListUl } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import { LuKanbanSquare } from "react-icons/lu";
 
+import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { JobStatus } from "@/types/job";
+import { useJobs } from "@/hooks/useJobs";
+import { JobStage } from "@/types/job";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import KanbanView from "./KanbanView";
 import NewJobDialog from "./_components/NewJobDialog";
-import { infer, z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useJobs } from "@/hooks/useJobs";
-import CustomInput from "@/components/custom/Input";
 
 export default function Jobs() {
   return (
@@ -51,18 +50,19 @@ export default function Jobs() {
 }
 
 const formSchema = z.object({
-  updated: z.string(),
-  stage: z.string(),
-  sortBy: z.string(),
+  updated: z.string().optional(),
+  stage: z.string().optional(),
+  sortBy: z.string().optional(),
+  search: z.string().optional(),
 });
 
 function Action() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    mode: "onChange",
   });
   const { filter, setFilter } = useJobs();
   const onSubmit = (data: any) => {
+      console.log(data);
     setFilter({
       ...filter,
       ...data,
@@ -72,6 +72,7 @@ function Action() {
     <div className="w-full mt-6 flex flex-row gap-3 items-center justify-between">
       <Form {...form}>
         <form
+          onSubmit={form.handleSubmit(onSubmit)}
           onChange={form.handleSubmit(onSubmit)}
           className="flex gap-3 flex-row items-center justify-start"
         >
@@ -109,9 +110,9 @@ function Action() {
               name="stage"
               control={form.control}
               selectClassName="border-0 gap-2 text-sm font-semibold text-blue-500"
-              options={Object.values(JobStatus).map((status) => ({
-                label: status,
-                value: status,
+              options={Object.entries(JobStage).map((stage) => ({
+                label: stage[1],
+                value: stage[0],
               }))}
               placeholder="Stage"
             />

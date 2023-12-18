@@ -1,14 +1,15 @@
 import { useDrop } from "react-dnd";
-import JobItem, { Job } from "./JobItem";
-import { JobStatus } from "@/types/job";
+import JobItem from "./JobItem";
+import { JobStage } from "@/types/job";
 import { cn } from "@/lib/utils";
 import { useJobStore } from "@/lib/stores/jobStore";
 import { updateJob } from "@/actions/job";
+import { Job } from "@/models/Job";
 
 export interface IKanbanTab {
   id: string;
   name: string;
-  type: JobStatus;
+  type: JobStage;
 }
 
 export default function KanbanTab({
@@ -22,10 +23,10 @@ export default function KanbanTab({
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "JOB_ITEM",
-    drop: (item: { id: string; status: JobStatus }) => {
+    drop: (item: { id: string; stage: JobStage }) => {
       moveJob(item.id, tab.type);
       updateJob(item.id, {
-        status: tab.type,
+        stage: tab.type,
       });
     },
     collect: (monitor) => ({
@@ -54,7 +55,9 @@ export default function KanbanTab({
       <div className={cn("flex flex-col gap-4 p-4")}>
         {jobs.map(
           (item) =>
-            item.status === tab.type && <JobItem key={item.id} job={item} />,
+            item.stage === tab.type && (
+              <JobItem key={String(item._id)} job={item} />
+            ),
         )}
       </div>
     </div>

@@ -22,7 +22,7 @@ export const GET = catchAsync(async (req) => {
   const { searchParams } = new URL(req.url);
 
   const updatedAt = searchParams.get("updatedAt");
-  const status = searchParams.get("status");
+  const stage = searchParams.get("stage");
   const sortBy = searchParams.get("sortBy");
   const search = searchParams.get("search");
 
@@ -38,9 +38,9 @@ export const GET = catchAsync(async (req) => {
     });
   }
 
-  if (status) {
+  if (stage) {
     query.where({
-      status: new RegExp(status, "i"),
+      stage: new RegExp(stage, "i"),
     });
   }
 

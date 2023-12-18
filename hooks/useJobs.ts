@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 interface JobFilter {
   search?: string;
   updatedAt?: string;
-  status?: string;
+  stage?: string;
   sortBy?: string;
 }
 
@@ -19,7 +19,7 @@ export const useJobs = (initFilter?: JobFilter) => {
       const params = new URLSearchParams({
         search: filter?.search || "",
         updatedAt: filter?.updatedAt || "",
-        status: filter?.status || "",
+        stage: filter?.stage || "",
         sortBy: filter?.sortBy || "",
       });
       const res = await fetch(`/api/jobs?${params.toString()}`);

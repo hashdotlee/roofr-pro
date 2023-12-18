@@ -7,7 +7,7 @@ import { useDrag } from "react-dnd";
 export default function JobItem({ job }: { job: Job }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "JOB_ITEM",
-    item: { id: job._id, status: job.status },
+    item: { id: job._id, stage: job.stage },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -30,7 +30,7 @@ export default function JobItem({ job }: { job: Job }) {
         <div></div>
         <div className="flex items-center ml-auto gap-2">
           <div className="text-[10px] font-semibold text-gray-400">
-            Updated {getTimeAgo(job.updatedAt)} 
+            Updated {getTimeAgo(String(job?.updatedAt))}
           </div>
           <Image
             src="/default_avatar.svg"

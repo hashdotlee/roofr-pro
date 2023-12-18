@@ -1,4 +1,4 @@
-export enum JobStatus {
+export enum JobStage {
   NEW_LEAD = "New Lead",
   APPOINTMENT_SCHEDULED = "Appointment Scheduled",
   PROPOSAL_SENT = "Proposal Sent",

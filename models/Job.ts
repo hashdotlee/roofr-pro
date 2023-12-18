@@ -1,4 +1,4 @@
-import { JobStatus } from "@/types/job";
+import { JobStage } from "@/types/job";
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
@@ -19,11 +19,8 @@ export class Job extends TimeStamps {
   @prop()
   public assignee?: any;
 
-  @prop({ default: JobStatus.NEW_LEAD, required: true, enum: JobStatus })
-  public status!: string;
-
-  @prop()
-  public stage?: string;
+  @prop({ default: JobStage.NEW_LEAD, required: true, enum: JobStage })
+  public stage!: string;
 
   @prop()
   public source?: string;
