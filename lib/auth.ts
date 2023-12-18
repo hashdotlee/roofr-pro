@@ -15,6 +15,8 @@ async function getUser(
     await dbConnect();
     const user = await AccountModel.findOne({ email }).select("+password");
 
+    console.log("user", user);
+
     const passwordsMatch = await bcrypt.compare(password, user.password);
     if (!passwordsMatch) return null;
 
@@ -46,6 +48,8 @@ export const {
         if (!parsedCredentials.success) return null;
 
         const { email, password } = parsedCredentials.data;
+        
+        console.log("email", email);
 
         const user = await getUser(email, password);
         if (!user) return null;
