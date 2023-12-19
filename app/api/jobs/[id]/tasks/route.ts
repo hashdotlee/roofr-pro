@@ -1,4 +1,5 @@
 import { catchAsync } from "@/app/api/utils";
+import { TaskDTO } from "@/dtos/compose-job.dto";
 import { auth } from "@/lib/auth";
 import dbConnect from "@/lib/dbConnect";
 import { JobModel } from "@/models/Job";
@@ -72,13 +73,17 @@ export const GET = catchAsync(
         },
       ])
       .select("tasks");
+
     const done = searchParams.get("done");
-    if (done) {
-      query.where("tasks.done").equals(done);
-    }
 
     const job = await query.exec();
 
-    return NextResponse.json(job.tasks);
+    let tasks = job.tasks;
+
+    if (done === "true") {
+      tasks = tasks.filter((task: TaskDTO) => !task?.done);
+    }
+
+    return NextResponse.json(tasks);
   },
 );

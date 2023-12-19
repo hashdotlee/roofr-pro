@@ -50,10 +50,10 @@ export default function EditTaskDialog({ task, toggleRefetch }: any) {
     fetch(`/api/jobs/${jobId}/tasks/${task._id}`, {
       method: "PUT",
       body: JSON.stringify({
-        title: data.title,
-        description: data.description,
-        dueDate: data.dueDate,
-        assignee: data.assignee._id,
+        title: data?.title,
+        description: data?.description,
+        dueDate: data?.dueDate,
+        assignee: data?.assignee?._id,
       }),
     }).then(() => {
       toast.success("Task updated");

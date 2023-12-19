@@ -12,7 +12,11 @@ export const GET = catchAsync(async () => {
     .select("tasks")
     .populate("tasks.assignee")
     .populate("tasks.creator");
-  let jobs = await query.sort({ "tasks.dueDate": 1 }).limit(LIMIT).exec();
+  let jobs = await query
+    .where({ "tasks.done": false })
+    .sort({ "tasks.dueDate": 1 })
+    .limit(LIMIT)
+    .exec();
   const tasks: TaskDTO[] = [];
   jobs.forEach((job) => {
     tasks.push(...job.tasks);
