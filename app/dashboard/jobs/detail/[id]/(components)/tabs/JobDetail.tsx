@@ -2,20 +2,46 @@ import CustomComboBox from "@/components/custom/ComboBox";
 import CustomSelect from "@/components/custom/Select";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import useJob from "@/hooks/useJob";
 import { defaultSources } from "@/types/default-sources";
 import { JobStage } from "@/types/job";
 import { LightbulbIcon } from "lucide-react";
-import { useState } from "react";
-import { FieldValues, UseFormReturn, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { UseFormReturn, useForm } from "react-hook-form";
 import AssigneePopover from "./AssigneePopover";
 
 export default function JobDetails() {
   const { job } = useJob();
-  const form = useForm({});
+  console.log(job);
+  const form = useForm({
+    defaultValues: {
+      assignee: {
+        firstName: job?.assignee?.firstName,
+        lastName: job?.assignee?.lastName,
+        avatar: job?.assignee?.avatar,
+      },
+      stage: job?.stage,
+      source: job?.source,
+      details: job?.details,
+    },
+  });
+
+  useEffect(() => {
+    if (job)
+      form.reset({
+        assignee: {
+          firstName: job?.assignee?.firstName,
+          lastName: job?.assignee?.lastName,
+          avatar: job?.assignee?.avatar,
+        },
+        stage: job?.stage,
+        source: job?.source,
+        details: job?.details,
+      });
+  }, [job]);
+
   const onSubmit = (data: any) => console.log(data);
 
   return (
@@ -28,14 +54,11 @@ export default function JobDetails() {
           className="grid gap-4 my-4 items-center grid-cols-3"
           // onChange={form.handleSubmit(onSubmit)}
         >
-          <div className="w-full">
-            <AssigneePopover
-              control={form.control}
-              name="assignee"
-              label="Assignee"
-              placeholder={`${job?.assignee?.firstName} ${job?.assignee?.lastName}`}
-            />
-          </div>
+          <AssigneePopover
+            control={form.control}
+            name="assignee"
+            label="Assignee"
+          />
 
           <CustomSelect
             name="stage"
@@ -80,7 +103,7 @@ function JobValueInput({
   form,
   job,
 }: {
-  form: UseFormReturn<FieldValues, any, undefined>;
+  form: UseFormReturn<any, any, undefined>;
   job: ComposeJobDTO | null;
 }) {
   const [currencyValue, setCurrencyValue] = useState(
@@ -90,12 +113,12 @@ function JobValueInput({
     }) || ""
   );
   return (
-    <div className="space-y-1">
-      <Label htmlFor="job-value">Job Value</Label>
+    <FormItem>
+      <FormLabel htmlFor="job-value">Job Value</FormLabel>
       <Input
         id="job-value"
         type="text"
-        className="w-full"
+        className="w-full font-semibold text-base placeholder:font-normal placeholder:text-sm"
         placeholder="Job Value"
         inputMode="decimal"
         value={currencyValue}
@@ -115,7 +138,7 @@ function JobValueInput({
           );
         }}
       />
-    </div>
+    </FormItem>
   );
 }
 
@@ -123,7 +146,7 @@ function SourceSelector({
   form,
   job,
 }: {
-  form: UseFormReturn<FieldValues, any, undefined>;
+  form: UseFormReturn<any, any, undefined>;
   job: ComposeJobDTO | null;
 }) {
   return (

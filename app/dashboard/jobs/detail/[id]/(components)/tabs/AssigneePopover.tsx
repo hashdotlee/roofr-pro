@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form";
+import { FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -32,21 +31,24 @@ export default function AssigneePopover({
       name={name}
       render={({ field }) => {
         return (
-          <div className="space-y-1">
-            {label && <Label>{label}</Label>}
+          <FormItem className="flex flex-col w-full">
+            {label && <FormLabel className="w-full">{label}</FormLabel>}
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full truncate px-3 py-2 pl-4"
+                >
                   {field.value ? (
                     <>
                       <Image
                         src={field.value?.avatar || "/default_avatar.svg"}
                         alt={"avatar"}
-                        width={16}
-                        height={16}
-                        className="rounded-full mr-2"
+                        width={18}
+                        height={18}
+                        className="rounded-full mr-4"
                       />
-                      <span className="text-sm">
+                      <span className="text-sm w-full truncate text-left">
                         {field.value?.firstName} {field.value?.lastName}
                       </span>
                     </>
@@ -58,7 +60,7 @@ export default function AssigneePopover({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="p-2">
+              <PopoverContent className="p-2 w-[245px]">
                 <Input
                   className="w-full focus-visible:ring-0"
                   placeholder="Search users"
@@ -92,7 +94,7 @@ export default function AssigneePopover({
                 </div>
               </PopoverContent>
             </Popover>
-          </div>
+          </FormItem>
         );
       }}
     />
