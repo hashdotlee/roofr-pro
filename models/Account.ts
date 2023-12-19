@@ -31,6 +31,9 @@ export class Account {
     default: () => Roles.CONTRACTOR,
   })
   public role!: Roles;
+
+  @prop({ default: [] })
+  public sourcePreferences?: string[];
 }
 
 export const AccountModel =

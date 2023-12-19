@@ -11,6 +11,7 @@ export default function CustomInput({
   control,
   disabled,
   name,
+  onTextChange,
 }: {
   label?: string;
   placeholder?: string;
@@ -19,6 +20,7 @@ export default function CustomInput({
   disabled?: boolean;
   control: Control<any>;
   name: string;
+  onTextChange?: (value: string) => void;
 }) {
   return (
     <FormField
@@ -34,6 +36,9 @@ export default function CustomInput({
               disabled={disabled}
               id={name}
               className={cn("w-[200px] justify-between", inputClassName)}
+              {...(onTextChange && {
+                onChange: (e) => onTextChange(e.target.value),
+              })}
             />
           </FormControl>
         </FormItem>

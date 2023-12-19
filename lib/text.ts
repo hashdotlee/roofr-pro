@@ -15,3 +15,7 @@ export const getShortName = (str?: string | null): string => {
     .filter((_, index) => index == 0 || index == str.split(" ").length - 1)
     .join(" ");
 };
+
+export const getCurrencyNumber = (num: number) => {
+  return "$" + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+};

@@ -1,0 +1,16 @@
+export const defaultSources = [
+  "Call in",
+  "Door knocking",
+  "Website",
+  "Facebook",
+  "Instagram",
+  "Customer referral",
+  "Realestate referral",
+  "Door hanger",
+  "Mailer",
+  "Yard Sign",
+  "Google",
+  "Home Advisor",
+  "Billboard/Print Ad",
+  "Repeat Customer",
+];

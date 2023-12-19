@@ -55,6 +55,7 @@ export default function CustomComboBox({
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
+                  type="button"
                   variant="outline"
                   role="combobox"
                   onClick={() => {
@@ -63,7 +64,7 @@ export default function CustomComboBox({
                   className={cn(
                     "w-[200px] justify-between",
                     !field.value && "text-muted-foreground mt-2",
-                    selectClassName,
+                    selectClassName
                   )}
                 >
                   {field.value
@@ -87,6 +88,7 @@ export default function CustomComboBox({
                 <div>
                   {options.map((option) => (
                     <Button
+                      type="button"
                       value={option.label}
                       key={option.value}
                       onClick={() => {
@@ -101,7 +103,7 @@ export default function CustomComboBox({
                           "mr-2 grow-0 shrink-0 h-4 w-4",
                           option.value === field.value
                             ? "opacity-100"
-                            : "opacity-0",
+                            : "opacity-0"
                         )}
                       />
                       {option.label}
@@ -109,6 +111,7 @@ export default function CustomComboBox({
                   ))}
                   {inputValue && (
                     <Button
+                      type="button"
                       onClick={() => {
                         field.onChange(inputValue);
                         onValueChange && onValueChange(inputValue);
