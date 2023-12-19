@@ -27,8 +27,11 @@ import NewJobDialog from "./(components)/NewJobDialog";
 import KanbanView from "./KanbanView";
 import { TaskTableColumn } from "./TaskTableColumn";
 import { useUrgentTasks } from "@/hooks/useTasks";
+import { useSession } from "next-auth/react";
+import { Roles } from "@/types/account";
 
 export default function Jobs() {
+  const { data: session } = useSession();
   const { filter, setFilter } = useJobs({
     stage: [
       JobStage.NEW_LEAD,
@@ -68,7 +71,7 @@ export default function Jobs() {
 
         <TabsContent value="kanban">
           <KanbanView filter={filter} />
-          <TaskTable />
+          {session?.user?.role === Roles.CONTRACTOR && <TaskTable />}
         </TabsContent>
         <TabsContent value="listview">Coming soon!</TabsContent>
       </Tabs>
