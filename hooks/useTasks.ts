@@ -33,3 +33,18 @@ export const useTasks = (jobId: string, initFilter?: TaskFilter) => {
     toggleRefetch,
   };
 };
+
+export const useUrgentTasks = () => {
+  const [tasks, setTasks] = useState([]);
+  useEffect(() => {
+    async function fetchTasks() {
+      const res = await fetch(`/api/tasks/urgent`);
+      const data = await res.json();
+      setTasks(data.data);
+    }
+    fetchTasks();
+  }, []);
+  return {
+    tasks,
+  };
+};

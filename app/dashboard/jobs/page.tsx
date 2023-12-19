@@ -8,6 +8,7 @@ import { LuKanbanSquare } from "react-icons/lu";
 import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DataTable } from "@/components/ui/data-table";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import {
@@ -20,10 +21,12 @@ import { JobStage } from "@/types/job";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDownIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import KanbanView from "./KanbanView";
-import NewJobDialog from "./(components)/NewJobDialog";
 import { useDebouncedCallback } from "use-debounce";
+import { z } from "zod";
+import NewJobDialog from "./(components)/NewJobDialog";
+import KanbanView from "./KanbanView";
+import { TaskTableColumn } from "./TaskTableColumn";
+import { useUrgentTasks } from "@/hooks/useTasks";
 
 export default function Jobs() {
   const { filter, setFilter } = useJobs({
@@ -65,6 +68,7 @@ export default function Jobs() {
 
         <TabsContent value="kanban">
           <KanbanView filter={filter} />
+          <TaskTable />
         </TabsContent>
         <TabsContent value="listview">Coming soon!</TabsContent>
       </Tabs>
@@ -245,3 +249,13 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
     </div>
   );
 }
+
+const TaskTable = () => {
+  const { tasks = [] } = useUrgentTasks();
+  return (
+    <div className="rounded-md space-y-3 my-4">
+      <h3 className="text-lg font-semibold text-gray-700">Urgent Tasks</h3>
+      <DataTable columns={TaskTableColumn} data={tasks} />
+    </div>
+  );
+};
