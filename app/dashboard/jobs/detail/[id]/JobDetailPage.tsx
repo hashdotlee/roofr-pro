@@ -1,7 +1,7 @@
 "use client";
 
 import { cn, getTimeAgo } from "@/lib/utils";
-import { Clipboard, Plus, X } from "lucide-react";
+import { Clipboard, Mail, Plus, UserPlus, X } from "lucide-react";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
 import Attachment from "./(components)/tabs/Attachment";
@@ -16,6 +16,9 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { AddCustomerModal } from "./(components)/dialogs/AddCustomerDialog";
 import EditAddressDialog from "./(components)/dialogs/EditAddressDialog";
 import useJob from "@/hooks/useJob";
+import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
+import { updateJob } from "@/actions/job";
 
 const tabs = [
   {
@@ -80,7 +83,7 @@ export default function JobDetailPage({
   hasCloseButton?: boolean;
 }) {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
-  const { job } = useJob();
+  const { job, setJob } = useJob();
 
   const handleTabChange = (id: string) => {
     setActiveTab(id);
@@ -92,6 +95,20 @@ export default function JobDetailPage({
         behavior: "smooth",
       });
     }
+  };
+
+  const handleRemoveCustomer = async () => {
+    await updateJob(String(job?._id), {
+      customer: null,
+    });
+    setJob((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        customer: null,
+      };
+    });
+    toast.success("Customer removed successfully");
   };
 
   return (
@@ -158,10 +175,44 @@ export default function JobDetailPage({
           <DeleteJobDialog />
         </div>
         <div className="flex flex-col gap-4 w-1/3 h-full overflow-hidden">
-          <div className="flex justify-between items-center p-4 border rounded-md">
-            <div className="text-sm font-semibold">Customer Contact</div>
-            <AddCustomerModal />
-          </div>
+          {!job?.customer ? (
+            <div className="flex justify-between items-center p-4 border rounded-md">
+              <div className="text-sm font-semibold">Customer Contact</div>
+              <AddCustomerModal>
+                <Button className="rounded-full bg-gray-100 text-current hover:bg-gray-200 flex items-center gap-2 text-xs px-4 py-2">
+                  <UserPlus className="w-4 h-4" /> Add Customer
+                </Button>
+              </AddCustomerModal>
+            </div>
+          ) : (
+            <div className="flex justify-between items-start p-4 border rounded-md">
+              <div className="text-sm font-semibold">
+                <div>{job?.customer?.fullname}</div>
+                <div className="text-xs mt-2 flex items-center gap-2 text-gray-500">
+                  <Mail className="w-4 h-4" /> {job?.customer?.email}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <AddCustomerModal>
+                  <Button
+                    variant={"outline"}
+                    className="text-xs p-1 border-0 h-auto rounded-lg hover:text-blue-700 hover:bg-transparent"
+                  >
+                    Edit
+                  </Button>
+                </AddCustomerModal>
+                <Button
+                  variant={"outline"}
+                  className="text-xs p-1 border-0 h-auto rounded-lg hover:text-blue-700 hover:bg-transparent"
+                  onClick={() => {
+                    handleRemoveCustomer();
+                  }}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+          )}
           <div className="flex flex-col gap-3 bg-gray-100 border p-4 overflow-hidden h-full rounded-md">
             <NoteList />
           </div>

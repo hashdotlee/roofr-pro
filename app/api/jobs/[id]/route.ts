@@ -13,7 +13,11 @@ export const GET = catchAsync(
         path: "assignee",
         select: "_id firstName lastName email avatar role",
       })
+      .populate({
+        path: "customer",
+        select: "_id fullname email",
+      })
       .exec();
     return NextResponse.json(job);
-  }
+  },
 );

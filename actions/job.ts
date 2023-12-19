@@ -59,8 +59,12 @@ export const deleteJob = async (jobId: string) => {
   }
 };
 
-export const updateJob = async (jobId: string, job: Partial<Job>) => {
+export const updateJob = async (
+  jobId: string,
+  job: Partial<Omit<Job, "customer">> & { customer: string | null },
+) => {
   try {
+    console.log(job);
     await dbConnect();
     const updatedJob = await JobModel.updateOne({ _id: jobId }, job);
     return {

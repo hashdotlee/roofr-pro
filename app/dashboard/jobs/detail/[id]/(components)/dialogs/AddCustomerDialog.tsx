@@ -12,63 +12,92 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { useCustomer } from "@/hooks/useCustomer";
+import useJob from "@/hooks/useJob";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserPlus } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
 const formSchema = z.object({
   name: z.string().min(1, {
     message: "Please select a customer.",
   }),
-  email: z.string().email({
-    message: "Please enter a email.",
-  }),
-  phone: z.string(),
+  email: z
+    .string()
+    .email({
+      message: "Please enter a email.",
+    })
+    .optional(),
+  phone: z.string().optional(),
 
-  ssn: z.string(),
+  ssn: z.string().optional(),
 });
 
-export const AddCustomerModal = () => {
+export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
   const jobId = useParams().id as string;
   const { customers, filter, setFilter } = useCustomer();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+  const { setJob, job } = useJob();
+
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (job?.customer) {
+      form.reset({
+        name: job.customer.fullname,
+        email: job.customer.email,
+        phone: job.customer.phone,
+        ssn: job.customer.ssn,
+      });
+      setIsDisabled(false);
+    }
+  }, [job]);
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const customer = customers.find(
-      (customer) => customer._id.toString() === data.name
+      (customer) => customer._id.toString() === data.name,
     );
-    if (customer) {
-      updateJob(jobId, {
-        customer: customer._id as any,
-      });
-    } else {
-      await createCustomer({
-        fullname: data.name,
-        email: data.email,
-        phone: data.phone,
-        ssn: data.ssn,
-      }).then((res) => {
-        updateJob(jobId, {
+    try {
+      if (customer) {
+        await updateJob(jobId, {
+          customer: customer._id as any,
+        });
+      } else {
+        const res = await createCustomer({
+          fullname: data.name,
+          email: data.email,
+          phone: data.phone,
+          ssn: data.ssn,
+        });
+        await updateJob(jobId, {
           customer: res.data._id,
         });
-      });
+        setJob((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            customer: res.data as any,
+          };
+        });
+      }
+      toast.success("Customer updated successfully");
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
     }
   };
 
   const [isDisabled, setIsDisabled] = useState(true);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="rounded-full bg-gray-100 text-current hover:bg-gray-200 flex items-center gap-2 text-xs px-4 py-2">
-          <UserPlus className="w-4 h-4" /> Add Customer
-        </Button>
-      </DialogTrigger>
-
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader className="text-2xl mx-auto font-semibold my-4 text-center">
           <DialogTitle>Customer Detail</DialogTitle>
@@ -82,7 +111,7 @@ export const AddCustomerModal = () => {
               selectClassName="max-w-md w-full"
               onValueChange={(value) => {
                 const customer = customers.find(
-                  (customer) => customer._id.toString() === value
+                  (customer) => customer._id.toString() === value,
                 );
                 if (customer) {
                   form.setValue("email", customer.email || "");
