@@ -6,7 +6,7 @@ import { Roles } from "@/types/account";
 export class Account {
   public _id!: mongoose.Types.ObjectId;
 
-  @prop({ required: true })
+  @prop({ required: true, unique: true })
   public email!: string;
 
   @prop({ required: true, select: false })

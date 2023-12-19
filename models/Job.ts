@@ -20,6 +20,9 @@ export class Job extends TimeStamps {
   @prop({ required: true })
   public address!: string;
 
+  @prop({ required: true, ref: () => Account })
+  public creator!: Ref<Account>;
+
   @prop({ ref: () => Account })
   public assignee?: Ref<Account>;
 
@@ -41,8 +44,8 @@ export class Job extends TimeStamps {
   @prop({ type: [String] })
   public attachments?: string[];
 
-  @prop({ ref: () => Customer, type: () => String })
-  public customer: Ref<Customer, string>;
+  @prop({ ref: () => Customer })
+  public customer: Ref<Customer>;
 
   @prop({ type: () => [Note] })
   public notes?: Note[];

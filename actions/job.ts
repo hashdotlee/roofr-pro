@@ -1,5 +1,7 @@
 "use server";
 
+import { ComposeAccountDTO } from "@/dtos/compose-account.dto";
+import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import dbConnect from "@/lib/dbConnect";
 import { Job, JobModel } from "@/models/Job";
 
@@ -9,11 +11,19 @@ export interface ServerResponse {
   data: any;
 }
 
-export const createJob = async (address: string) => {
+export const createJob = async ({
+  address,
+  creatorId,
+}: {
+  address: ComposeJobDTO["address"];
+  creatorId: ComposeAccountDTO["_id"];
+}) => {
   try {
     await dbConnect();
     const job = await JobModel.create({
       address,
+      creator: creatorId,
+      assignee: creatorId,
     });
     return {
       code: 200,

@@ -11,6 +11,7 @@ import { Form } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { useJobs } from "@/hooks/useJobs";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 const FormSchema = z.object({
   address: z.string({
@@ -23,11 +24,21 @@ export function NewJobForm() {
     resolver: zodResolver(FormSchema),
   });
 
+  const { data: session, status } = useSession();
+  const user = session?.user;
+
   const { toggleRefetch } = useJobs();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (status !== "authenticated" || !user) {
+      toast.error("You must be logged in to create a job.");
+      return;
+    }
     try {
-      await createJob(data.address);
+      await createJob({
+        address: data.address,
+        creatorId: user.id,
+      });
       toast.success("Job created successfully");
       toggleRefetch();
       form.reset();

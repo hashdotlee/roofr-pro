@@ -14,10 +14,10 @@ export class Customer {
   @prop({ required: true })
   public fullname!: string;
 
-  @prop()
+  @prop({ required: false, unique: true })
   public email?: string;
 
-  @prop()
+  @prop({ unique: true })
   public phone?: string;
 
   @prop({ select: false })

@@ -1,8 +1,9 @@
 import { Job, Task } from "@/models/Job";
 import { ComposeAccountDTO } from "./compose-account.dto";
 
-export interface ComposeJobDTO extends Omit<Job, "_id" | "assignee" | "tasks"> {
+export interface ComposeJobDTO extends Omit<Job, "_id" | "creator" | "assignee" | "tasks"> {
   _id: string;
+  creator?: ComposeAccountDTO;
   assignee?: ComposeAccountDTO;
   tasks?: TaskDTO[];
 }

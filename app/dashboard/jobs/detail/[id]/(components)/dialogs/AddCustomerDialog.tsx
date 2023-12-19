@@ -43,7 +43,7 @@ export const AddCustomerModal = () => {
     );
     if (customer) {
       updateJob(jobId, {
-        customer: customer._id.toString(),
+        customer: customer._id as any,
       });
     } else {
       await createCustomer({

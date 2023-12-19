@@ -1,5 +1,4 @@
 import CustomComboBox from "@/components/custom/ComboBox";
-import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -12,6 +11,7 @@ import { JobStage } from "@/types/job";
 import { LightbulbIcon } from "lucide-react";
 import { useState } from "react";
 import { FieldValues, UseFormReturn, useForm } from "react-hook-form";
+import AssigneePopover from "./AssigneePopover";
 
 export default function JobDetails() {
   const { job } = useJob();
@@ -28,16 +28,15 @@ export default function JobDetails() {
           className="grid gap-4 my-4 items-center grid-cols-3"
           // onChange={form.handleSubmit(onSubmit)}
         >
-          <CustomSelect
-            name="assignee"
-            label="Assignee"
-            control={form.control}
-            options={[
-              { label: "John Doe", value: "john-doe" },
-              { label: "Jane Doe", value: "jane-doe" },
-            ]}
-            placeholder={`${job?.assignee?.firstName} ${job?.assignee?.lastName}`}
-          />
+          <div className="w-full">
+            <AssigneePopover
+              control={form.control}
+              name="assignee"
+              label="Assignee"
+              placeholder={`${job?.assignee?.firstName} ${job?.assignee?.lastName}`}
+            />
+          </div>
+
           <CustomSelect
             name="stage"
             label="Stage"
