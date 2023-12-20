@@ -69,6 +69,11 @@ export default function TasksList() {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleCreateTask();
+            }
+          }}
           name="task"
           id="task"
         />
