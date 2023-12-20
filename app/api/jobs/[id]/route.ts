@@ -1,9 +1,11 @@
 import { JobModel } from "@/models/Job";
 import { catchAsync } from "../../utils";
 import { NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect";
 
 export const GET = catchAsync(
   async (_, { params }: { params: { id: string } }) => {
+    await dbConnect();
     const job = await JobModel.findById(params.id)
       .populate({
         path: "creator",
@@ -15,7 +17,7 @@ export const GET = catchAsync(
       })
       .populate({
         path: "customer",
-        select: "_id fullname email",
+        select: "_id fullname email phone ssn",
       })
       .exec();
     return NextResponse.json(job);

@@ -19,6 +19,8 @@ import useJob from "@/hooks/useJob";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { updateJob } from "@/actions/job";
+import { useTasks } from "@/hooks/useTasks";
+import { useParams } from "next/navigation";
 
 const tabs = [
   {
@@ -83,7 +85,12 @@ export default function JobDetailPage({
   hasCloseButton?: boolean;
 }) {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
+
+  const jobId = useParams().id as string;
+
   const { job, setJob } = useJob();
+
+  const { tasks } = useTasks(jobId);
 
   const handleTabChange = (id: string) => {
     setActiveTab(id);
@@ -111,6 +118,8 @@ export default function JobDetailPage({
     toast.success("Customer removed successfully");
   };
 
+  const numOfCompletedTasks = tasks.filter((task) => task?.done).length;
+
   return (
     <>
       <div>
@@ -135,7 +144,8 @@ export default function JobDetailPage({
         <div className="flex gap-3 text-xs items-center mt-2">
           <span>New to stage</span>
           <span className="p-1 bg-gray-100 rounded-md flex gap-2 items-center">
-            <Clipboard className="w-4 h-4 font-semibold" /> Tasks 0/1
+            <Clipboard className="w-4 h-4 font-semibold" /> Tasks{" "}
+            {numOfCompletedTasks}/{tasks.length}
           </span>
           <span>Updated {getTimeAgo(job?.updatedAt?.toString())}</span>
         </div>

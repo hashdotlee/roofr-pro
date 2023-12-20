@@ -11,16 +11,20 @@ export default function TasksList() {
   const jobId = useParams().id as string;
   const { tasks, toggleRefetch, setFilter, filter } = useTasks(jobId);
   const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleCreateTask = () => {
+    setLoading(true);
     fetch(`/api/jobs/${jobId}/tasks`, {
       method: "POST",
       body: JSON.stringify({
         title,
       }),
     }).then(() => {
+      setLoading(false);
       toast.success("Task created");
       toggleRefetch();
+      setTitle("");
     });
   };
 
@@ -69,6 +73,7 @@ export default function TasksList() {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          disabled={loading}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               handleCreateTask();

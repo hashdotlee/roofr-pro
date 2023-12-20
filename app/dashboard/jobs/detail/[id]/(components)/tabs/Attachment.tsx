@@ -33,7 +33,7 @@ const AttachmentContext = createContext<{
 export default function Attachment() {
   const { job, setJob } = useJob();
   const [savedImageUrls, setSavedImageUrls] = useState<string[]>(
-    job?.attachments || []
+    job?.attachments || [],
   );
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -41,7 +41,7 @@ export default function Attachment() {
 
   const onSave = async () => {
     const deletingImageUrls = job?.attachments?.filter(
-      (url) => !savedImageUrls.includes(url)
+      (url) => !savedImageUrls.includes(url),
     )!;
 
     if (
@@ -74,12 +74,12 @@ export default function Attachment() {
 
       toast.success(savingResp?.message);
       setHasNotSavedChanges(false);
-      setSavedImageUrls(job?.attachments!);
-      setImageFiles([]);
       setJob((old) => {
         if (!old) return old;
         return { ...old, attachments: savingResp.data };
       });
+      setSavedImageUrls(savingResp?.data || []);
+      setImageFiles([]);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -111,7 +111,7 @@ export default function Attachment() {
           )}
           <Button
             variant={"default"}
-            className="rounded-full px-8 py-2 text-sm bg-green-800 hover:bg-green-700 h-7"
+            className="rounded-full text-white  px-8 py-2 text-sm bg-blue-500 hover:bg-blue-700 h-7"
             onClick={onSave}
             disabled={isSaving || !hasNotSavedChanges}
           >
@@ -170,7 +170,7 @@ function UploadFile() {
 
     if (newFile.size > MAX_IMAGE_SIZE) {
       toast.error(
-        "File size is too large. Please upload a file less than 5MB."
+        "File size is too large. Please upload a file less than 5MB.",
       );
       return;
     }
@@ -193,7 +193,7 @@ function UploadFile() {
         {
           "h-[200px]": imageFiles.length === 0,
           "h-[100px]": imageFiles.length > 0,
-        }
+        },
       )}
     >
       <input
@@ -206,7 +206,7 @@ function UploadFile() {
       />
       <div
         className={cn(
-          "flex w-full flex-col gap-2 items-center justify-center text-neutral-500"
+          "flex w-full flex-col gap-2 items-center justify-center text-neutral-500",
         )}
       >
         <UploadIcon
@@ -243,6 +243,7 @@ function ImagePreview({ file }: { file: File | string }) {
         alt="attachment"
         width={0}
         height={0}
+        sizes="100vw"
         loading="lazy"
         className="w-full h-full object-cover rounded-md"
       />
@@ -252,11 +253,11 @@ function ImagePreview({ file }: { file: File | string }) {
           onClick={() => {
             if (isUrl) {
               setSavedImageUrls((old: string[]) =>
-                old.filter((_file) => file !== _file)
+                old.filter((_file) => file !== _file),
               );
             } else
               setImageFiles((old: File[]) =>
-                old.filter((_file) => file !== _file)
+                old.filter((_file) => file !== _file),
               );
             setHasNotSavedChanges(true);
           }}

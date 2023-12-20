@@ -37,6 +37,7 @@ export default function AssigneePopover({
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
+                  type="button"
                   className="w-full truncate px-3 py-2 pl-4"
                 >
                   {field.value ? (
@@ -76,6 +77,7 @@ export default function AssigneePopover({
                       variant="outline"
                       key={account._id.toString()}
                       className="justify-start"
+                      type="button"
                       onClick={() => {
                         field.onChange(account);
                         setOpen(false);

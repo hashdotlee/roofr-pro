@@ -7,6 +7,9 @@ export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
     id: "title",
     header: "Title",
     accessorKey: "title",
+    cell: (cell: any) => {
+      return <span className="line-clamp-1">{cell.getValue()}</span>;
+    },
   },
   {
     id: "creator",
@@ -16,7 +19,7 @@ export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
       const value = cell.getValue() as TaskDTO["assignee"];
       if (!value) return null;
       return (
-        <span>
+        <span className="line-clamp-1">
           {value?.firstName} {value?.lastName}
         </span>
       );
@@ -38,7 +41,7 @@ export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
       const value = cell.getValue() as TaskDTO["assignee"];
       if (!value) return null;
       return (
-        <span>
+        <span className="line-clamp-1">
           {value?.firstName} {value?.lastName}
         </span>
       );
@@ -51,7 +54,7 @@ export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
     cell: (cell) => {
       const value = cell.getValue() as TaskDTO["dueDate"];
       if (!value) return null;
-      return <span>{format(new Date(value), "PPP")}</span>;
+      return <span className="line-clamp-1">{format(new Date(value), "PPP")}</span>;
     },
   },
 ];

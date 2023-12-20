@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import CustomTextArea from "@/components/custom/Area";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -84,7 +85,7 @@ export default function EditTaskDialog({ task, toggleRefetch }: any) {
               control={form.control}
               placeholder="Title"
             />
-            <CustomInput
+            <CustomTextArea
               name="description"
               label="Description"
               inputClassName="w-full"

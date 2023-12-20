@@ -1,3 +1,4 @@
+import { TaskDTO } from "@/dtos/compose-job.dto";
 import { useEffect, useState } from "react";
 
 interface TaskFilter {
@@ -7,7 +8,7 @@ interface TaskFilter {
 }
 
 export const useTasks = (jobId: string, initFilter?: TaskFilter) => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<TaskDTO[]>([]);
   const [refetch, setRefetch] = useState(false);
   const [filter, setFilter] = useState(initFilter);
   const toggleRefetch = () => setRefetch((prev) => !prev);

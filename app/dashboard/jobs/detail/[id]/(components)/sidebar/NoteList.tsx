@@ -10,14 +10,17 @@ export default function NoteList() {
   const [content, setContent] = useState("");
   const jobId = useParams().id as string;
   const { notes = [], toggleRefetch } = useNotes(jobId);
+  const [loading, setLoading] = useState(false);
 
   const handleEnter = () => {
+    setLoading(true);
     fetch(`/api/jobs/${jobId}/notes`, {
       method: "POST",
       body: JSON.stringify({
         content,
       }),
     }).then(() => {
+      setLoading(false);
       setContent("");
       toggleRefetch();
     });
@@ -40,6 +43,7 @@ export default function NoteList() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleEnter();
           }}
+          disabled={loading}
         />
         <Button
           className=" absolute rounded-none right-4 text-blue-700 top-1/2 bg-transparent hover:bg-transparent p-0 -translate-y-1/2"

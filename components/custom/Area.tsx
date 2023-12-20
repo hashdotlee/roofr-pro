@@ -3,15 +3,17 @@ import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { HTMLInputTypeAttribute } from "react";
+import { Textarea } from "../ui/textarea";
 
-export default function CustomInput({
+export default function CustomTextArea({
   label,
   placeholder,
   inputClassName,
   containerClassName,
   control,
-  type,
   disabled,
+  row,
+  cols,
   name,
   onTextChange,
 }: {
@@ -20,9 +22,10 @@ export default function CustomInput({
   inputClassName?: string;
   containerClassName?: string;
   disabled?: boolean;
-  type?: HTMLInputTypeAttribute;
   control: Control<any>;
   name: string;
+  row?: number;
+  cols?: number;
   onTextChange?: (value: string) => void;
 }) {
   return (
@@ -33,9 +36,10 @@ export default function CustomInput({
         <FormItem className={cn("flex flex-col", containerClassName)}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <Input
+            <Textarea
               {...field}
-              type={type}
+              rows={row}
+              cols={cols}
               placeholder={placeholder}
               disabled={disabled}
               id={name}

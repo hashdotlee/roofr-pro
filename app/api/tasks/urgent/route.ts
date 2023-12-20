@@ -14,7 +14,7 @@ export const GET = catchAsync(async () => {
     .populate("tasks.creator");
   let jobs = await query
     .where({ "tasks.done": false })
-    .sort({ "tasks.dueDate": 1 })
+    .sort({ "tasks.dueDate": -1 })
     .limit(LIMIT)
     .exec();
   const tasks: TaskDTO[] = [];

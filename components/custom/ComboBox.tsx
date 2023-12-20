@@ -51,7 +51,7 @@ export default function CustomComboBox({
       render={({ field, fieldState }) => (
         <FormItem className="flex flex-col w-full">
           <FormLabel>{label}</FormLabel>
-          <Popover open={open}>
+          <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button

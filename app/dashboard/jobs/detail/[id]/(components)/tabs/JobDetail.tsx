@@ -110,7 +110,7 @@ export default function JobDetails() {
               <Button
                 type="submit"
                 variant={"default"}
-                className="rounded-full px-8 py-2 text-sm bg-green-800 hover:bg-green-700 h-7"
+                className="rounded-full px-8 py-2 text-sm bg-blue-500 hover:bg-blue-700 h-7"
                 disabled={isSaving || !hasNotSavedChanges}
               >
                 {isSaving ? "Saving..." : "Save"}
@@ -229,6 +229,7 @@ function SourceSelector({
       }))}
       placeholder={job?.source || "None"}
       contentClassName="h-64 overflow-y-auto"
+     selectClassName="w-full " 
     />
   );
 }
