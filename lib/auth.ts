@@ -51,8 +51,6 @@ export const {
 
         const { email, password } = parsedCredentials.data;
 
-        console.log("email", email);
-
         const user = await getUser(email, password);
         if (!user) return null;
 

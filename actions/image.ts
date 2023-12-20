@@ -2,6 +2,7 @@
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import { UTApi } from "uploadthing/server";
 import { updateJob } from "./job";
+import dbConnect from "@/lib/dbConnect";
 
 const utapi = new UTApi();
 
@@ -16,6 +17,7 @@ export async function uploadFiles({
 }) {
   const files = newFilesData.getAll("files");
   try {
+    await dbConnect();
     const cloudResp = await utapi.uploadFiles(files);
     if (cloudResp.some((res) => res.error !== null)) {
       throw {
@@ -55,7 +57,9 @@ export async function deleteFiles({ deletedUrls }: { deletedUrls: string[] }) {
   const keys = deletedUrls
     .map((url) => url.split("/").pop())
     .filter((url) => url !== undefined) as string[];
+
   try {
+    await dbConnect();
     const res = await utapi.deleteFiles(keys);
     if (res.success) {
       return {

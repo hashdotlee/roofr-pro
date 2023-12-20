@@ -99,13 +99,13 @@ export default function JobDetailPage({
 
   const handleRemoveCustomer = async () => {
     await updateJob(String(job?._id), {
-      customer: null,
+      customer: undefined,
     });
     setJob((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
-        customer: null,
+        customer: undefined,
       };
     });
     toast.success("Customer removed successfully");

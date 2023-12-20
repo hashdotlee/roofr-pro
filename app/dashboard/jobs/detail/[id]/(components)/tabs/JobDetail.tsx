@@ -11,88 +11,154 @@ import { LightbulbIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UseFormReturn, useForm } from "react-hook-form";
 import AssigneePopover from "./AssigneePopover";
+import { Button } from "@/components/ui/button";
+import { updateJob } from "@/actions/job";
+import toast from "react-hot-toast";
+import { useJobStore } from "@/lib/stores/jobStore";
+
+function getJobDetails(job: ComposeJobDTO | null) {
+  return {
+    assignee: {
+      _id: job?.assignee?._id,
+      firstName: job?.assignee?.firstName,
+      lastName: job?.assignee?.lastName,
+      avatar: job?.assignee?.avatar,
+    },
+    stage: job?.stage,
+    source: job?.source,
+    jobValue: job?.jobValue,
+    details: job?.details,
+  };
+}
+
+type JobDetailsForm = ReturnType<typeof getJobDetails>;
 
 export default function JobDetails() {
-  const { job } = useJob();
-  console.log(job);
+  const { job, setJob } = useJob();
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasNotSavedChanges, setHasNotSavedChanges] = useState(false);
+  const modifyJob = useJobStore((state) => state.modifyJob);
+
   const form = useForm({
-    defaultValues: {
-      assignee: {
-        firstName: job?.assignee?.firstName,
-        lastName: job?.assignee?.lastName,
-        avatar: job?.assignee?.avatar,
-      },
-      stage: job?.stage,
-      source: job?.source,
-      details: job?.details,
-    },
+    defaultValues: getJobDetails(job),
   });
 
   useEffect(() => {
-    if (job)
-      form.reset({
-        assignee: {
-          firstName: job?.assignee?.firstName,
-          lastName: job?.assignee?.lastName,
-          avatar: job?.assignee?.avatar,
-        },
-        stage: job?.stage,
-        source: job?.source,
-        details: job?.details,
-      });
+    if (job) {
+      form.reset(getJobDetails(job));
+    }
   }, [job]);
 
-  const onSubmit = (data: any) => console.log(data);
+  useEffect(() => {
+    if (JSON.stringify(form.getValues()) !== JSON.stringify(getJobDetails(job)))
+      setHasNotSavedChanges(true);
+    else setHasNotSavedChanges(false);
+  }, [form.watch()]);
+
+  const onSubmit = async (data: JobDetailsForm) => {
+    const payload = {} as any;
+    if (data.assignee._id !== job?.assignee?._id)
+      payload.assignee = data.assignee._id;
+    if (data.jobValue !== job?.jobValue) payload.jobValue = data.jobValue;
+    if (data.stage !== job?.stage) payload.stage = data.stage;
+    if (data.source !== job?.source) payload.source = data.source;
+    if (data.details !== job?.details) payload.details = data.details;
+
+    if (!payload) return;
+
+    try {
+      setIsSaving(true);
+      const res = await updateJob(job?._id!, payload);
+      if (!res.ok) throw { message: res.message };
+      toast.success(res.message);
+      setJob((old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          ...(data as any),
+        };
+      });
+      if (payload.stage) {
+        modifyJob(String(job?._id), {
+          stage: form.getValues().stage!,
+        });
+      }
+      setHasNotSavedChanges(false);
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <>
-      <div className="text-lg font-semibold leading-3 text-left">
-        Job Details
-      </div>
       <Form {...form}>
-        <form
-          className="grid gap-4 my-4 items-center grid-cols-3"
-          // onChange={form.handleSubmit(onSubmit)}
-        >
-          <AssigneePopover
-            control={form.control}
-            name="assignee"
-            label="Assignee"
-          />
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex flex-row justify-between items-center mb-4">
+            <p className="text-lg font-semibold leading-3 text-left">
+              Job Details
+            </p>
 
-          <CustomSelect
-            name="stage"
-            label="Stage"
-            control={form.control}
-            options={Object.values(JobStage).map((stage) => ({
-              label: stage,
-              value: stage,
-            }))}
-            placeholder={job?.stage}
-          />
-          <SourceSelector form={form} job={job} />
-          <JobValueInput form={form} job={job} />
-
-          <div className="p-3 bg-blue-200/50 flex items-center border border-blue-500 gap-4 text-xs col-span-2 rounded-md self-end">
-            <LightbulbIcon className="h-4 w-4 text-yellow-500" /> Job value will
-            help you to prioritize your jobs.
+            <div className="space-x-4">
+              {hasNotSavedChanges && (
+                <span className="text-red-600 text-xs">
+                  * Changes have not been saved
+                </span>
+              )}
+              <Button
+                type="submit"
+                variant={"default"}
+                className="rounded-full px-8 py-2 text-sm bg-green-800 hover:bg-green-700 h-7"
+                disabled={isSaving || !hasNotSavedChanges}
+              >
+                {isSaving ? "Saving..." : "Save"}
+              </Button>
+            </div>
           </div>
 
-          <FormField
-            name="details"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="flex flex-col col-span-3">
-                <FormLabel htmlFor="details">Details</FormLabel>
-                <Textarea
-                  {...field}
-                  id="details"
-                  className="w-full"
-                  placeholder="Frequently referenced info (gate code, material section, parking, etc.)"
-                />
-              </FormItem>
-            )}
-          />
+          <div className="grid gap-4 my-4 items-center grid-cols-3">
+            <AssigneePopover
+              control={form.control}
+              name="assignee"
+              label="Assignee"
+            />
+
+            <CustomSelect
+              name="stage"
+              label="Stage"
+              control={form.control}
+              options={Object.values(JobStage).map((stage) => ({
+                label: stage,
+                value: stage,
+              }))}
+              placeholder={job?.stage}
+            />
+            <SourceSelector form={form} job={job} />
+            <JobValueInput form={form} job={job} />
+
+            <div className="p-3 bg-blue-200/50 flex items-center border border-blue-500 gap-4 text-xs col-span-2 rounded-md self-end">
+              <LightbulbIcon className="h-4 w-4 text-yellow-500" /> Job value
+              will help you to prioritize your jobs.
+            </div>
+
+            <FormField
+              name="details"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="flex flex-col col-span-3">
+                  <FormLabel htmlFor="details">Details</FormLabel>
+                  <Textarea
+                    {...field}
+                    id="details"
+                    className="w-full"
+                    placeholder="Frequently referenced info (gate code, material section, parking, etc.)"
+                  />
+                </FormItem>
+              )}
+            />
+          </div>
         </form>
       </Form>
     </>
@@ -123,17 +189,20 @@ function JobValueInput({
         inputMode="decimal"
         value={currencyValue}
         onBlur={() => {
-          setCurrencyValue(
-            Number(form.getValues("job-value")).toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            })
-          );
+          const jobValue = Number(form.getValues("jobValue"));
+          if (Number.isNaN(jobValue)) setCurrencyValue("$0.00");
+          else
+            setCurrencyValue(
+              jobValue.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })
+            );
         }}
         onChange={(e) => {
           setCurrencyValue(e.target.value);
           form.setValue(
-            "job-value",
+            "jobValue",
             Number(e.target.value.replace(/[^0-9.]/g, ""))
           );
         }}

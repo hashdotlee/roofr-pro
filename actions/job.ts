@@ -51,7 +51,7 @@ export const deleteJob = async (jobId: string) => {
       data: job,
     } satisfies ServerResponse;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       code: 500,
       message: "Internal server error",
@@ -65,7 +65,6 @@ export const updateJob = async (
   job: Partial<ComposeJobDTO>,
 ) => {
   try {
-    console.log(job);
     await dbConnect();
     const updatedJob = await JobModel.updateOne({ _id: jobId }, job);
     return {
@@ -75,7 +74,7 @@ export const updateJob = async (
       data: updatedJob,
     } satisfies ServerResponse;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       ok: false,
       code: 500,

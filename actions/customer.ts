@@ -17,7 +17,6 @@ type TCustomerResponse = {
 };
 
 export const createCustomer = async (customerPayload: ICustomerPayload) => {
-  console.log("customerPayload", customerPayload);
   try {
     await dbConnect();
     const customer = await CustomerModel.create(customerPayload);
