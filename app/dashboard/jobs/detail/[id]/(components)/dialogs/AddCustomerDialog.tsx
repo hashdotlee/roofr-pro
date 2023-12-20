@@ -67,6 +67,13 @@ export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
         await updateJob(jobId, {
           customer: customer._id as any,
         });
+        setJob((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            customer: customer as any,
+          };
+        });
       } else {
         const res = await createCustomer({
           fullname: data.name,
