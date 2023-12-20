@@ -3,9 +3,10 @@
 import { ComposeAccountDTO } from "@/dtos/compose-account.dto";
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import dbConnect from "@/lib/dbConnect";
-import { Job, JobModel } from "@/models/Job";
+import { JobModel } from "@/models/Job";
 
 export interface ServerResponse {
+  ok?: boolean;
   code: number;
   message: string;
   data: any;
@@ -61,13 +62,14 @@ export const deleteJob = async (jobId: string) => {
 
 export const updateJob = async (
   jobId: string,
-  job: Partial<Omit<Job, "customer">> & { customer: string | null },
+  job: Partial<ComposeJobDTO>,
 ) => {
   try {
     console.log(job);
     await dbConnect();
     const updatedJob = await JobModel.updateOne({ _id: jobId }, job);
     return {
+      ok: true,
       code: 200,
       message: "Job updated successfully",
       data: updatedJob,
@@ -75,6 +77,7 @@ export const updateJob = async (
   } catch (error) {
     console.log(error);
     return {
+      ok: false,
       code: 500,
       message: "Internal server error",
       data: error,

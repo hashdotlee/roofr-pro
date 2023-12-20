@@ -1,7 +1,7 @@
 "use client";
 
 import { cn, getTimeAgo } from "@/lib/utils";
-import { Clipboard, Mail, Plus, UserPlus, X } from "lucide-react";
+import { Clipboard, Loader2, Mail, Plus, UserPlus, X } from "lucide-react";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
 import Attachment from "./(components)/tabs/Attachment";
@@ -140,82 +140,95 @@ export default function JobDetailPage({
           <span>Updated {getTimeAgo(job?.updatedAt?.toString())}</span>
         </div>
         <div className="border-b mt-4 text-sm flex gap-4">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              className={cn(`flex py-2 flex-col items-center gap-1`, {
-                "border-b-2 border-blue-700": activeTab === tab.id,
-                "border-b-2 border-transparent": activeTab !== tab.id,
-              })}
-              onClick={() => {
-                handleTabChange(tab.id);
-              }}
-            >
-              <span>{tab.name}</span>
-            </button>
-          ))}
+          {job &&
+            tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={cn(`flex py-2 flex-col items-center gap-1`, {
+                  "border-b-2 border-blue-700": activeTab === tab.id,
+                  "border-b-2 border-transparent": activeTab !== tab.id,
+                })}
+                onClick={() => {
+                  handleTabChange(tab.id);
+                }}
+              >
+                <span>{tab.name}</span>
+              </button>
+            ))}
         </div>
       </div>
       <div className="flex overflow-hidden items-stretch gap-4 h-full">
         <div className="overflow-y-auto h-full w-2/3" id="job_detail_root">
-          {tabs.map((tab) => (
-            <InView
-              key={tab.id}
-              id={tab.id}
-              onChange={(inView) => {
-                if (inView) {
-                  setActiveTab(tab.id);
-                }
-              }}
-              className="mb-4 p-4 bg-gray-100 rounded-md"
-            >
-              {tab.content}
-            </InView>
-          ))}
-          <DeleteJobDialog />
+          {!job ? (
+            <Loader2 className="w-8 h-8 mx-auto animate-spin text-gray-500" />
+          ) : (
+            <>
+              {tabs.map((tab) => (
+                <InView
+                  key={tab.id}
+                  id={tab.id}
+                  onChange={(inView) => {
+                    if (inView) {
+                      setActiveTab(tab.id);
+                    }
+                  }}
+                  className="mb-4 p-4 bg-gray-100 rounded-md"
+                >
+                  {tab.content}
+                </InView>
+              ))}
+              <DeleteJobDialog />
+            </>
+          )}
         </div>
         <div className="flex flex-col gap-4 w-1/3 h-full overflow-hidden">
-          {!job?.customer ? (
-            <div className="flex justify-between items-center p-4 border rounded-md">
-              <div className="text-sm font-semibold">Customer Contact</div>
-              <AddCustomerModal>
-                <Button className="rounded-full bg-gray-100 text-current hover:bg-gray-200 flex items-center gap-2 text-xs px-4 py-2">
-                  <UserPlus className="w-4 h-4" /> Add Customer
-                </Button>
-              </AddCustomerModal>
-            </div>
+          {!job ? (
+            <Loader2 className="w-8 h-8 mx-auto animate-spin text-gray-500" />
           ) : (
-            <div className="flex justify-between items-start p-4 border rounded-md">
-              <div className="text-sm font-semibold">
-                <div>{job?.customer?.fullname}</div>
-                <div className="text-xs mt-2 flex items-center gap-2 text-gray-500">
-                  <Mail className="w-4 h-4" /> {job?.customer?.email}
+            <>
+              {!job?.customer ? (
+                <div className="flex justify-between items-center p-4 border rounded-md">
+                  <div className="text-sm font-semibold">Customer Contact</div>
+                  <AddCustomerModal>
+                    <Button className="rounded-full bg-gray-100 text-current hover:bg-gray-200 flex items-center gap-2 text-xs px-4 py-2">
+                      <UserPlus className="w-4 h-4" /> Add Customer
+                    </Button>
+                  </AddCustomerModal>
                 </div>
+              ) : (
+                <div className="flex justify-between items-start p-4 border rounded-md">
+                  <div className="text-sm font-semibold">
+                    <div>{job?.customer?.fullname}</div>
+                    <div className="text-xs mt-2 flex items-center gap-2 text-gray-500">
+                      <Mail className="w-4 h-4" /> {job?.customer?.email}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <AddCustomerModal>
+                      <Button
+                        variant={"outline"}
+                        className="text-xs p-1 border-0 h-auto rounded-lg hover:text-blue-700 hover:bg-transparent"
+                      >
+                        Edit
+                      </Button>
+                    </AddCustomerModal>
+                    <Button
+                      variant={"outline"}
+                      className="text-xs p-1 border-0 h-auto rounded-lg hover:text-blue-700 hover:bg-transparent"
+                      onClick={() => {
+                        handleRemoveCustomer();
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-col gap-3 bg-gray-100 border p-4 overflow-hidden h-full rounded-md">
+                <NoteList />
               </div>
-              <div className="flex items-center gap-2">
-                <AddCustomerModal>
-                  <Button
-                    variant={"outline"}
-                    className="text-xs p-1 border-0 h-auto rounded-lg hover:text-blue-700 hover:bg-transparent"
-                  >
-                    Edit
-                  </Button>
-                </AddCustomerModal>
-                <Button
-                  variant={"outline"}
-                  className="text-xs p-1 border-0 h-auto rounded-lg hover:text-blue-700 hover:bg-transparent"
-                  onClick={() => {
-                    handleRemoveCustomer();
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-            </div>
+            </>
           )}
-          <div className="flex flex-col gap-3 bg-gray-100 border p-4 overflow-hidden h-full rounded-md">
-            <NoteList />
-          </div>
         </div>
       </div>
     </>

@@ -20,3 +20,11 @@ export function getTimeAgo(date?: string) {
   if (seconds > 0) return `${seconds}s ago`;
   return "Just now";
 }
+
+export const toBase64 = (file: File) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+  });

@@ -5,12 +5,18 @@ export default function Measurement() {
         Measurements
       </div>
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1 px-4 py-2 rounded-full text-xs bg-gray-200 font-semibold">
+        <button
+          className="flex items-center gap-1 px-4 py-2 rounded-full text-xs bg-gray-200 font-semibold"
+          disabled
+        >
           Create DIY report
-        </div>
-        <div className="flex items-center gap-1 px-4 py-2 rounded-full text-xs text-white bg-blue-500 font-semibold">
+        </button>
+        <button
+          className="flex items-center gap-1 px-4 py-2 rounded-full text-xs text-white bg-blue-500 font-semibold"
+          disabled
+        >
           Order Report
-        </div>
+        </button>
       </div>
     </div>
   );
