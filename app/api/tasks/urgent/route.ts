@@ -11,7 +11,7 @@ export const GET = catchAsync(async () => {
   const query = JobModel.find({})
     .select("tasks address _id")
     .populate("tasks.assignee")
-    .populate({ path: "tasks.creator", model: "Account" });
+    .populate("tasks.creator");
   let jobs = await query
     .where({ "tasks.done": false })
     .sort({ "tasks.dueDate": -1 })
