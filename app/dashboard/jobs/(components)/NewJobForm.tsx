@@ -13,6 +13,7 @@ import { useJobs } from "@/hooks/useJobs";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const FormSchema = z.object({
   address: z.string({
@@ -27,6 +28,7 @@ export function NewJobForm({ setOpen }: { setOpen: (open: boolean) => void }) {
 
   const { data: session, status } = useSession();
   const user = session?.user;
+  const [loading, setLoading] = useState(false);
 
   const { toggleRefetch } = useJobs();
 
@@ -37,6 +39,7 @@ export function NewJobForm({ setOpen }: { setOpen: (open: boolean) => void }) {
       toast.error("You must be logged in to create a job.");
       return;
     }
+    setLoading(true);
     try {
       const { data: job } = await createJob({
         address: data.address,
@@ -50,6 +53,7 @@ export function NewJobForm({ setOpen }: { setOpen: (open: boolean) => void }) {
       const e = error as Error;
       if (e.message) toast.error(e.message);
     }
+    setLoading(false);
   }
 
   return (
@@ -65,7 +69,7 @@ export function NewJobForm({ setOpen }: { setOpen: (open: boolean) => void }) {
           containerClassName="my-3"
           control={form.control}
         />
-        <Button type="submit" className="w-full mt-3">
+        <Button disabled={loading} type="submit" className="w-full mt-3">
           Submit
         </Button>
       </form>

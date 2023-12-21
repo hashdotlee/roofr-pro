@@ -1,33 +1,28 @@
 "use client";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { logout } from "@/actions/auth";
 import { LogOut, User } from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function DropdownMenuList() {
-  const router = useRouter();
   return (
     <>
-      <DropdownMenuItem className="p-4 cursor-pointer">
-        <Link href={"/profile"} className="flex flex-row">
+      <DropdownMenuItem className="cursor-pointer p-0">
+        <Link href={"/profile"} className="flex p-4 flex-row">
           <User className="w-5 h-5 mr-3" /> User Profile
         </Link>
       </DropdownMenuItem>
-      <DropdownMenuItem className="p-4 cursor-pointer">
-        <form
-          action={async () => {
-            await logout();
-            router.push("/");
-          }}
+      <DropdownMenuItem className="cursor-pointer p-0">
+        <button
+          onClick={() => signOut()}
+          type="submit"
+          className="w-full flex p-4 flex-row"
         >
-          <button type="submit" className="w-full flex flex-row">
-            <>
-              <LogOut className="w-5 h-5 mr-3" />
-              <span>Logout</span>
-            </>
-          </button>
-        </form>
+          <>
+            <LogOut className="w-5 h-5 mr-3" />
+            <span>Logout</span>
+          </>
+        </button>
       </DropdownMenuItem>{" "}
     </>
   );

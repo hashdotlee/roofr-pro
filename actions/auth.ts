@@ -40,7 +40,8 @@ export async function login(options: Record<string, any>) {
 export async function logout() {
   try {
     await signOut({
-      redirect: false,
+      redirect: true,
+      redirectTo: "/",
     });
   } catch (error) {
     console.error(error);
