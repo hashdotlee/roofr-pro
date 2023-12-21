@@ -2,7 +2,12 @@ import mongoose from "mongoose";
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { Roles } from "@/types/account";
 
-@modelOptions({ schemaOptions: { collection: "accounts", versionKey: false } })
+@modelOptions({
+  schemaOptions: { collection: "accounts", versionKey: false },
+  options: {
+    allowMixed: 0,
+  },
+})
 export class Account {
   public _id!: mongoose.Types.ObjectId;
 
@@ -32,7 +37,7 @@ export class Account {
   })
   public role!: Roles;
 
-  @prop({ default: [] })
+  @prop({ default: [], type: mongoose.Schema.Types.Mixed })
   public sourcePreferences?: string[];
 }
 

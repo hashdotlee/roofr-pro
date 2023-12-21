@@ -13,6 +13,9 @@ import { Customer } from "./Customer";
     timestamps: true,
     versionKey: false,
   },
+  options: {
+    allowMixed: 0,
+  },
 })
 export class Job extends TimeStamps {
   public _id!: mongoose.Schema.Types.ObjectId;
@@ -38,16 +41,16 @@ export class Job extends TimeStamps {
   @prop()
   public details?: string;
 
-  @prop({ type: () => [Task] })
+  @prop({ type: mongoose.Schema.Types.Mixed })
   public tasks?: Task[];
 
-  @prop({ type: [String] })
+  @prop({ type: mongoose.Schema.Types.Mixed })
   public attachments?: string[];
 
   @prop({ ref: () => Customer })
   public customer: Ref<Customer>;
 
-  @prop({ type: () => [Note] })
+  @prop({ type: mongoose.Schema.Types.Mixed})
   public notes?: Note[];
 }
 

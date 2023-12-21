@@ -1,6 +1,6 @@
 import { TaskDTO } from "@/dtos/compose-job.dto";
+import { getTimeAgo } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
 
 export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
   {
@@ -8,8 +8,20 @@ export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
     header: "Title",
     accessorKey: "title",
     cell: (cell: any) => {
+      return <span className="line-clamp-1 font-semibold">{cell.getValue()}</span>;
+    },
+    maxSize: 100,
+    size: 100,
+  },
+  {
+    id: "address",
+    header: "Address",
+    accessorKey: "job.address",
+    cell: (cell: any) => {
       return <span className="line-clamp-1">{cell.getValue()}</span>;
     },
+    maxSize: 100,
+    size: 60,
   },
   {
     id: "creator",
@@ -24,6 +36,8 @@ export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
         </span>
       );
     },
+    maxSize: 100,
+    size: 60,
   },
   {
     id: "description",
@@ -46,6 +60,8 @@ export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
         </span>
       );
     },
+    maxSize: 100,
+    size: 60,
   },
   {
     id: "dueDate",
@@ -53,8 +69,25 @@ export const TaskTableColumn: ColumnDef<TaskDTO>[] = [
     accessorKey: "dueDate",
     cell: (cell) => {
       const value = cell.getValue() as TaskDTO["dueDate"];
-      if (!value) return null;
-      return <span className="line-clamp-1">{format(new Date(value), "PPP")}</span>;
+      if (!value)
+        return <span className="text-neutral-400 font-semibold">No due date</span>;
+      return (
+        <span
+          className={`
+          font-semibold
+      line-clamp-1 
+      ${
+        new Date(value).getTime() < new Date().getTime() + 24 * 60 * 3600
+          ? "text-red-500"
+          : ""
+      }
+      `}
+        >
+          {getTimeAgo(String(value))}
+        </span>
+      );
     },
+    maxSize: 100,
+    size: 60,
   },
 ];

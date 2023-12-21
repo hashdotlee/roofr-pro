@@ -18,6 +18,12 @@ export function getTimeAgo(date?: string) {
   if (hours > 0) return `${hours}h ago`;
   if (minutes > 0) return `${minutes}m ago`;
   if (seconds > 0) return `${seconds}s ago`;
+
+  // time after
+  if (days < 0) return `${-days}d remaining`;
+  if (hours < 0) return `${-hours}h remaining`;
+  if (minutes < 0) return `${-minutes}m remaining`;
+  if (seconds < 0) return `${-seconds}s remaining`;
   return "Just now";
 }
 

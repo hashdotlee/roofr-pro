@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["cdn.iconscout.com", "utfs.io"],
+    remotePatterns: [
+      {
+        hostname: "cdn.iconscout.com",
+      },
+      {
+        hostname: "utfs.io",
+      },
+    ],
   },
 };
 
