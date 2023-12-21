@@ -37,7 +37,7 @@ export class Account {
   })
   public role!: Roles;
 
-  @prop({ default: [], type: mongoose.Schema.Types.Mixed })
+  @prop({ default: [], type: () => [String] })
   public sourcePreferences?: string[];
 }
 

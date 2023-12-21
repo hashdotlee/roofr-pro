@@ -111,7 +111,7 @@ export default function Attachment() {
           )}
           <Button
             variant={"default"}
-            className="rounded-full text-white  px-8 py-2 text-sm bg-blue-500 hover:bg-blue-700 h-7"
+            className="rounded-full text-white  px-8 py-2 font-semibold text-xs bg-blue-500 hover:bg-blue-700 h-7"
             onClick={onSave}
             disabled={isSaving || !hasNotSavedChanges}
           >
@@ -128,11 +128,11 @@ export default function Attachment() {
           {imageFiles.map((file, index) => (
             <ImagePreview file={file} key={index} />
           ))}
+          {imageFiles.length < MAX_IMAGE_COUNT && <UploadFile />}
         </div>
       </div>
 
       <div className="my-4">
-        {imageFiles.length < MAX_IMAGE_COUNT && <UploadFile />}
         <p className="text-xs text-neutral-500 mt-2">
           Up to {MAX_IMAGE_COUNT} files, 5MB each. Only accept image file types.
         </p>
@@ -189,10 +189,10 @@ function UploadFile() {
     <label
       htmlFor="file-upload"
       className={cn(
-        "p-4 bg-white border-dashed cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors duration-200 border-2 w-full block rounded-lg",
+        "p-4 bg-white border-dashed cursor-pointer hover:bg-blue-50 flex items-center justify-center hover:border-blue-300 transition-colors duration-200 border-2 w-full rounded-lg",
         {
-          "h-[200px]": imageFiles.length === 0,
-          "h-[100px]": imageFiles.length > 0,
+          "col-span-4": imageFiles.length === 0,
+          "col-span-1": imageFiles.length > 0,
         },
       )}
     >
@@ -245,7 +245,7 @@ function ImagePreview({ file }: { file: File | string }) {
         height={0}
         sizes="100vw"
         loading="lazy"
-        className="w-full h-full object-cover rounded-md"
+        className="w-full h-full object-cover aspect-square rounded-md"
       />
       <div className="absolute top-0 right-0">
         <button

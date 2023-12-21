@@ -1,5 +1,11 @@
 import { Control } from "react-hook-form";
-import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { HTMLInputTypeAttribute } from "react";
@@ -45,6 +51,7 @@ export default function CustomInput({
               })}
             />
           </FormControl>
+          <FormMessage />
         </FormItem>
       )}
     />

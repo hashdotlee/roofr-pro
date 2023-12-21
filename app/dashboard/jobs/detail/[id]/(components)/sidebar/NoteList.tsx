@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SendIcon } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NoteItem from "./NoteItem";
 import { useNotes } from "@/hooks/useNote";
 
@@ -11,6 +11,8 @@ export default function NoteList() {
   const jobId = useParams().id as string;
   const { notes = [], toggleRefetch } = useNotes(jobId);
   const [loading, setLoading] = useState(false);
+
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const handleEnter = () => {
     setLoading(true);
@@ -26,12 +28,19 @@ export default function NoteList() {
     });
   };
 
+  useEffect(() => {
+    if (bottomRef.current)
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [notes]);
+
   return (
     <>
       <div className="flex overflow-y-auto flex-col gap-2">
         {notes.map((note: any) => (
           <NoteItem key={note?._id} note={note} />
         ))}
+        <div className="h-1" />
+        <div className="h-1" ref={bottomRef} />
       </div>
       <label htmlFor="add_note" className="relative">
         <Input

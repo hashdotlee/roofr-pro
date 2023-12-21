@@ -65,11 +65,9 @@ export const GET = catchAsync(
       .populate([
         {
           path: "tasks.assignee",
-          model: "Account",
         },
         {
           path: "tasks.creator",
-          model: "Account",
         },
       ])
       .select("tasks");

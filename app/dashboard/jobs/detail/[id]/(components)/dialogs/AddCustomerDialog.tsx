@@ -14,7 +14,6 @@ import { Form } from "@/components/ui/form";
 import { useCustomer } from "@/hooks/useCustomer";
 import useJob from "@/hooks/useJob";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserPlus } from "lucide-react";
 import { useParams } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -31,9 +30,14 @@ const formSchema = z.object({
       message: "Please enter a email.",
     })
     .optional(),
-  phone: z.string().optional(),
-
-  ssn: z.string().optional(),
+  phone: z
+    .string()
+    .regex(/^[0-9]{10}$/, "Phone number must be 10 digits")
+    .optional(),
+  ssn: z
+    .string()
+    .regex(/^[0-9]{4}$/, "SSN must be 4 digits")
+    .optional(),
 });
 
 export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
@@ -41,6 +45,7 @@ export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
   const { customers, filter, setFilter } = useCustomer();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
   });
   const { setJob, job } = useJob();
 
@@ -52,7 +57,7 @@ export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
         name: job.customer.fullname,
         email: job.customer.email,
         phone: job.customer.phone,
-        ssn: job.customer.ssn,
+        ssn: job.customer.ssn?.toString(),
       });
       setIsDisabled(false);
     }
@@ -123,13 +128,13 @@ export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
                 if (customer) {
                   form.setValue("email", customer.email || "");
                   form.setValue("phone", customer.phone || "");
-                  form.setValue("ssn", customer.ssn || "");
+                  form.setValue("ssn", customer.ssn || 0);
                   setIsDisabled(true);
                 } else {
                   setIsDisabled(false);
                   form.setValue("email", "");
                   form.setValue("phone", "");
-                  form.setValue("ssn", "");
+                  form.setValue("ssn", 0);
                 }
               }}
               control={form.control}

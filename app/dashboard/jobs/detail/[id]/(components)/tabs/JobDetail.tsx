@@ -110,7 +110,7 @@ export default function JobDetails() {
               <Button
                 type="submit"
                 variant={"default"}
-                className="rounded-full px-8 py-2 text-sm bg-blue-500 hover:bg-blue-700 h-7"
+                className="rounded-full px-8 py-2 text-xs font-semibold bg-blue-500 hover:bg-blue-700 h-7"
                 disabled={isSaving || !hasNotSavedChanges}
               >
                 {isSaving ? "Saving..." : "Save"}
@@ -123,6 +123,7 @@ export default function JobDetails() {
               control={form.control}
               name="assignee"
               label="Assignee"
+              contentClassname={`w-[10rem] xs:w-[20rem]`}
             />
 
             <CustomSelect
@@ -176,7 +177,7 @@ function JobValueInput({
     job?.jobValue?.toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
-    }) || ""
+    }) || "",
   );
   return (
     <FormItem>
@@ -196,14 +197,14 @@ function JobValueInput({
               jobValue.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
-              })
+              }),
             );
         }}
         onChange={(e) => {
           setCurrencyValue(e.target.value);
           form.setValue(
             "jobValue",
-            Number(e.target.value.replace(/[^0-9.]/g, ""))
+            Number(e.target.value.replace(/[^0-9.]/g, "")),
           );
         }}
       />
@@ -229,7 +230,7 @@ function SourceSelector({
       }))}
       placeholder={job?.source || "None"}
       contentClassName="h-64 overflow-y-auto"
-     selectClassName="w-full " 
+      selectClassName="w-full "
     />
   );
 }

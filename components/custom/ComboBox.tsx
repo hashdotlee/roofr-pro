@@ -48,7 +48,7 @@ export default function CustomComboBox({
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => (
+      render={({ field }) => (
         <FormItem className="flex flex-col w-full">
           <FormLabel>{label}</FormLabel>
           <Popover open={open} onOpenChange={setOpen}>
@@ -64,7 +64,7 @@ export default function CustomComboBox({
                   className={cn(
                     "w-[200px] justify-between",
                     !field.value && "text-muted-foreground mt-2",
-                    selectClassName
+                    selectClassName,
                   )}
                 >
                   {field.value
@@ -103,7 +103,7 @@ export default function CustomComboBox({
                           "mr-2 grow-0 shrink-0 h-4 w-4",
                           option.value === field.value
                             ? "opacity-100"
-                            : "opacity-0"
+                            : "opacity-0",
                         )}
                       />
                       {option.label}

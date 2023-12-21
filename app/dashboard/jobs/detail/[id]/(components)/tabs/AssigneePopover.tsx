@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import useAccounts from "@/hooks/useAccount";
+import { cn } from "@/lib/utils";
 import { User } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -16,10 +17,12 @@ export default function AssigneePopover({
   placeholder = "Assignee",
   control,
   name,
+  contentClassname,
   label,
 }: {
   placeholder?: string;
   control: Control<any>;
+  contentClassname?: string;
   name: string;
   label?: string;
 }) {
@@ -31,14 +34,14 @@ export default function AssigneePopover({
       name={name}
       render={({ field }) => {
         return (
-          <FormItem className="flex flex-col w-full">
+          <FormItem className="flex relative flex-col w-full">
             {label && <FormLabel className="w-full">{label}</FormLabel>}
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   type="button"
-                  className="w-full truncate px-3 py-2 pl-4"
+                  className="w-full truncate text-left justify-start px-3 py-2 pl-4"
                 >
                   {field.value ? (
                     <>
@@ -61,38 +64,43 @@ export default function AssigneePopover({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="p-2 w-[245px]">
-                <Input
-                  className="w-full focus-visible:ring-0"
-                  placeholder="Search users"
-                  value={filter.search}
-                  onChange={(e) =>
-                    setFilter({ ...filter, search: e.target.value })
-                  }
-                />
-                <hr className="my-2" />
-                <div className="flex flex-col gap-2">
-                  {accounts.map((account) => (
-                    <Button
-                      variant="outline"
-                      key={account._id.toString()}
-                      className="justify-start"
-                      type="button"
-                      onClick={() => {
-                        field.onChange(account);
-                        setOpen(false);
-                      }}
-                    >
-                      <Image
-                        src={account.avatar || "/default_avatar.svg"}
-                        alt={"avatar"}
-                        width={24}
-                        height={24}
-                        className="rounded-full mr-2"
-                      />
-                      {account.firstName} {account.lastName}
-                    </Button>
-                  ))}
+              <PopoverContent
+                asChild
+                className={cn("p-2", contentClassname)}
+              >
+                <div className="bg-white">
+                  <Input
+                    className="w-full focus-visible:ring-0"
+                    placeholder="Search users"
+                    value={filter.search}
+                    onChange={(e) =>
+                      setFilter({ ...filter, search: e.target.value })
+                    }
+                  />
+                  <hr className="my-2" />
+                  <div className="flex flex-col gap-2">
+                    {accounts.map((account) => (
+                      <Button
+                        variant="outline"
+                        key={account._id.toString()}
+                        className="justify-start"
+                        type="button"
+                        onClick={() => {
+                          field.onChange(account);
+                          setOpen(false);
+                        }}
+                      >
+                        <Image
+                          src={account.avatar || "/default_avatar.svg"}
+                          alt={"avatar"}
+                          width={24}
+                          height={24}
+                          className="rounded-full mr-2"
+                        />
+                        {account.firstName} {account.lastName}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </PopoverContent>
             </Popover>

@@ -7,7 +7,7 @@ interface ICustomerPayload {
   fullname: string;
   email?: string;
   phone?: string;
-  ssn?: string;
+  ssn?: number;
 }
 
 type TCustomerResponse = {

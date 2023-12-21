@@ -12,8 +12,9 @@ export const useCustomer = (initFilter?: CustomerFilter) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   useEffect(() => {
     async function fetchCustomers() {
+      const search = filter?.search?.replace(/[^a-zA-Z0-9 -]/g, "");
       const params = new URLSearchParams({
-        search: filter?.search || "",
+        search: search || "",
         page: filter?.page?.toString() || "1",
         limit: filter?.limit?.toString() || "10",
       });

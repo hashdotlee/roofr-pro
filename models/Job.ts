@@ -7,6 +7,35 @@ import mongoose from "mongoose";
 import { Account } from "./Account";
 import { Customer } from "./Customer";
 
+export class Metric {
+  @prop({ required: true, default: 0 })
+  public roofFootprintArea!: number;
+
+  @prop({ required: true, default: 0 })
+  public pitch!: number;
+
+  @prop({ required: true, default: 0 })
+  public roofAreaAdjustedForPitch!: number;
+
+  @prop({ required: true, default: 0 })
+  public currentlyOnRoof!: number;
+
+  @prop({ required: true, default: 0 })
+  public desiredMaterial!: number;
+
+  @prop({ required: true, default: 0 })
+  public projectTimeline!: number;
+
+  @prop({ required: true, default: 0 })
+  public residentialCommercial!: number;
+
+  @prop({ required: true, default: 0 })
+  public wantsFinancing!: number;
+
+  @prop({ required: true, default: 0 })
+  public customerNote!: number;
+}
+
 @modelOptions({
   schemaOptions: {
     collection: "jobs",
@@ -41,19 +70,27 @@ export class Job extends TimeStamps {
   @prop()
   public details?: string;
 
-  @prop({ type: mongoose.Schema.Types.Mixed })
+  @prop({ type: () => [Task] })
   public tasks?: Task[];
 
-  @prop({ type: mongoose.Schema.Types.Mixed })
+  @prop({ type: () => [String] })
   public attachments?: string[];
 
   @prop({ ref: () => Customer })
   public customer: Ref<Customer>;
 
-  @prop({ type: mongoose.Schema.Types.Mixed})
+  @prop({ type: () => [Note] })
   public notes?: Note[];
+
+  @prop({ type: () => Metric })
+  public metrics?: Metric;
 }
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+  },
+})
 export class Task extends TimeStamps {
   @prop({ required: true })
   public title!: string;
@@ -74,9 +111,15 @@ export class Task extends TimeStamps {
   dueDate?: Date;
 }
 
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+  },
+})
 export class Note extends TimeStamps {
-  @prop({ required: true, ref: () => Account })
-  public writer!: Ref<Account>;
+  @prop({ required: true })
+  public writer!: mongoose.Schema.Types.ObjectId;
 
   @prop({ required: true })
   public content!: string;
