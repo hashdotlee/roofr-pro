@@ -7,7 +7,7 @@ interface ICustomerPayload {
   fullname: string;
   email?: string;
   phone?: string;
-  ssn?: number;
+  ssn?: string;
 }
 
 type TCustomerResponse = {
@@ -36,7 +36,7 @@ export const createCustomer = async (customerPayload: ICustomerPayload) => {
 
 export const updateCustomer = async (
   id: string,
-  customerPayload: ICustomerPayload
+  customerPayload: ICustomerPayload,
 ) => {
   try {
     await dbConnect();

@@ -128,13 +128,13 @@ export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
                 if (customer) {
                   form.setValue("email", customer.email || "");
                   form.setValue("phone", customer.phone || "");
-                  form.setValue("ssn", customer.ssn || 0);
+                  form.setValue("ssn", customer.ssn?.toString() || "");
                   setIsDisabled(true);
                 } else {
                   setIsDisabled(false);
                   form.setValue("email", "");
                   form.setValue("phone", "");
-                  form.setValue("ssn", 0);
+                  form.setValue("ssn", "");
                 }
               }}
               control={form.control}

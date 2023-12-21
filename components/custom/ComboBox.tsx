@@ -67,7 +67,7 @@ export default function CustomComboBox({
                     selectClassName,
                   )}
                 >
-                  {field.value
+                  {field.value && options?.length > 0
                     ? options?.find((option) => option.value === field.value)
                         ?.label ?? field.value
                     : placeholder}

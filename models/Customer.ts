@@ -21,7 +21,7 @@ export class Customer {
   public phone?: string;
 
   @prop({ select: false })
-  public ssn?: number;
+  public ssn?: string;
 
   @prop({ default: Date.now() })
   public createdAt?: Date;
