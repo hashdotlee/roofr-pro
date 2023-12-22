@@ -49,7 +49,15 @@ export default function KanbanTab({
           <span className="font-semibold text-base truncate">{tab.name}</span>
           <span className="font-semibold">({jobs.length})</span>
         </div>
-        <div className="text-xs font-semibold text-neutral-600">$0.00</div>
+        <div className="text-xs font-semibold text-neutral-600">
+          {jobs
+            .reduce((acc, curr) => acc + (curr?.jobValue || 0), 0)
+            .toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+              notation: "compact",
+            })}
+        </div>
       </div>
 
       <div className={cn("flex flex-col gap-4 p-4")}>
