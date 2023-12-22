@@ -40,7 +40,7 @@ const formSchema = z.object({
     .optional(),
 });
 
-export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
+const AddCustomerModal = ({ children }: { children: ReactNode }) => {
   const jobId = useParams().id as string;
   const { customers, filter, setFilter } = useCustomer();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -189,3 +189,5 @@ export const AddCustomerModal = ({ children }: { children: ReactNode }) => {
     </Dialog>
   );
 };
+
+export default AddCustomerModal;

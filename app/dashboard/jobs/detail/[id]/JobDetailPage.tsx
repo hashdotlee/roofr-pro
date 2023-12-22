@@ -5,7 +5,6 @@ import { Clipboard, Loader2, Mail, Plus, UserPlus, X } from "lucide-react";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
 import Attachment from "./(components)/tabs/Attachment";
-import DeleteJobDialog from "./(components)/dialogs/DeleteJobDialog";
 import InstantEstimate from "./(components)/tabs/InstantEstimate";
 import JobDetail from "./(components)/tabs/JobDetail";
 import Measurement from "./(components)/tabs/Measurement";
@@ -13,14 +12,25 @@ import NoteList from "./(components)/sidebar/NoteList";
 import Proposal from "./(components)/tabs/Proposal";
 import TasksList from "./(components)/tabs/TaskList";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { AddCustomerModal } from "./(components)/dialogs/AddCustomerDialog";
-import EditAddressDialog from "./(components)/dialogs/EditAddressDialog";
 import useJob from "@/hooks/useJob";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { updateJob } from "@/actions/job";
 import { useTasks } from "@/hooks/useTasks";
 import { useParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const DeleteJobDialog = dynamic(
+  () => import("./(components)/dialogs/DeleteJobDialog"),
+);
+
+const AddCustomerModal = dynamic(
+  () => import("./(components)/dialogs/AddCustomerDialog"),
+);
+
+const EditAddressDialog = dynamic(
+  () => import("./(components)/dialogs/EditAddressDialog"),
+);
 
 const tabs = [
   {
