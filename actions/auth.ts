@@ -22,6 +22,7 @@ export async function login(options: Record<string, any>) {
       status: StatusCodes.OK,
     } satisfies AuthResponse;
   } catch (error) {
+    console.log(error);
     if (error instanceof AuthError && error.type === "CredentialsSignin") {
       return {
         ok: false,

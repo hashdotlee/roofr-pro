@@ -2,22 +2,31 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getAbbreviation } from "@/lib/text";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Loader2 } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { Session } from "next-auth/types";
+import { useEffect, useState } from "react";
 import { useCollapsed } from "../../Sidebar";
 import DropdownMenuList from "./DropdownMenuList";
 
 export default function ProfileMenu() {
   const collapsed = useCollapsed();
-  const { data: session, status } = useSession();
+  const [session, setSession] = useState<Session>();
 
-  if (status === "loading")
+  useEffect(() => {
+    const fetchSession = async () => {
+      const res = await fetch("/api/auth/session");
+      setSession(await res.json());
+    };
+    fetchSession();
+  }, []);
+
+  if (!session)
     return (
       <div className="flex flex-row justify-center items-center mt-4">
         <Loader2 className="animate-spin" />
@@ -46,7 +55,9 @@ export default function ProfileMenu() {
             )}
           >
             <div className="flex flex-col gap-0 items-start">
-              <h1 className="text-base font-bold truncate">{session?.user?.name}</h1>
+              <h1 className="text-base font-bold truncate">
+                {session?.user?.name}
+              </h1>
               <p className="text-gray-500 text-xs uppercase bg-slate-200 px-4 py-0.5 rounded-2xl">
                 {session?.user?.role}
               </p>
