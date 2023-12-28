@@ -16,36 +16,23 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { SortBy, useJobs } from "@/hooks/useJobs";
+import { SortBy, initFilter, useJobs } from "@/hooks/useJobs";
+import { useUrgentTasks } from "@/hooks/useTasks";
+import { Roles } from "@/types/account";
 import { JobStage } from "@/types/job";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDownIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 import NewJobDialog from "./(components)/NewJobDialog";
 import KanbanView from "./KanbanView";
 import { TaskTableColumn } from "./TaskTableColumn";
-import { useUrgentTasks } from "@/hooks/useTasks";
-import { useSession } from "next-auth/react";
-import { Roles } from "@/types/account";
 
 export default function Jobs() {
   const { data: session } = useSession();
-  const { filter, setFilter } = useJobs({
-    stage: [
-      JobStage.NEW_LEAD,
-      JobStage.APPOINTMENT_SCHEDULED,
-      JobStage.PROPOSAL_SENT,
-      JobStage.PROPOSAL_SIGNED,
-      JobStage.PRE_PRODUCTION,
-      JobStage.POST_PRODUCTION,
-      JobStage.PAYMENT,
-      JobStage.JOB_COMPLETED,
-      JobStage.LOST,
-      JobStage.UNQUALIFIED,
-    ],
-  });
+  const { filter, setFilter } = useJobs();
 
   return (
     <div className="h-screen w-full py-4 px-8 overflow-x-hidden">
@@ -89,20 +76,7 @@ const formSchema = z.object({
 function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      stage: [
-        JobStage.NEW_LEAD,
-        JobStage.APPOINTMENT_SCHEDULED,
-        JobStage.PROPOSAL_SENT,
-        JobStage.PROPOSAL_SIGNED,
-        JobStage.PRE_PRODUCTION,
-        JobStage.POST_PRODUCTION,
-        JobStage.PAYMENT,
-        JobStage.JOB_COMPLETED,
-        JobStage.LOST,
-        JobStage.UNQUALIFIED,
-      ],
-    },
+    defaultValues: initFilter,
   });
   const onSubmit = useDebouncedCallback(() => {
     const newData = form.getValues();

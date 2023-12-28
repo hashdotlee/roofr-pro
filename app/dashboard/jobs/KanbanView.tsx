@@ -1,7 +1,7 @@
-import { useJobs } from "@/hooks/useJobs";
 import { cn } from "@/lib/utils";
 import { JobStage } from "@/types/job";
 import KanbanTab, { IKanbanTab } from "./(components)/KanbanTab";
+import { useJobs } from "@/hooks/useJobs";
 
 const tabs: IKanbanTab[] = [
   {
@@ -57,7 +57,7 @@ const tabs: IKanbanTab[] = [
 ];
 
 export default function KanbanView({ filter }: { filter: any }) {
-  const { jobs } = useJobs();
+  const { data: jobs = [], status } = useJobs();
 
   return (
     <div
@@ -74,6 +74,7 @@ export default function KanbanView({ filter }: { filter: any }) {
                 key={tab.id}
                 tab={tab}
                 jobs={jobs.filter((job) => job.stage === tab.type)}
+                fetching={status === "pending"}
               />
             ),
         )}

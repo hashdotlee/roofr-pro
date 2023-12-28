@@ -1,51 +1,69 @@
+import { updateJob } from "@/actions/job";
 import CustomComboBox from "@/components/custom/ComboBox";
 import CustomSelect from "@/components/custom/Select";
+import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import useJob from "@/hooks/useJob";
+import baseQueryKey from "@/lib/constants/queryKey";
+import { useJobStore } from "@/lib/stores/jobStore";
 import { defaultSources } from "@/types/default-sources";
 import { JobStage } from "@/types/job";
+import { useQueryClient } from "@tanstack/react-query";
 import { LightbulbIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UseFormReturn, useForm } from "react-hook-form";
-import AssigneePopover from "./AssigneePopover";
-import { Button } from "@/components/ui/button";
-import { updateJob } from "@/actions/job";
 import toast from "react-hot-toast";
-import { useJobStore } from "@/lib/stores/jobStore";
+import { z } from "zod";
+import AssigneePopover from "./AssigneePopover";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-function getJobDetails(job: ComposeJobDTO | null) {
-  return {
-    assignee: {
-      _id: job?.assignee?._id,
-      firstName: job?.assignee?.firstName,
-      lastName: job?.assignee?.lastName,
-      avatar: job?.assignee?.avatar,
-    },
-    stage: job?.stage,
-    source: job?.source,
-    jobValue: job?.jobValue,
-    details: job?.details,
-  };
-}
+const formSchema = z.object({
+    assignee: z.object({
+        _id: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        email: z.string().optional(),
+        phone: z.string().optional(),
+        }).optional(),
+    stage: z.nativeEnum(JobStage).optional(),
+    source: z.string().optional(),
+    jobValue: z.number().optional(),
+    details: z.string().optional(),
+    });
 
-type JobDetailsForm = ReturnType<typeof getJobDetails>;
+const defaultValue = {
+        assignee: {
+        _id: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+            },
+        stage: JobStage.NEW_LEAD,
+        source: "",
+        jobValue: 0,
+        details: "",
+        };
+
 
 export default function JobDetails() {
-  const { job, setJob } = useJob();
+  const id = useParams().id as string;
+  const { data: job } = useJob(id);
   const [isSaving, setIsSaving] = useState(false);
   const [hasNotSavedChanges, setHasNotSavedChanges] = useState(false);
   const modifyJob = useJobStore((state) => state.modifyJob);
 
-  const form = useForm({
-    defaultValues: getJobDetails(job),
-  });
+  const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+    });
 
   useEffect(() => {
     if (job) {
-      form.reset(getJobDetails(job));
+      form.reset(job);
     }
   }, [job]);
 
@@ -55,29 +73,23 @@ export default function JobDetails() {
     else setHasNotSavedChanges(false);
   }, [form.watch()]);
 
-  const onSubmit = async (data: JobDetailsForm) => {
-    const payload = {} as any;
-    if (data.assignee._id !== job?.assignee?._id)
-      payload.assignee = data.assignee._id;
-    if (data.jobValue !== job?.jobValue) payload.jobValue = data.jobValue;
-    if (data.stage !== job?.stage) payload.stage = data.stage;
-    if (data.source !== job?.source) payload.source = data.source;
-    if (data.details !== job?.details) payload.details = data.details;
+  const queryClient = useQueryClient();
 
-    if (!payload) return;
+  const onSubmit = async (data: ) => {
+    if (JSON.stringify(data) === JSON.stringify(getJobDetails(job))) return;
 
     try {
       setIsSaving(true);
-      const res = await updateJob(job?._id!, payload);
+      const res = await updateJob(job?._id!, data);
       if (!res.ok) throw { message: res.message };
       toast.success(res.message);
-      setJob((old) => {
-        if (!old) return old;
-        return {
+      queryClient.setQueryData(
+        [...baseQueryKey.JOB_DETAILS, id],
+        (old: ComposeJobDTO) => ({
           ...old,
-          ...(data as any),
-        };
-      });
+          ...payload,
+        }),
+      );
       if (payload.stage) {
         modifyJob(String(job?._id), {
           stage: form.getValues().stage!,

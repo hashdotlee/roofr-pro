@@ -1,5 +1,3 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -9,11 +7,11 @@ import Input from "@/components/custom/Input";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
-import { useJobs } from "@/hooks/useJobs";
-import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 const FormSchema = z.object({
   address: z.string({
@@ -30,7 +28,9 @@ export function NewJobForm({ setOpen }: { setOpen: (open: boolean) => void }) {
   const user = session?.user;
   const [loading, setLoading] = useState(false);
 
-  const { toggleRefetch } = useJobs();
+  const queryClient = useQueryClient();
+
+  const toggleRefetch = () => {};
 
   const router = useRouter();
 
@@ -45,6 +45,7 @@ export function NewJobForm({ setOpen }: { setOpen: (open: boolean) => void }) {
         address: data.address,
         creatorId: user.id,
       });
+      queryClient.setQueryData(["jobs", job._id], job);
       toast.success("Job created successfully");
       toggleRefetch();
       setOpen(false);

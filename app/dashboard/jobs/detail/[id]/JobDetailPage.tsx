@@ -19,19 +19,26 @@ import { updateJob } from "@/actions/job";
 import { useTasks } from "@/hooks/useTasks";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useQueryClient } from "@tanstack/react-query";
+import baseQueryKey from "@/lib/constants/queryKey";
+import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 
+// use dynamic import to reduce bundle size
 const DeleteJobDialog = dynamic(
   () => import("./(components)/dialogs/DeleteJobDialog"),
 );
 
+// use dynamic import to reduce bundle size
 const AddCustomerModal = dynamic(
   () => import("./(components)/dialogs/AddCustomerDialog"),
 );
 
+// use dynamic import to reduce bundle size
 const EditAddressDialog = dynamic(
   () => import("./(components)/dialogs/EditAddressDialog"),
 );
 
+// use tabs to map the content to each tab
 const tabs = [
   {
     id: "job_details",
@@ -65,6 +72,7 @@ const tabs = [
   },
 ];
 
+// use InView to detect if the tab is in view
 const InView = ({
   children,
   id,
@@ -98,9 +106,11 @@ export default function JobDetailPage({
 
   const jobId = useParams().id as string;
 
-  const { job, setJob } = useJob();
+  const { data: job } = useJob(jobId);
 
   const { tasks } = useTasks(jobId);
+
+  const queryClient = useQueryClient();
 
   const handleTabChange = (id: string) => {
     setActiveTab(id);
@@ -118,13 +128,14 @@ export default function JobDetailPage({
     await updateJob(String(job?._id), {
       customer: undefined,
     });
-    setJob((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
+
+    queryClient.setQueryData(
+      [baseQueryKey.JOB_DETAILS, job?._id],
+      (old: ComposeJobDTO) => ({
+        ...old,
         customer: undefined,
-      };
-    });
+      }),
+    );
     toast.success("Customer removed successfully");
   };
 

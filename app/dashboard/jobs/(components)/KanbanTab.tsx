@@ -1,10 +1,12 @@
-import { useDrop } from "react-dnd";
-import JobItem from "./JobItem";
-import { JobStage } from "@/types/job";
-import { cn } from "@/lib/utils";
-import { useJobStore } from "@/lib/stores/jobStore";
 import { updateJob } from "@/actions/job";
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
+import baseQueryKey from "@/lib/constants/queryKey";
+import { cn } from "@/lib/utils";
+import { JobStage } from "@/types/job";
+import { useQueryClient } from "@tanstack/react-query";
+import { useDrop } from "react-dnd";
+import JobItem from "./JobItem";
+import JobSkeleton from "./JobSkeleton";
 
 export interface IKanbanTab {
   id: string;
@@ -15,16 +17,36 @@ export interface IKanbanTab {
 export default function KanbanTab({
   tab,
   jobs,
+  fetching,
 }: {
   tab: IKanbanTab;
   jobs: ComposeJobDTO[];
+  fetching: boolean;
 }) {
-  const moveJob = useJobStore((state) => state.moveJob);
+  const queryClient = useQueryClient();
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "JOB_ITEM",
     drop: (item: { id: string; stage: JobStage }) => {
-      moveJob(item.id, tab.type);
+      // set query cache
+      queryClient.setQueriesData(
+        {
+          queryKey: baseQueryKey.JOB_LIST,
+          exact: false,
+        },
+        (old?: ComposeJobDTO[]) =>
+          old?.map((job) => {
+            if (job._id === item.id) {
+              return {
+                ...job,
+                stage: tab.type,
+              };
+            }
+            return job;
+          }),
+      );
+
+      // update db using server action
       updateJob(item.id, {
         stage: tab.type,
       });
@@ -61,11 +83,19 @@ export default function KanbanTab({
       </div>
 
       <div className={cn("flex flex-col gap-4 p-4")}>
-        {jobs.map(
-          (item) =>
-            item.stage === tab.type && (
-              <JobItem key={String(item._id)} job={item} />
-            ),
+        {!fetching ? (
+          jobs.map(
+            (item) =>
+              item.stage === tab.type && (
+                <JobItem key={String(item._id)} job={item} />
+              ),
+          )
+        ) : (
+          <>
+            <JobSkeleton />
+            <JobSkeleton />
+            <JobSkeleton />
+          </>
         )}
       </div>
     </div>
