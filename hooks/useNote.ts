@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
+import { fetchWrapper } from "@/lib/fetchWrapper";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchNotes = async (jobId: string) => {
+  const { data } = await fetchWrapper.get(`/api/jobs/${jobId}/notes`);
+  return data;
+};
 
 export const useNotes = (jobId: string) => {
-  const [notes, setNotes] = useState([]);
-  const [refetch, setRefetch] = useState(false);
-  const toggleRefetch = () => setRefetch((prev) => !prev);
-
-  useEffect(() => {
-    async function fetchNotes() {
-      const res = await fetch(`/api/jobs/${jobId}/notes`);
-      const data = await res.json();
-      setNotes(data);
-    }
-    fetchNotes();
-  }, [refetch]);
-
-  return {
-    notes,
-    toggleRefetch,
-  };
+  return useQuery({
+    queryKey: ["notes", jobId],
+    queryFn: () => fetchNotes(jobId),
+    enabled: !!jobId,
+  });
 };

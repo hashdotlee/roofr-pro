@@ -8,6 +8,13 @@ import { LuKanbanSquare } from "react-icons/lu";
 import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 import { DataTable } from "@/components/ui/data-table";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
@@ -16,13 +23,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import useAccounts from "@/hooks/useAccount";
 import { SortBy, initFilter, useJobs } from "@/hooks/useJobs";
 import { useUrgentTasks } from "@/hooks/useTasks";
+import { cn } from "@/lib/utils";
 import { Roles } from "@/types/account";
 import { JobStage } from "@/types/job";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDownIcon } from "lucide-react";
+import { Check, ChevronDown, ChevronDownIcon, Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
@@ -32,7 +42,7 @@ import { TaskTableColumn } from "./TaskTableColumn";
 
 export default function Jobs() {
   const { data: session } = useSession();
-  const { filter, setFilter } = useJobs();
+  const { filter, setFilter, data: jobs = [] } = useJobs();
 
   return (
     <div className="h-screen w-full py-4 px-8 overflow-x-hidden">
@@ -57,7 +67,7 @@ export default function Jobs() {
         <Action filter={filter} setFilter={setFilter} />
 
         <TabsContent value="kanban">
-          <KanbanView filter={filter} />
+          <KanbanView filter={filter} jobs={jobs} />
           {session?.user?.role === Roles.CONTRACTOR && <TaskTable />}
         </TabsContent>
         <TabsContent value="listview">Coming soon!</TabsContent>
@@ -71,9 +81,11 @@ const formSchema = z.object({
   stage: z.string().array(),
   sortBy: z.nativeEnum(SortBy).optional(),
   search: z.string().optional(),
+  assignee: z.string(),
 });
 
 function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initFilter,
@@ -115,13 +127,17 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
       ...newData,
     });
   }, 500);
+  const { data: assignees = [], isFetching } = useAccounts({
+    page: 1,
+    limit: 10,
+  });
   return (
     <div className="w-full mt-6 flex flex-row gap-3 items-center justify-between">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           onChange={form.handleSubmit(onSubmit)}
-          className="flex gap-3 flex-row items-center justify-start"
+          className="flex gap-4 flex-row items-center justify-start"
         >
           <Label className="relative block shrink-0">
             <div className="absolute top-3 ps-4 text-gray-500 text-lg">
@@ -220,6 +236,74 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
               placeholder="Sort by"
             />
           </div>
+          <div>
+            <FormField
+              name="assignee"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        role="combobox"
+                        aria-expanded={open}
+                        className="border-0 flex items-center w-[200px] gap-2 text-sm text-blue-500 hover:text-blue-700 font-semibold text-left"
+                      >
+                        {field.value
+                          ? "Assignee: " +
+                            assignees.find(
+                              (assignee) => assignee._id === field.value,
+                            )?.lastName
+                          : "Assignee"}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search assignee..." />
+                        <CommandEmpty>No assignee found.</CommandEmpty>
+                        <CommandGroup>
+                          {!isFetching ? (
+                            assignees.map((assignee) => (
+                              <CommandItem
+                                key={assignee?._id}
+                                value={assignee?._id}
+                                ref={field.ref}
+                                onSelect={(currentValue) => {
+                                  form.setValue(
+                                    "assignee",
+                                    currentValue === field.value
+                                      ? ""
+                                      : currentValue,
+                                  );
+                                  form.handleSubmit(onSubmit)();
+                                  setOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    field.value === assignee._id
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {assignee.firstName} {assignee.lastName}
+                              </CommandItem>
+                            ))
+                          ) : (
+                            <div className="flex justify-center items-center h-32">
+                              <Loader2 className="w-8 h-8 animate-spin" />
+                            </div>
+                          )}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
+          </div>
         </form>
       </Form>
       <NewJobDialog />
@@ -228,7 +312,7 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
 }
 
 const TaskTable = () => {
-  const { tasks = [] } = useUrgentTasks();
+  const { data: tasks = [] } = useUrgentTasks();
   return (
     <div className="rounded-md space-y-3 my-4">
       <h3 className="text-lg font-semibold text-gray-700">Urgent Tasks</h3>

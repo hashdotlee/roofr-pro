@@ -3,29 +3,26 @@ import { Input } from "@/components/ui/input";
 import { useTasks } from "@/hooks/useTasks";
 import { Send } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
-import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 import TaskItem from "./TaskItem";
+import { useCreateTask } from "@/hooks/useCreateTask";
 
 export default function TasksList() {
   const jobId = useParams().id as string;
-  const { tasks, toggleRefetch, setFilter, filter } = useTasks(jobId);
+  const { data: tasks = [], setFilter, filter } = useTasks(jobId);
   const [title, setTitle] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleCreateTask = () => {
-    setLoading(true);
-    fetch(`/api/jobs/${jobId}/tasks`, {
-      method: "POST",
-      body: JSON.stringify({
+  const { mutate: createTask, isPending } = useCreateTask({
+    jobId,
+  });
+
+  const handleCreateTask = async () => {
+    if (title.length > 0) {
+      createTask({
         title,
-      }),
-    }).then(() => {
-      setLoading(false);
-      toast.success("Task created");
-      toggleRefetch();
+      });
       setTitle("");
-    });
+    }
   };
 
   return (
@@ -51,13 +48,7 @@ export default function TasksList() {
       </div>
       <div className="flex mt-4 flex-col gap-4">
         {tasks.length > 0 ? (
-          tasks.map((task: any) => (
-            <TaskItem
-              toggleRefetch={toggleRefetch}
-              task={task}
-              key={task?._id}
-            />
-          ))
+          tasks.map((task: any) => <TaskItem task={task} key={task?._id} />)
         ) : (
           <div className="text-center text-xs text-gray-400">No tasks yet</div>
         )}
@@ -71,9 +62,9 @@ export default function TasksList() {
           className="w-full py-6 border-0 focus-visible:ring-offset-0 focus-visible:ring-offset-transparent focus-visible:ring-0"
           placeholder="Add a task"
           type="text"
-          value={title}
+          value={isPending ? "Pending..." : title}
           onChange={(e) => setTitle(e.target.value)}
-          disabled={loading}
+          disabled={isPending}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               handleCreateTask();

@@ -6,7 +6,6 @@ import { JobStage } from "@/types/job";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDrop } from "react-dnd";
 import JobItem from "./JobItem";
-import JobSkeleton from "./JobSkeleton";
 
 export interface IKanbanTab {
   id: string;
@@ -17,11 +16,9 @@ export interface IKanbanTab {
 export default function KanbanTab({
   tab,
   jobs,
-  fetching,
 }: {
   tab: IKanbanTab;
   jobs: ComposeJobDTO[];
-  fetching: boolean;
 }) {
   const queryClient = useQueryClient();
 
@@ -47,8 +44,11 @@ export default function KanbanTab({
       );
 
       // update db using server action
-      updateJob(item.id, {
-        stage: tab.type,
+      updateJob({
+        jobId: item.id,
+        job: {
+          stage: tab.type,
+        },
       });
     },
     collect: (monitor) => ({
@@ -83,19 +83,11 @@ export default function KanbanTab({
       </div>
 
       <div className={cn("flex flex-col gap-4 p-4")}>
-        {!fetching ? (
-          jobs.map(
-            (item) =>
-              item.stage === tab.type && (
-                <JobItem key={String(item._id)} job={item} />
-              ),
-          )
-        ) : (
-          <>
-            <JobSkeleton />
-            <JobSkeleton />
-            <JobSkeleton />
-          </>
+        {jobs.map(
+          (item) =>
+            item.stage === tab.type && (
+              <JobItem key={String(item._id)} job={item} />
+            ),
         )}
       </div>
     </div>

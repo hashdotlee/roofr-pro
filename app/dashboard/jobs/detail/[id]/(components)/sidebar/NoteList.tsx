@@ -9,7 +9,7 @@ import { useNotes } from "@/hooks/useNote";
 export default function NoteList() {
   const [content, setContent] = useState("");
   const jobId = useParams().id as string;
-  const { notes = [], toggleRefetch } = useNotes(jobId);
+  const { data: notes = [], refetch } = useNotes(jobId);
   const [loading, setLoading] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,7 @@ export default function NoteList() {
     }).then(() => {
       setLoading(false);
       setContent("");
-      toggleRefetch();
+      refetch();
     });
   };
 
@@ -42,7 +42,7 @@ export default function NoteList() {
         <div className="h-1" />
         <div className="h-1" ref={bottomRef} />
       </div>
-      <label htmlFor="add_note" className="relative">
+      <label htmlFor="add_note" className="relative mt-auto block">
         <Input
           id="add_note"
           value={content}

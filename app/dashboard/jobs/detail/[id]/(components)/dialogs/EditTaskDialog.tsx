@@ -1,5 +1,7 @@
+import CustomTextArea from "@/components/custom/Area";
 import { DatePicker } from "@/components/custom/DatePicker";
 import CustomInput from "@/components/custom/Input";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,59 +10,60 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { Pencil } from "lucide-react";
-import { useForm } from "react-hook-form";
-import AssigneePopover from "../tabs/AssigneePopover";
-import { Button } from "@/components/ui/button";
-import { useParams } from "next/navigation";
-import toast from "react-hot-toast";
-import { useState } from "react";
-import { z } from "zod";
+import { TaskDTO } from "@/dtos/compose-job.dto";
+import { useUpdateTask } from "@/hooks/useUpdateTask";
 import { zodResolver } from "@hookform/resolvers/zod";
-import CustomTextArea from "@/components/custom/Area";
+import { Pencil } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import AssigneePopover from "../tabs/AssigneePopover";
 
 const formSchema = z.object({
   title: z.string().min(1, {
     message: "Please enter a title.",
   }),
   description: z.string().optional(),
-  dueDate: z.date().nullable().optional(),
+  dueDate: z.date().optional(),
   assignee: z
     .object({
       _id: z.string(),
       firstname: z.string().optional(),
       lastname: z.string().optional(),
     })
-    .nullable()
     .optional(),
 });
 
-export default function EditTaskDialog({ task, toggleRefetch }: any) {
+interface EditTaskDialogProps {
+  taskId: string;
+  jobId: string;
+  task: TaskDTO;
+}
+
+export default function EditTaskDialog({
+  taskId,
+  task,
+  jobId,
+}: EditTaskDialogProps) {
   const [open, setOpen] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: task?.title,
-      description: task?.description,
+      title: "fhefe",
+      description: "r97r389r43432rl3",
       dueDate: new Date(task?.dueDate || Date.now()),
       assignee: task?.assignee,
     },
   });
-  const jobId = useParams().id as string;
-  const onSubmit = (data: any) => {
-    fetch(`/api/jobs/${jobId}/tasks/${task._id}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        title: data?.title,
-        description: data?.description,
-        dueDate: data?.dueDate,
-        assignee: data?.assignee?._id,
-      }),
-    }).then(() => {
-      toast.success("Task updated");
-      toggleRefetch();
-      setOpen(false);
-    });
+
+  const { mutate: handleUpdateTask } = useUpdateTask({
+    jobId,
+    taskId,
+  });
+
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    handleUpdateTask(data);
+    setOpen(false);
   };
 
   return (

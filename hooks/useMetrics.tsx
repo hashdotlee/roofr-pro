@@ -1,30 +1,16 @@
-import { Job } from "@/models/Job";
-import { useEffect, useState } from "react";
+import baseQueryKey from "@/lib/constants/queryKey";
+import { fetchWrapper } from "@/lib/fetchWrapper";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchMetrics = async (jobId: string) => {
+  const { data } = await fetchWrapper.get(`/api/jobs/${jobId}/metrics`);
+  return data;
+};
 
 export const useMetrics = (jobId: string) => {
-  const [metrics, setMetrics] = useState<Job["metrics"]>({
-    roofFootprintArea: 0,
-    pitch: 0,
-    roofAreaAdjustedForPitch: 0,
-    currentlyOnRoof: 0,
-    desiredMaterial: 0,
-    projectTimeline: 0,
-    residentialCommercial: 0,
-    wantsFinancing: 0,
-    customerNote: 0,
+  return useQuery({
+    queryKey: [...baseQueryKey.JOB_METRICS, jobId],
+    queryFn: () => fetchMetrics(jobId),
+    enabled: !!jobId,
   });
-
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      const res = (await fetch(`/api/jobs/${jobId}/metrics`).then((res) =>
-        res.json(),
-      )) as any;
-
-      setMetrics(res.data);
-    };
-
-    fetchMetrics();
-  }, []);
-
-  return { metrics };
 };
