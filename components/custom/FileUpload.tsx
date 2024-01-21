@@ -27,7 +27,7 @@ export default function FileUploader({
   const [urls, setUrls] = useState<{ [key: string]: string }>({});
   // 'file' comes from the Blob or File API
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget?.files) {
       for (let i = 0; i < e.currentTarget?.files.length; i++) {
         const file = e.currentTarget?.files[i];
@@ -51,23 +51,23 @@ export default function FileUploader({
             }));
           },
           (error) => {},
-          () => {
-            getMetadata(storageRef).then((metadata) => {
+          async () => {
+            await getMetadata(storageRef).then((metadata) => {
               setMetadata((old) => ({
                 ...old,
                 [file.name]: metadata,
               }));
             });
-            getDownloadURL(storageRef).then((url) => {
+            await getDownloadURL(storageRef).then((url) => {
               setUrls((old) => ({
                 ...old,
                 [file.name]: url,
               }));
+              onChange([...value, url]);
             });
           },
         );
       }
-      onChange([...value, ...Object.values(urls).filter((url) => url)]);
     }
   };
 
@@ -103,58 +103,23 @@ export default function FileUploader({
           ))}
         {files &&
           files?.length > 0 &&
-          files.map((file, index) => (
-            <div
-              key={index}
-              className="px-4 cursor-pointer py-2 flex justify-between gap-2 items-center"
-            >
-              {urls && urls?.[file.name] ? (
-                <Link
-                  href={urls?.[file.name]}
-                  className="text-xs font-bold text-blue-400 w-full hover:underline line-clamp-1"
-                >
-                  {index + value.length + 1}. {metadata?.[file.name]?.fullPath}{" "}
-                </Link>
-              ) : (
-                <div className="text-xs line-clamp-1">{file?.name}</div>
-              )}
-              {progress?.[file.name] < 100 && (
-                <ProgressBar max={100} value={progress?.[file.name]} />
-              )}
-              {!urls?.[file.name] && (
-                <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-              )}
-              <>
-                <Button
-                  type="button"
-                  variant={"link"}
-                  className="flex text-destructive text-xs items-center gap-2"
-                  onClick={() => {
-                    const newUrls = {
-                      ...urls,
-                      [file.name]: "",
-                    };
-
-                    setFiles(files.filter((f) => f.name !== file.name));
-
-                    setProgress({
-                      ...progress,
-                      [file.name]: 0,
-                    });
-
-                    setUrls(newUrls);
-
-                    onChange([
-                      ...value,
-                      ...Object.values(newUrls).filter((u) => u),
-                    ]);
-                  }}
-                >
-                  <Trash className="w-4 h-4 inline" /> Remove
-                </Button>
-              </>
-            </div>
-          ))}
+          files
+            .filter(
+              (item) => progress[item.name] > 0 && progress[item.name] < 100,
+            )
+            .map((file, index) => (
+              <div
+                key={index}
+                className="px-4 cursor-pointer py-2 flex justify-between gap-2 items-center"
+              >
+                {progress?.[file.name] < 100 && (
+                  <ProgressBar max={100} value={progress?.[file.name]} />
+                )}
+                {!urls?.[file.name] && (
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                )}
+              </div>
+            ))}
       </div>
       <label
         htmlFor="file-upload"
