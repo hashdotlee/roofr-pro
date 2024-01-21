@@ -8,30 +8,37 @@ import { LuKanbanSquare } from "react-icons/lu";
 import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 import { DataTable } from "@/components/ui/data-table";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import useAccounts from "@/hooks/useAccount";
 import { SortBy, initFilter, useJobs } from "@/hooks/useJobs";
 import { useUrgentTasks } from "@/hooks/useTasks";
 import { cn } from "@/lib/utils";
 import { Roles } from "@/types/account";
 import { JobStage } from "@/types/job";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, ChevronDownIcon } from "lucide-react";
+import { Check, ChevronDown, ChevronDownIcon, Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 import NewJobDialog from "./(components)/NewJobDialog";
 import KanbanView from "./KanbanView";
 import { TaskTableColumn } from "./TaskTableColumn";
-import { Button } from "@/components/ui/button";
 
 export default function Jobs() {
   const { data: session } = useSession();
@@ -78,6 +85,7 @@ const formSchema = z.object({
 });
 
 function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initFilter,
@@ -119,6 +127,10 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
       ...newData,
     });
   }, 500);
+  const { data: assignees = [], isFetching } = useAccounts({
+    page: 1,
+    limit: 10,
+  });
   return (
     <div className="w-full mt-6 flex flex-row gap-3 items-center justify-between">
       <Form {...form}>
@@ -230,47 +242,62 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <Popover>
-                    <PopoverTrigger className="flex items-center border-0 hover:bg-transparent hover:text-blue-700 gap-2 text-sm font-semibold text-blue-500">
-                      <span>Assignee</span>
-                      <ChevronDownIcon className="w-4 h-4" />
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        role="combobox"
+                        aria-expanded={open}
+                        className="border-0 flex items-center w-[200px] gap-2 text-sm text-blue-500 hover:text-blue-700 font-semibold text-left"
+                      >
+                        {field.value
+                          ? "Assignee: " +
+                            assignees.find(
+                              (assignee) => assignee._id === field.value,
+                            )?.lastName
+                          : "Assignee"}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </button>
                     </PopoverTrigger>
-                    <PopoverContent className="p-2">
-                      <div>
-                        <Input
-                          placeholder={"Search"}
-                          className="border-0 border-b focus-visible:ring-0 rounded-none"
-                          value={form.getValues("assignee")}
-                          onChange={(e) => {
-                            form.setValue("assignee", e.target.value);
-                          }}
-                        />
-                        <div>
-                          {[{ label: "John Doe", value: "John Doe" }].map(
-                            (option) => (
-                              <Button
-                                type="button"
-                                value={option.label}
-                                key={option.value}
-                                onClick={() => {
-                                  field.onChange(option.value);
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search assignee..." />
+                        <CommandEmpty>No assignee found.</CommandEmpty>
+                        <CommandGroup>
+                          {!isFetching ? (
+                            assignees.map((assignee) => (
+                              <CommandItem
+                                key={assignee?._id}
+                                value={assignee?._id}
+                                ref={field.ref}
+                                onSelect={(currentValue) => {
+                                  form.setValue(
+                                    "assignee",
+                                    currentValue === field.value
+                                      ? ""
+                                      : currentValue,
+                                  );
+                                  form.handleSubmit(onSubmit)();
+                                  setOpen(false);
                                 }}
-                                className="w-full justify-start border-0 text-left bg-transparent hover:bg-gray-100 rounded-none text-current"
                               >
                                 <Check
                                   className={cn(
-                                    "mr-2 grow-0 shrink-0 h-4 w-4",
-                                    option.value === field.value
+                                    "mr-2 h-4 w-4",
+                                    field.value === assignee._id
                                       ? "opacity-100"
                                       : "opacity-0",
                                   )}
                                 />
-                                {option.label}
-                              </Button>
-                            ),
+                                {assignee.firstName} {assignee.lastName}
+                              </CommandItem>
+                            ))
+                          ) : (
+                            <div className="flex justify-center items-center h-32">
+                              <Loader2 className="w-8 h-8 animate-spin" />
+                            </div>
                           )}
-                        </div>
-                      </div>
+                        </CommandGroup>
+                      </Command>
                     </PopoverContent>
                   </Popover>
                 </FormItem>

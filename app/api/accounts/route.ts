@@ -7,7 +7,7 @@ import { Roles } from "@/types/account";
 export const GET = catchAsync(async (req) => {
   await dbConnect();
   const { searchParams } = new URL(req.url);
-  const query = AccountModel.find({
+  let query = AccountModel.find({
     role: Roles.CONTRACTOR,
   });
   const search = searchParams.get("search");
@@ -23,14 +23,16 @@ export const GET = catchAsync(async (req) => {
   }
   const page = searchParams.get("page");
   const limit = searchParams.get("limit");
-  if (!page || !limit) {
-    return NextResponse.json(await query.exec());
+  if (page && limit) {
+    query = query
+      .skip((parseInt(page) - 1) * parseInt(limit))
+      .limit(parseInt(limit));
   }
 
-  const accounts = await query
-    .skip((parseInt(page) - 1) * parseInt(limit))
-    .limit(parseInt(limit))
-    .exec();
+  const accounts = await query.exec();
 
-  return NextResponse.json(accounts);
+  return NextResponse.json({
+    data: accounts,
+    message: "Get accounts successfully",
+  });
 });

@@ -60,10 +60,13 @@ export const deleteJob = async (jobId: string) => {
   }
 };
 
-export const updateJob = async (
-  jobId: string,
-  job: Partial<ComposeJobDTO>,
-) => {
+export const updateJob = async ({
+  jobId,
+  job,
+}: {
+  jobId: string;
+  job: Partial<ComposeJobDTO>;
+}) => {
   try {
     await dbConnect();
     const updatedJob = await JobModel.updateOne({ _id: jobId }, job);

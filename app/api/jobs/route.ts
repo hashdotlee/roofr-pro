@@ -26,6 +26,7 @@ export const GET = catchAsync(async (req) => {
   const stage = searchParams.get("stage");
   const sortBy = searchParams.get("sortBy");
   const search = searchParams.get("search");
+  const assignee = searchParams.get("assignee");
 
   if (search) {
     query.where({
@@ -53,6 +54,12 @@ export const GET = catchAsync(async (req) => {
   if (sortBy) {
     query.sort({
       [sortBy]: -1,
+    });
+  }
+
+  if (assignee) {
+    query.where({
+      assignee,
     });
   }
 

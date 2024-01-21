@@ -44,8 +44,11 @@ export default function KanbanTab({
       );
 
       // update db using server action
-      updateJob(item.id, {
-        stage: tab.type,
+      updateJob({
+        jobId: item.id,
+        job: {
+          stage: tab.type,
+        },
       });
     },
     collect: (monitor) => ({

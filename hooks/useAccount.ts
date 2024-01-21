@@ -1,5 +1,8 @@
-import { Account } from "@/models/Account";
-import { useEffect, useState } from "react";
+import { ComposeAccountDTO } from "@/dtos/compose-account.dto";
+import baseQueryKey from "@/lib/constants/queryKey";
+import { fetchWrapper } from "@/lib/fetchWrapper";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface AccountFilter {
   search?: string;
@@ -7,28 +10,24 @@ interface AccountFilter {
   limit?: number;
 }
 
+const fetchAccounts = async (filter?: AccountFilter) => {
+  const { data } = await fetchWrapper.get(`/api/accounts`, {
+    params: filter,
+  });
+  return data;
+};
+
 export default function useAccounts(initFilter?: AccountFilter) {
   const [filter, setFilter] = useState<AccountFilter>(
     initFilter || <AccountFilter>{},
   );
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  useEffect(() => {
-    async function fetchAccounts() {
-      const search = filter?.search?.replace(/[^a-zA-Z0-9 -]/g, "");
-      const params = new URLSearchParams({
-        search: search || "",
-        page: filter?.page?.toString() || "1",
-        limit: filter?.limit?.toString() || "10",
-      });
-      const res = await fetch(`/api/accounts?${params.toString()}`);
-      const data = await res.json();
-      setAccounts(data);
-    }
-    fetchAccounts();
-  }, [filter]);
 
+  const query = useQuery<ComposeAccountDTO[]>({
+    queryKey: [...baseQueryKey.ACCOUNT_LIST, filter],
+    queryFn: () => fetchAccounts(filter),
+  });
   return {
-    accounts,
+    ...query,
     filter,
     setFilter,
   };
