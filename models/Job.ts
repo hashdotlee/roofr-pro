@@ -111,15 +111,14 @@ export class Task extends TimeStamps {
   dueDate?: Date;
 }
 
-
 @modelOptions({
   schemaOptions: {
     timestamps: true,
   },
 })
 export class Note extends TimeStamps {
-  @prop({ required: true })
-  public writer!: mongoose.Schema.Types.ObjectId;
+  @prop({ required: true, ref: () => Account })
+  public writer!: Ref<Account>;
 
   @prop({ required: true })
   public content!: string;

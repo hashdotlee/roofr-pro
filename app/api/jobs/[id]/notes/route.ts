@@ -58,10 +58,7 @@ export const GET = catchAsync(
     await dbConnect();
     const jobId = params.id;
     const job = await JobModel.findById(jobId)
-      .populate({
-        path: "notes.writer",
-        model: "Account",
-      })
+      .populate("notes.writer")
       .select("notes");
     return NextResponse.json({
       message: "Successfully!",
