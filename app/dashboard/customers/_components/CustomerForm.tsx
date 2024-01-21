@@ -17,6 +17,7 @@ import { useUpdateCustomer } from "@/hooks/useUpdateCustomer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -91,9 +92,15 @@ export default function CustomerForm({
     router.back();
   }
 
+  useEffect(() => {
+    if (customer && mode === ComposeMode.Edit) {
+      form.reset(customer);
+    }
+  }, [customer]);
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="fullname"

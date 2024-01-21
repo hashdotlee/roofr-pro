@@ -45,13 +45,14 @@ export default function JobItem({ job }: { job: ComposeJobDTO }) {
         <span className="py-1 px-2 text-xs bg-gray-200/50 inline-block text-neutral-600 rounded-2xl">
           {job?.tasks?.length} tasks
         </span>
-        <span className="py-1 px-2 text-xs bg-gray-200/50 inline-block text-neutral-600 rounded-2xl">
-          {job?.jobValue &&
-            job?.jobValue?.toLocaleString("en-US", {
+        {job?.jobValue && (
+          <span className="py-1 px-2 text-xs bg-gray-200/50 inline-block text-neutral-600 rounded-2xl">
+            {job?.jobValue?.toLocaleString("en-US", {
               style: "currency",
               currency: "USD",
             })}
-        </span>
+          </span>
+        )}
       </div>
       <div className="flex justify-between px-4 py-1 bg-gray-100 items-center">
         <div className="flex items-center gap-2">

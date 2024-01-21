@@ -11,6 +11,9 @@ export const GET = catchAsync(
     await dbConnect();
     const customer = await CustomerModel.findById(id);
 
-    return NextResponse.json(customer);
+    return NextResponse.json({
+        data: customer,
+        message: "Successfully!",
+    });
   }
 );

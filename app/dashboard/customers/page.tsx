@@ -18,7 +18,6 @@ import { useRouter } from "next/navigation";
 
 export default function Customers() {
   const router = useRouter();
-
   const { data: customers = [], isLoading: loading } = useCustomers();
 
   return (

@@ -1,6 +1,5 @@
 "use client";
 
-import { deleteCustomer } from "@/actions/customer";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,10 +9,9 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useDeleteCustomer } from "@/hooks/useDeleteCustomer";
 import { Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import toast from "react-hot-toast";
 
 export default function DeleteCustomerDialog({
   customerId,
@@ -21,7 +19,7 @@ export default function DeleteCustomerDialog({
   customerId: string;
 }) {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const { mutate: deleteCustomer } = useDeleteCustomer(customerId);
 
   return (
     <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
@@ -47,14 +45,9 @@ export default function DeleteCustomerDialog({
           </Button>
           <Button
             variant="destructive"
-            onClick={async () => {
-              const res = await deleteCustomer(customerId);
-              if (res.ok) {
-                toast.success(res.message);
-                router.back();
-              } else {
-                toast.error(res.message);
-              }
+            onClick={() => {
+              deleteCustomer();
+              setOpen(false);
             }}
           >
             Delete

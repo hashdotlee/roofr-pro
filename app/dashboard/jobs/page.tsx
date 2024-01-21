@@ -24,7 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import useAccounts from "@/hooks/useAccount";
-import { SortBy, initFilter, useJobs } from "@/hooks/useJobs";
+import { SortBy, defaultFilter, useJobs } from "@/hooks/useJobs";
 import { useUrgentTasks } from "@/hooks/useTasks";
 import { cn } from "@/lib/utils";
 import { Roles } from "@/types/account";
@@ -86,9 +86,10 @@ const formSchema = z.object({
 
 function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
   const [open, setOpen] = useState(false);
+  const { data: session } = useSession();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initFilter,
+    defaultValues: defaultFilter,
   });
   const onSubmit = useDebouncedCallback(() => {
     const newData = form.getValues();
@@ -236,74 +237,76 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
               placeholder="Sort by"
             />
           </div>
-          <div>
-            <FormField
-              name="assignee"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <button
-                        role="combobox"
-                        aria-expanded={open}
-                        className="border-0 flex items-center w-[200px] gap-2 text-sm text-blue-500 hover:text-blue-700 font-semibold text-left"
-                      >
-                        {field.value
-                          ? "Assignee: " +
-                            assignees.find(
-                              (assignee) => assignee._id === field.value,
-                            )?.lastName
-                          : "Assignee"}
-                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput placeholder="Search assignee..." />
-                        <CommandEmpty>No assignee found.</CommandEmpty>
-                        <CommandGroup>
-                          {!isFetching ? (
-                            assignees.map((assignee) => (
-                              <CommandItem
-                                key={assignee?._id}
-                                value={assignee?._id}
-                                ref={field.ref}
-                                onSelect={(currentValue) => {
-                                  form.setValue(
-                                    "assignee",
-                                    currentValue === field.value
-                                      ? ""
-                                      : currentValue,
-                                  );
-                                  form.handleSubmit(onSubmit)();
-                                  setOpen(false);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    field.value === assignee._id
-                                      ? "opacity-100"
-                                      : "opacity-0",
-                                  )}
-                                />
-                                {assignee.firstName} {assignee.lastName}
-                              </CommandItem>
-                            ))
-                          ) : (
-                            <div className="flex justify-center items-center h-32">
-                              <Loader2 className="w-8 h-8 animate-spin" />
-                            </div>
-                          )}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </FormItem>
-              )}
-            />
-          </div>
+          {session?.user?.role === Roles.ADMIN && (
+            <div>
+              <FormField
+                name="assignee"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <button
+                          role="combobox"
+                          aria-expanded={open}
+                          className="border-0 flex items-center w-[200px] gap-2 text-sm text-blue-500 hover:text-blue-700 font-semibold text-left"
+                        >
+                          {field.value
+                            ? "Assignee: " +
+                              assignees.find(
+                                (assignee) => assignee._id === field.value,
+                              )?.lastName
+                            : "Assignee"}
+                          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search assignee..." />
+                          <CommandEmpty>No assignee found.</CommandEmpty>
+                          <CommandGroup>
+                            {!isFetching ? (
+                              assignees.map((assignee) => (
+                                <CommandItem
+                                  key={assignee?._id}
+                                  value={assignee?._id}
+                                  ref={field.ref}
+                                  onSelect={(currentValue) => {
+                                    form.setValue(
+                                      "assignee",
+                                      currentValue === field.value
+                                        ? ""
+                                        : currentValue,
+                                    );
+                                    form.handleSubmit(onSubmit)();
+                                    setOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      field.value === assignee._id
+                                        ? "opacity-100"
+                                        : "opacity-0",
+                                    )}
+                                  />
+                                  {assignee.firstName} {assignee.lastName}
+                                </CommandItem>
+                              ))
+                            ) : (
+                              <div className="flex justify-center items-center h-32">
+                                <Loader2 className="w-8 h-8 animate-spin" />
+                              </div>
+                            )}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
         </form>
       </Form>
       <NewJobDialog />

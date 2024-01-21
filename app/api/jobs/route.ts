@@ -26,6 +26,7 @@ export const GET = catchAsync(async (req) => {
   const stage = searchParams.get("stage");
   const sortBy = searchParams.get("sortBy");
   const search = searchParams.get("search");
+  const customerId = searchParams.get("customerId");
   const assignee = searchParams.get("assignee");
 
   if (search) {
@@ -57,14 +58,21 @@ export const GET = catchAsync(async (req) => {
     });
   }
 
-  if (assignee) {
+  if (customerId) {
     query.where({
-      assignee,
+      customer: customerId,
     });
   }
 
+  query.populate("assignee");
+
   const role = session.user.role;
   if (role === Roles.ADMIN) {
+    if (assignee) {
+      query.where({
+        assignee,
+      });
+    }
     const jobs = await query.exec();
     return NextResponse.json({
       code: 200,

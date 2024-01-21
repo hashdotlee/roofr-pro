@@ -6,7 +6,7 @@ import { JobStage } from "@/types/job";
 export interface ComposeJobDTO
   extends Omit<
     Job,
-    "stage" | "_id" | "creator" | "assignee" | "tasks" | "customer"
+    "stage" | "_id" | "creator" | "assignee" | "tasks" | "customer" | "createdAt" | "updatedAt"
   > {
   _id: string;
   creator?: ComposeAccountDTO;
@@ -14,6 +14,8 @@ export interface ComposeJobDTO
   tasks?: TaskDTO[];
   stage?: JobStage;
   customer?: ComposeCustomerDTO;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface TaskDTO extends Omit<Task, "_id" | "creator" | "assignee"> {

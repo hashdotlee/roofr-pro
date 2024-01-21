@@ -15,9 +15,10 @@ interface JobFilter {
   updatedAt?: string;
   stage?: string[];
   sortBy?: SortBy;
+  customerId?: string;
 }
 
-export const initFilter: JobFilter = {
+export const defaultFilter: JobFilter = {
   stage: [
     JobStage.NEW_LEAD,
     JobStage.APPOINTMENT_SCHEDULED,
@@ -39,8 +40,11 @@ const fetchJobs = async (filter: JobFilter) => {
   return data;
 };
 
-export const useJobs = () => {
-  const [filter, setFilter] = useState(initFilter);
+export const useJobs = (initFilter?: JobFilter) => {
+  const [filter, setFilter] = useState({
+    ...defaultFilter,
+    ...initFilter,
+  });
   const query = useQuery<ComposeJobDTO[]>({
     queryKey: [...baseQueryKey.JOB_LIST, filter],
     queryFn: () => fetchJobs(filter),

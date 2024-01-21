@@ -1,7 +1,8 @@
 "use server";
 
-import { ComposeAccountDTO } from "@/dtos/compose-account.dto";
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
+import { ActionHandler } from "@/lib/actionHandler";
+import { auth } from "@/lib/auth";
 import dbConnect from "@/lib/dbConnect";
 import { JobModel } from "@/models/Job";
 
@@ -12,34 +13,29 @@ export interface ServerResponse {
   data: any;
 }
 
-export const createJob = async ({
-  address,
-  creatorId,
-}: {
-  address: ComposeJobDTO["address"];
-  creatorId: ComposeAccountDTO["_id"];
-}) => {
-  try {
-    await dbConnect();
+export const createJob = ActionHandler<{ address: string; customer?: string }>(
+  async ({ address, customer }) => {
+    const session = await auth();
+    if (!session) {
+      return {
+        ok: false,
+        message: "Unauthorized",
+        data: null,
+      };
+    }
     const job = await JobModel.create({
       address,
-      creator: creatorId,
-      assignee: creatorId,
+      creator: session.user.id,
+      assignee: session.user.id,
+      customer,
     });
     return {
-      code: 200,
+      ok: true,
       message: "Job created successfully",
       data: job,
-    } satisfies ServerResponse;
-  } catch (error) {
-    console.log(error);
-    return {
-      code: 500,
-      message: "Internal server error",
-      data: error,
-    } satisfies ServerResponse;
-  }
-};
+    };
+  },
+);
 
 export const deleteJob = async (jobId: string) => {
   try {

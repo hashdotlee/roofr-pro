@@ -8,8 +8,9 @@ export const useUpdateCustomer = ({ customerId }: { customerId: string }) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ customer }: { customer: Partial<ComposeCustomerDTO> }) =>
-      updateCustomer(customerId, {
-        customer,
+      updateCustomer({
+        id: customerId,
+        customerPayload: customer,
       }),
     onSuccess: (_data, variables) => {
       // set query cache

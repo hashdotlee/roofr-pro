@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Dialog,
@@ -10,7 +10,7 @@ import { FaPlus } from "react-icons/fa";
 import { NewJobForm } from "./NewJobForm";
 import { useState } from "react";
 
-export default function NewJobDialog() {
+export default function NewJobDialog({ customerId }: { customerId?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -22,7 +22,7 @@ export default function NewJobDialog() {
         <DialogHeader className="text-2xl mx-auto font-semibold my-4 text-center">
           New Job
         </DialogHeader>
-        <NewJobForm setOpen={setOpen} />
+        <NewJobForm setOpen={setOpen} customerId={customerId} />
       </DialogContent>
     </Dialog>
   );

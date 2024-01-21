@@ -9,11 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import EditCustomerPage from "../../../[id]/edit/page";
 
-export default function CreateCustomerModal({
-  params: { id },
-}: {
-  params: { id: string };
-}) {
+export default function CreateCustomerModal() {
   const router = useRouter();
   return (
     <Dialog
@@ -28,7 +24,7 @@ export default function CreateCustomerModal({
         <DialogHeader>
           <DialogClose className="mb-3" />
         </DialogHeader>
-        <EditCustomerPage params={{ id }} />
+        <EditCustomerPage />
       </DialogContent>
     </Dialog>
   );
