@@ -16,7 +16,7 @@ export const useUpdateJob = ({ jobId }: { jobId: string }) => {
       // set query cache
       queryClient.setQueriesData(
         {
-          queryKey: [...baseQueryKey.JOB_LIST, jobId],
+          queryKey: [...baseQueryKey.JOB_LIST],
         },
         (old?: ComposeJobDTO[]) =>
           old?.map((job) => {
