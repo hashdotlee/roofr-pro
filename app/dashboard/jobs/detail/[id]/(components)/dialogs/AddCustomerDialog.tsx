@@ -1,5 +1,4 @@
 import { createCustomer } from "@/actions/customer";
-import { updateJob } from "@/actions/job";
 import CustomComboBox from "@/components/custom/ComboBox";
 import CustomInput from "@/components/custom/Input";
 import { Button } from "@/components/ui/button";
@@ -11,11 +10,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { useCustomer } from "@/hooks/useCustomer";
+import { useCustomers } from "@/hooks/useCustomers";
 import useJob from "@/hooks/useJob";
-import baseQueryKey from "@/lib/constants/queryKey";
+import { useUpdateJob } from "@/hooks/useUpdateJob";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -48,25 +46,27 @@ const formSchema = z.object({
 
 const AddCustomerModal = ({ children }: { children: ReactNode }) => {
   const jobId = useParams().id as string;
-  const { data: customers = [], filter, setFilter } = useCustomer();
+  const { data: customers = [], filter, setFilter } = useCustomers();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
   });
 
-  const queryClient = useQueryClient();
-
   const { data: job } = useJob(jobId);
 
   const [open, setOpen] = useState(false);
 
+  const { mutate: updateJob } = useUpdateJob({
+    jobId,
+  });
+
   useEffect(() => {
     if (job?.customer) {
       form.reset({
-        name: job.customer.fullname,
-        email: job.customer.email,
-        phone: job.customer.phone,
-        ssn: job.customer.ssn?.toString(),
+        name: job?.customer?.fullname,
+        email: job?.customer?.email,
+        phone: job?.customer?.phone,
+        ssn: job?.customer?.ssn?.toString(),
       });
       setIsDisabled(false);
     }
@@ -78,26 +78,24 @@ const AddCustomerModal = ({ children }: { children: ReactNode }) => {
     );
     try {
       if (customer) {
-        await updateJob(jobId, {
-          customer: customer._id as any,
-        });
-        queryClient.setQueryData([...baseQueryKey.JOB_DETAILS, jobId], {
-          ...job,
-          customer: customer as any,
+        updateJob({
+          job: {
+            customer: customer._id as any,
+          },
         });
       } else {
         const res = await createCustomer({
-          fullname: data.name,
-          email: data.email,
-          phone: data.phone,
-          ssn: data.ssn,
+          customer: {
+            fullname: data.name,
+            email: data.email,
+            phone: data.phone,
+            ssn: data.ssn,
+          },
         });
-        await updateJob(jobId, {
-          customer: res.data._id,
-        });
-        queryClient.setQueryData([...baseQueryKey.JOB_DETAILS, jobId], {
-          ...job,
-          customer: customer as any,
+        updateJob({
+          job: {
+            customer: res.data._id,
+          },
         });
       }
       toast.success("Customer updated successfully");

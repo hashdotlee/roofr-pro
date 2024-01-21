@@ -23,7 +23,7 @@ export default function JobDetailModal() {
         className="max-w-[80vw] h-[86vh] flex flex-col"
         hasCloseButton={false}
       >
-        <JobDetailPage hasCloseButton />
+        <JobDetailPage setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   );

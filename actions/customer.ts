@@ -1,73 +1,46 @@
 "use server";
 
-import dbConnect from "@/lib/dbConnect";
+import { ComposeCustomerDTO } from "@/dtos/compose-customer.dto";
+import { ActionHandler } from "@/lib/actionHandler";
 import { CustomerModel } from "@/models/Customer";
 
 interface ICustomerPayload {
-  fullname: string;
-  email?: string;
-  phone?: string;
-  ssn?: string;
+  customer: Partial<ComposeCustomerDTO>;
 }
 
-type TCustomerResponse = {
-  ok: boolean;
-  message: string;
-  data?: any;
-};
+export const createCustomer = ActionHandler<ICustomerPayload>(async (input) => {
+  const { fullname, email, phone, ssn } = input.customer;
+  const customer = await CustomerModel.create({
+    fullname,
+    email,
+    phone,
+    ssn,
+  });
+  return {
+    ok: true,
+    message: "Successfully!",
+    data: customer,
+  };
+});
 
-export const createCustomer = async (customerPayload: ICustomerPayload) => {
-  try {
-    await dbConnect();
-    const customer = await CustomerModel.create(customerPayload);
-    return {
-      ok: true,
-      message: "Successfully!",
-      data: customer,
-    } satisfies TCustomerResponse;
-  } catch (error: any) {
-    console.error(error);
-    return {
-      ok: false,
-      message: "Something went wrong!",
-    } satisfies TCustomerResponse;
-  }
-};
+export const updateCustomer = ActionHandler<{
+  id: string;
+  customerPayload: Partial<ComposeCustomerDTO>;
+}>(async (input) => {
+  const { id, customerPayload } = input;
+  const customer = await CustomerModel.findByIdAndUpdate(id, customerPayload);
+  return {
+    ok: true,
+    message: "Update Successfully!",
+    data: customer,
+  };
+});
 
-export const updateCustomer = async (
-  id: string,
-  customerPayload: ICustomerPayload,
-) => {
-  try {
-    await dbConnect();
-    const customer = await CustomerModel.findByIdAndUpdate(id, customerPayload);
-    return {
-      ok: true,
-      message: "Update Successfully!",
-      data: customer,
-    } satisfies TCustomerResponse;
-  } catch (error) {
-    console.error(error);
-    return {
-      ok: false,
-      message: "Something went wrong!",
-    } satisfies TCustomerResponse;
-  }
-};
-
-export const deleteCustomer = async (id: string) => {
-  try {
-    await dbConnect();
-    await CustomerModel.findByIdAndDelete(id);
-    return {
-      ok: true,
-      message: "Delete Successfully!",
-    } satisfies TCustomerResponse;
-  } catch (error) {
-    console.error(error);
-    return {
-      ok: false,
-      message: "Something went wrong!",
-    } satisfies TCustomerResponse;
-  }
-};
+export const deleteCustomer = ActionHandler<{ id: string }>(async (input) => {
+  const { id } = input;
+  await CustomerModel.findByIdAndDelete(id);
+  return {
+    ok: true,
+    message: "Delete Successfully!",
+  };
+});

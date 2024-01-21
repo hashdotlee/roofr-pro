@@ -14,6 +14,7 @@ const fetchTasks = async (jobId: string, filter?: TaskFilter) => {
   const { data } = await fetchWrapper.get(`/api/jobs/${jobId}/tasks`, {
     params: filter,
   });
+  if (data === null) return [];
   return data;
 };
 

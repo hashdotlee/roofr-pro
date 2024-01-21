@@ -76,7 +76,10 @@ export default function FileUploader({
       <div className="flex bg-white rounded-xl flex-col divide-y border border-back">
         {value.length > 0 &&
           value.map((url, index) => (
-            <div className="px-4 cursor-pointer py-2 flex justify-between gap-2 items-center">
+            <div
+              key={index}
+              className="px-4 cursor-pointer py-2 flex justify-between gap-2 items-center"
+            >
               <Link
                 href={url}
                 className="text-xs font-bold text-blue-400 w-full hover:underline line-clamp-1"

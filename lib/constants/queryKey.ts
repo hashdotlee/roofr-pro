@@ -8,6 +8,7 @@ const baseQueryKey = {
   TASK_LIST: ["TASK", "LIST"],
   TASK_DETAILS: ["TASK", "DETAILS"],
   URGENT_TASK_LIST: ["URGENT_TASK", "LIST"],
+  CUSTOMER_DETAILS: ["CUSTOMER", "DETAILS"],
 };
 
 export default baseQueryKey;

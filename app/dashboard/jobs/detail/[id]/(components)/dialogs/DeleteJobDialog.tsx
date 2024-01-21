@@ -1,6 +1,3 @@
-"use client";
-
-import { deleteJob } from "@/actions/job";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,19 +7,19 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import useJob from "@/hooks/useJob";
-import { useJobs } from "@/hooks/useJobs";
+import { useDeleteJob } from "@/hooks/useDeleteJob";
 import { Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState } from "react";
-import toast from "react-hot-toast";
 
-export default function DeleteJobDialog() {
+export default function DeleteJobDialog({
+  setOpen: _setOpen,
+}: {
+  setOpen?: (open: boolean) => void;
+}) {
+  const jobID = useParams().id as string;
   const [open, setOpen] = useState(false);
-  const router = useRouter();
-  const { job } = useJob();
-  const jobId = String(job?._id);
-  const { toggleRefetch } = useJobs();
+  const { mutate: deleteJob } = useDeleteJob(jobID);
 
   return (
     <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
@@ -51,15 +48,10 @@ export default function DeleteJobDialog() {
           </Button>
           <Button
             variant="destructive"
-            onClick={async () => {
-              const res = await deleteJob(jobId);
-              if (res.code === 200) {
-                toast.success(res.message);
-                toggleRefetch();
-                router.back();
-              } else {
-                toast.error(res.message);
-              }
+            onClick={() => {
+              deleteJob();
+              setOpen(false);
+              if (_setOpen) _setOpen(false);
             }}
           >
             Delete

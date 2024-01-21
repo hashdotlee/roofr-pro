@@ -145,7 +145,7 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
             </div>
             <CustomInput
               name="search"
-              placeholder="Search jobs"
+              placeholder="Search jobs..."
               control={form.control}
               inputClassName="ps-12"
             />

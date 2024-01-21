@@ -27,7 +27,7 @@ export default function AssigneePopover({
   label?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const { accounts, filter, setFilter } = useAccounts();
+  const { data: accounts = [], filter, setFilter } = useAccounts();
   return (
     <FormField
       control={control}
@@ -64,10 +64,7 @@ export default function AssigneePopover({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent
-                asChild
-                className={cn("p-2", contentClassname)}
-              >
+              <PopoverContent asChild className={cn("p-2", contentClassname)}>
                 <div className="bg-white">
                   <Input
                     className="w-full focus-visible:ring-0"

@@ -1,4 +1,5 @@
 import { ComposeCustomerDTO } from "@/dtos/compose-customer.dto";
+import baseQueryKey from "@/lib/constants/queryKey";
 import { fetchWrapper } from "@/lib/fetchWrapper";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -16,10 +17,10 @@ const fetchCustomers = async (filter?: CustomerFilter) => {
   return data;
 };
 
-export const useCustomer = (initFilter?: CustomerFilter) => {
+export const useCustomers = (initFilter?: CustomerFilter) => {
   const [filter, setFilter] = useState(initFilter);
   const query = useQuery<ComposeCustomerDTO[]>({
-    queryKey: ["customers", filter],
+    queryKey: [...baseQueryKey.CUSTOMER_LIST, filter],
     queryFn: () => fetchCustomers(filter),
   });
 

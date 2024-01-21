@@ -16,7 +16,7 @@ export const useUpdateJob = ({ jobId }: { jobId: string }) => {
       // set query cache
       queryClient.setQueriesData(
         {
-          queryKey: baseQueryKey.JOB_LIST,
+          queryKey: [...baseQueryKey.JOB_LIST, jobId],
         },
         (old?: ComposeJobDTO[]) =>
           old?.map((job) => {
@@ -29,8 +29,18 @@ export const useUpdateJob = ({ jobId }: { jobId: string }) => {
             return job;
           }),
       );
+      queryClient.setQueryData(
+        [...baseQueryKey.JOB_DETAILS, jobId],
+        (old?: ComposeJobDTO) => {
+          if (!old) return;
+          return {
+            ...old,
+            ...variables.job,
+          };
+        },
+      );
 
-      // update db using server action
+      toast.success("Job updated successfully");
     },
     onError: (err: any) => {
       toast.error(err?.message || "Something went wrong");

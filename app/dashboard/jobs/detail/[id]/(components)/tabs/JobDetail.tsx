@@ -1,25 +1,22 @@
-import { updateJob } from "@/actions/job";
 import CustomComboBox from "@/components/custom/ComboBox";
 import CustomSelect from "@/components/custom/Select";
-import deepEql from "deep-eql";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { replaceEqualDeep } from "@tanstack/react-query";
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import useJob from "@/hooks/useJob";
+import { useUpdateJob } from "@/hooks/useUpdateJob";
 import { Roles } from "@/types/account";
 import { defaultSources } from "@/types/default-sources";
 import { JobStage } from "@/types/job";
+import deepEql from "deep-eql";
 import { LightbulbIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { z } from "zod";
 import AssigneePopover from "./AssigneePopover";
-import { isDeepStrictEqual } from "util";
 
 const formSchema = z.object({
   assignee: z
@@ -40,6 +37,7 @@ const formSchema = z.object({
 export default function JobDetails() {
   const id = useParams().id as string;
   const { data: job } = useJob(id);
+  const { mutate: updateJob } = useUpdateJob({ jobId: id });
 
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -64,12 +62,7 @@ export default function JobDetails() {
   }, [job]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await updateJob(id, values);
-      toast.success("Job detail updated successfully!");
-    } catch (error: any) {
-      toast.error(error?.message || "Something went wrong!");
-    }
+    updateJob({ job: values });
   };
 
   const isChange = useMemo(() => {

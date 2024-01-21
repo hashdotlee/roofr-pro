@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import useJob from "@/hooks/useJob";
+import { useUpdateJob } from "@/hooks/useUpdateJob";
 import { useJobStore } from "@/lib/stores/jobStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PenIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -26,7 +28,11 @@ const formSchema = z.object({
 });
 
 export default function EditAddressDialog() {
-  const { job, setJob } = useJob();
+  const jobID = useParams().id as string;
+  const { data: job } = useJob(jobID);
+  const { mutate: updateJob } = useUpdateJob({
+    jobId: jobID,
+  });
   const [open, setOpen] = useState(false);
   const modifyJob = useJobStore((state) => state.modifyJob);
 
@@ -50,19 +56,10 @@ export default function EditAddressDialog() {
         </DialogHeader>
         <Form {...form}>
           <form
-            action={async () => {
-              const res = await updateJob(String(job?._id), form.getValues());
-              if (res.code === 200) {
-                setJob({
-                  ...job!,
-                  address: form.getValues().address!,
-                });
-                modifyJob(String(job?._id), {
-                  address: form.getValues().address!,
-                });
-                toast.success(res.message);
-                setOpen(false);
-              } else toast.error(res.message);
+            action={() => {
+              updateJob({
+                job: { address: form.getValues().address! },
+              });
             }}
           >
             <CustomInput

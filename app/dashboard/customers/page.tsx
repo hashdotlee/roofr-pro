@@ -4,23 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { ComposeCustomerDTO } from "@/dtos/compose-customer.dto";
-import { useCustomer } from "@/hooks/useCustomer";
+import { useCustomers } from "@/hooks/useCustomers";
 import { PlusCircle, Search } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Customers() {
   const router = useRouter();
-  const pathname = usePathname();
 
-  const { data: customers = [], isLoading: loading } = useCustomer();
+  const { data: customers = [], isLoading: loading } = useCustomers();
 
   return (
     <div className="h-screen w-full py-8 px-8 overflow-x-hidden">

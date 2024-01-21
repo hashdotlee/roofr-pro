@@ -1,27 +1,21 @@
+import { Button } from "@/components/ui/button";
+import useJob from "@/hooks/useJob";
+import { useTasks } from "@/hooks/useTasks";
+import { useUpdateJob } from "@/hooks/useUpdateJob";
 import { cn, getTimeAgo } from "@/lib/utils";
+import { DialogClose } from "@radix-ui/react-dialog";
 import { Clipboard, Loader2, Mail, Plus, UserPlus, X } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useInView } from "react-intersection-observer";
+import NoteList from "./(components)/sidebar/NoteList";
 import Attachment from "./(components)/tabs/Attachment";
 import InstantEstimate from "./(components)/tabs/InstantEstimate";
 import JobDetail from "./(components)/tabs/JobDetail";
 import Measurement from "./(components)/tabs/Measurement";
-import NoteList from "./(components)/sidebar/NoteList";
 import Proposal from "./(components)/tabs/Proposal";
 import TasksList from "./(components)/tabs/TaskList";
-import { DialogClose } from "@radix-ui/react-dialog";
-import useJob from "@/hooks/useJob";
-import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import { updateJob } from "@/actions/job";
-import { useTasks } from "@/hooks/useTasks";
-import { useParams } from "next/navigation";
-import dynamic from "next/dynamic";
-import { useQueryClient } from "@tanstack/react-query";
-import baseQueryKey from "@/lib/constants/queryKey";
-import { ComposeJobDTO } from "@/dtos/compose-job.dto";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 // use dynamic import to reduce bundle size
 const DeleteJobDialog = dynamic(
@@ -97,13 +91,10 @@ const InView = ({
   );
 };
 
-// common form for all tabs
-const formSchema = z.object({});
-
 export default function JobDetailPage({
-  hasCloseButton = false,
+  setOpen,
 }: {
-  hasCloseButton?: boolean;
+  setOpen?: (open: boolean) => void;
 }) {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
 
@@ -113,7 +104,9 @@ export default function JobDetailPage({
 
   const { data: tasks = [] } = useTasks(jobId);
 
-  const queryClient = useQueryClient();
+  const { mutate: updateJob } = useUpdateJob({
+    jobId: jobId,
+  });
 
   const handleTabChange = (id: string) => {
     setActiveTab(id);
@@ -128,23 +121,14 @@ export default function JobDetailPage({
   };
 
   const handleRemoveCustomer = async () => {
-    await updateJob(String(job?._id), {
-      customer: undefined,
-    });
-
-    queryClient.setQueryData(
-      [baseQueryKey.JOB_DETAILS, job?._id],
-      (old: ComposeJobDTO) => ({
-        ...old,
+    updateJob({
+      job: {
         customer: undefined,
-      }),
-    );
-    toast.success("Customer removed successfully");
+      },
+    });
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({});
-
-  const numOfCompletedTasks = tasks.filter((task) => task?.done).length;
+  const numOfCompletedTasks = tasks?.filter((task) => task?.done).length;
 
   return (
     <>
@@ -158,7 +142,7 @@ export default function JobDetailPage({
             <button className="p-2 bg-blue-700 rounded-full text-white flex justify-center items-center w-10 h-10">
               <Plus className="w-5 h-5" />
             </button>
-            {hasCloseButton && (
+            {setOpen && (
               <DialogClose className="ml-auto">
                 <button className="flex justify-center items-center w-10 h-10">
                   <X className="w-5 h-5" />
@@ -171,7 +155,7 @@ export default function JobDetailPage({
           <span>New to stage</span>
           <span className="p-1 bg-gray-100 rounded-md flex gap-2 items-center">
             <Clipboard className="w-4 h-4 font-semibold" /> Tasks{" "}
-            {numOfCompletedTasks}/{tasks.length}
+            {numOfCompletedTasks}/{tasks?.length}
           </span>
           <span>Updated {getTimeAgo(job?.updatedAt?.toString())}</span>
         </div>
@@ -213,7 +197,7 @@ export default function JobDetailPage({
                   {tab.content}
                 </InView>
               ))}
-              <DeleteJobDialog />
+              <DeleteJobDialog setOpen={setOpen} />
             </>
           )}
         </div>

@@ -1,4 +1,3 @@
-import FileUploader from "@/components/custom/FileUpload";
 import { Button } from "@/components/ui/button";
 
 export default function Proposal() {

@@ -3,6 +3,7 @@ import CustomInput from "@/components/custom/Input";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import useJob from "@/hooks/useJob";
+import { useUpdateJob } from "@/hooks/useUpdateJob";
 import baseQueryKey from "@/lib/constants/queryKey";
 import { Job } from "@/models/Job";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -73,8 +74,6 @@ const formSchema = z.object({
 export default function InstantEstimate() {
   const jobId = useParams().id as string;
 
-  const [loading, setLoading] = useState(false);
-
   const [isEdit, setIsEdit] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -95,10 +94,9 @@ export default function InstantEstimate() {
 
   const { data: job } = useJob(jobId);
 
-  const queryClient = useQueryClient();
+  const { mutateAsync: updateJob, isPending } = useUpdateJob({ jobId });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setLoading(true);
     const numberMetrics = {
       roofFootprintArea: Number(data.roofFootprintArea),
       pitch: Number(data.pitch),
@@ -110,16 +108,12 @@ export default function InstantEstimate() {
       wantsFinancing: Number(data.wantsFinancing),
       customerNote: Number(data.customerNote),
     };
-    await updateJob(jobId, {
-      metrics: numberMetrics,
-    });
-    queryClient.setQueryData([...baseQueryKey.JOB_DETAILS, jobId], {
-      ...job,
-      metrics: numberMetrics,
+    await updateJob({
+      job: {
+        metrics: numberMetrics,
+      },
     });
     setIsEdit(false);
-    setLoading(false);
-    toast.success("Saved");
   };
 
   useEffect(() => {
@@ -152,9 +146,9 @@ export default function InstantEstimate() {
             onClick={() => {
               form.handleSubmit(onSubmit)();
             }}
-            disabled={!form.formState.isValid || loading}
+            disabled={!form.formState.isValid || isPending}
           >
-            {loading ? "Saving..." : "Save"}
+            {isPending ? "Saving..." : "Save"}
           </Button>
         ) : (
           <Button
@@ -175,7 +169,6 @@ export default function InstantEstimate() {
                 {isEdit ? (
                   <CustomInput
                     name={metric.key}
-                    type="number"
                     control={form.control}
                     inputClassName="border font-normal border-gray-200 rounded-md p-2 w-full"
                   />

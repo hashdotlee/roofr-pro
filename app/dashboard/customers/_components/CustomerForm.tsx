@@ -1,6 +1,6 @@
 "use client";
 
-import { createCustomer, updateCustomer } from "@/actions/customer";
+import CustomInput from "@/components/custom/Input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,30 +11,35 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ComposeCustomerDTO, ComposeMode } from "@/dtos/compose-customer.dto";
+import useCreateCustomer from "@/hooks/useCreateCustomer";
+import { useUpdateCustomer } from "@/hooks/useUpdateCustomer";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import validator from "validator";
-import { Loader2 } from "lucide-react";
-import toast from "react-hot-toast";
-import { ComposeCustomerDTO } from "@/dtos/compose-customer.dto";
-import { ComposeMode } from "@/dtos/compose-customer.dto";
 
 const formSchema = z.object({
-  fullname: z.string().min(1, "Please provide customer's name."),
+  fullname: z.string().min(1, {
+    message: "Please select a customer.",
+  }),
   email: z
     .string()
-    .email("This is not a valid email. Please try again.")
-    .optional()
-    .or(z.literal("")),
+    .email({
+      message: "Please enter a email.",
+    })
+    .optional(),
   phone: z
     .string()
-    .refine(validator.isMobilePhone, "This is not a valid phone number.")
-    .optional()
-    .or(z.literal("")),
+    .regex(
+      /^([0-9]{3}|[0-9]{3}–)([0-9]{3}|[0-9]{3}–)[0-9]{4}$/,
+      "Phone number must be 10 digits",
+    )
+    .optional(),
   ssn: z
     .string()
-    .regex(/^\d{4}$/)
+    .regex(/^[0-9]{4}$/, "SSN must be 4 digits")
     .optional()
     .or(z.literal("")),
 });
@@ -54,13 +59,13 @@ export default function CustomerForm({
       fullname: mode === ComposeMode.Create ? "" : customer?.fullname,
       ...(mode === ComposeMode.Edit && { email: customer?.email }),
       ...(mode === ComposeMode.Edit && { phone: customer?.phone }),
+      ...(mode === ComposeMode.Edit && { ssn: customer?.ssn }),
     },
     mode: "onBlur",
   });
   const { formState } = form;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     if (mode === ComposeMode.Create) {
       await onCreate(values);
     } else {
@@ -68,24 +73,22 @@ export default function CustomerForm({
     }
   }
 
+  const router = useRouter();
+
+  const { mutateAsync: createCustomer } = useCreateCustomer();
+  const { mutateAsync: updateCustomer } = useUpdateCustomer({
+    customerId: customer?._id!,
+  });
+
   async function onCreate(values: z.infer<typeof formSchema>) {
-    const res = await createCustomer(values);
-    if (!res.ok) {
-      toast.error(res.message);
-    } else {
-      toast.success(res.message);
-      form.reset();
-    }
+    await createCustomer({ customer: values });
+    form.reset();
   }
 
   async function onEdit(values: z.infer<typeof formSchema>) {
     if (!customer?._id) return;
-    const res = await updateCustomer(customer?._id, values);
-    if (!res.ok) {
-      toast.error(res.message);
-    } else {
-      toast.success(res.message);
-    }
+    await updateCustomer({ customer: values });
+    router.back();
   }
 
   return (
@@ -121,37 +124,22 @@ export default function CustomerForm({
           )}
         />
 
-        <FormField
-          control={form.control}
+        <CustomInput
           name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone (optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter phone" {...field} type="tel" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
+          label="Phone (optional)"
+          inputClassName="w-full"
           control={form.control}
+          format={`###–###–####`}
+          placeholder="Phone"
+        />
+        <CustomInput
           name="ssn"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>SSN (optional)</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Enter last 4 SSN digits"
-                  {...field}
-                  type="number"
-                  max={4}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="SSN (4 digits)"
+          inputClassName="w-full"
+          format="####"
+          control={form.control}
+          placeholder="SSN"
+          allowLeadingZeros
         />
 
         <Button
