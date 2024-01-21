@@ -25,8 +25,6 @@ export const POST = catchAsync(
       });
     }
 
-    console.log(session.user);
-
     const note = await JobModel.findOneAndUpdate(
       { _id: jobId },
       {
@@ -65,6 +63,9 @@ export const GET = catchAsync(
         model: "Account",
       })
       .select("notes");
-    return NextResponse.json(job.notes);
+    return NextResponse.json({
+      message: "Successfully!",
+      data: job.notes,
+    });
   },
 );

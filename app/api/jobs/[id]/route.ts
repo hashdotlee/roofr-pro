@@ -20,6 +20,9 @@ export const GET = catchAsync(
         select: "_id fullname email phone ssn",
       })
       .exec();
-    return NextResponse.json(job);
+    return NextResponse.json({
+      data: job,
+      message: "Successfully fetched job",
+    });
   },
 );

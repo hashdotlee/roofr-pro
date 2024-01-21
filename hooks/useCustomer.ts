@@ -1,5 +1,7 @@
-import { Customer } from "@/models/Customer";
-import { useEffect, useState } from "react";
+import { ComposeCustomerDTO } from "@/dtos/compose-customer.dto";
+import { fetchWrapper } from "@/lib/fetchWrapper";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface CustomerFilter {
   search?: string;
@@ -7,25 +9,22 @@ interface CustomerFilter {
   limit?: number;
 }
 
+const fetchCustomers = async (filter?: CustomerFilter) => {
+  const { data } = await fetchWrapper.get(`/api/customers`, {
+    params: filter,
+  });
+  return data;
+};
+
 export const useCustomer = (initFilter?: CustomerFilter) => {
   const [filter, setFilter] = useState(initFilter);
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  useEffect(() => {
-    async function fetchCustomers() {
-      const search = filter?.search?.replace(/[^a-zA-Z0-9 -]/g, "");
-      const params = new URLSearchParams({
-        search: search || "",
-        page: filter?.page?.toString() || "1",
-        limit: filter?.limit?.toString() || "10",
-      });
-      const res = await fetch(`/api/customers?${params.toString()}`);
-      const data = await res.json();
-      setCustomers(data);
-    }
-    fetchCustomers();
-  }, [filter]);
+  const query = useQuery<ComposeCustomerDTO[]>({
+    queryKey: ["customers", filter],
+    queryFn: () => fetchCustomers(filter),
+  });
+
   return {
-    customers,
+    ...query,
     filter,
     setFilter,
   };

@@ -26,8 +26,6 @@ export const POST = catchAsync(
       });
     }
 
-    console.log(session.user);
-
     const job = await JobModel.findOneAndUpdate(
       { _id: jobId },
       {
@@ -82,6 +80,9 @@ export const GET = catchAsync(
       tasks = tasks.filter((task: TaskDTO) => !task?.done);
     }
 
-    return NextResponse.json(tasks);
+    return NextResponse.json({
+      data: tasks,
+      message: "Successfully fetched tasks",
+    });
   },
 );

@@ -3,9 +3,10 @@ import CustomInput from "@/components/custom/Input";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import useJob from "@/hooks/useJob";
-import { useMetrics } from "@/hooks/useMetrics";
+import baseQueryKey from "@/lib/constants/queryKey";
 import { Job } from "@/models/Job";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -92,7 +93,9 @@ export default function InstantEstimate() {
     },
   });
 
-  const { job, setJob } = useJob();
+  const { data: job } = useJob(jobId);
+
+  const queryClient = useQueryClient();
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
@@ -110,12 +113,9 @@ export default function InstantEstimate() {
     await updateJob(jobId, {
       metrics: numberMetrics,
     });
-    setJob((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        metrics: numberMetrics,
-      };
+    queryClient.setQueryData([...baseQueryKey.JOB_DETAILS, jobId], {
+      ...job,
+      metrics: numberMetrics,
     });
     setIsEdit(false);
     setLoading(false);

@@ -2,27 +2,30 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import { useDeleteTask } from "@/hooks/useDeleteTask";
 import { Trash } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
 
 export default function DeleteJobDialog({
   jobId,
   taskId,
-  toggleRefetch,
 }: {
   jobId: string;
   taskId: string;
-  toggleRefetch: any;
 }) {
   const [open, setOpen] = useState(false);
+
+  const { mutate: handleDeleteTask } = useDeleteTask({
+    jobId,
+    taskId,
+  });
 
   return (
     <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
@@ -48,17 +51,9 @@ export default function DeleteJobDialog({
           </Button>
           <Button
             variant="destructive"
-            onClick={async () => {
-              const res = await fetch(`/api/jobs/${jobId}/tasks/${taskId}`, {
-                method: "DELETE",
-              }).then((res) => res.json());
-              if (res.code === 200) {
-                toast.success(res.message);
-                toggleRefetch();
-                setOpen(false);
-              } else {
-                toast.error(res.message);
-              }
+            onClick={() => {
+              handleDeleteTask();
+              setOpen(false);
             }}
           >
             Delete

@@ -1,5 +1,6 @@
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import baseQueryKey from "@/lib/constants/queryKey";
+import { fetchWrapper } from "@/lib/fetchWrapper";
 import { JobStage } from "@/types/job";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -32,8 +33,8 @@ export const initFilter: JobFilter = {
 };
 
 const fetchJobs = async (filter: JobFilter) => {
-  const { data } = await fetch(`/api/jobs`, {
-      method: "GET",
+  const { data } = await fetchWrapper.get(`/api/jobs`, {
+    params: filter,
   });
   return data;
 };

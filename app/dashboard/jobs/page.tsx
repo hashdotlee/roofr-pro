@@ -10,6 +10,7 @@ import CustomSelect from "@/components/custom/Select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTable } from "@/components/ui/data-table";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -18,10 +19,11 @@ import {
 } from "@/components/ui/popover";
 import { SortBy, initFilter, useJobs } from "@/hooks/useJobs";
 import { useUrgentTasks } from "@/hooks/useTasks";
+import { cn } from "@/lib/utils";
 import { Roles } from "@/types/account";
 import { JobStage } from "@/types/job";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDownIcon } from "lucide-react";
+import { Check, ChevronDownIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { useDebouncedCallback } from "use-debounce";
@@ -29,10 +31,11 @@ import { z } from "zod";
 import NewJobDialog from "./(components)/NewJobDialog";
 import KanbanView from "./KanbanView";
 import { TaskTableColumn } from "./TaskTableColumn";
+import { Button } from "@/components/ui/button";
 
 export default function Jobs() {
   const { data: session } = useSession();
-  const { filter, setFilter } = useJobs();
+  const { filter, setFilter, data: jobs = [] } = useJobs();
 
   return (
     <div className="h-screen w-full py-4 px-8 overflow-x-hidden">
@@ -57,7 +60,7 @@ export default function Jobs() {
         <Action filter={filter} setFilter={setFilter} />
 
         <TabsContent value="kanban">
-          <KanbanView filter={filter} />
+          <KanbanView filter={filter} jobs={jobs} />
           {session?.user?.role === Roles.CONTRACTOR && <TaskTable />}
         </TabsContent>
         <TabsContent value="listview">Coming soon!</TabsContent>
@@ -71,6 +74,7 @@ const formSchema = z.object({
   stage: z.string().array(),
   sortBy: z.nativeEnum(SortBy).optional(),
   search: z.string().optional(),
+  assignee: z.string(),
 });
 
 function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
@@ -121,7 +125,7 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           onChange={form.handleSubmit(onSubmit)}
-          className="flex gap-3 flex-row items-center justify-start"
+          className="flex gap-4 flex-row items-center justify-start"
         >
           <Label className="relative block shrink-0">
             <div className="absolute top-3 ps-4 text-gray-500 text-lg">
@@ -220,6 +224,59 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
               placeholder="Sort by"
             />
           </div>
+          <div>
+            <FormField
+              name="assignee"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <Popover>
+                    <PopoverTrigger className="flex items-center border-0 hover:bg-transparent hover:text-blue-700 gap-2 text-sm font-semibold text-blue-500">
+                      <span>Assignee</span>
+                      <ChevronDownIcon className="w-4 h-4" />
+                    </PopoverTrigger>
+                    <PopoverContent className="p-2">
+                      <div>
+                        <Input
+                          placeholder={"Search"}
+                          className="border-0 border-b focus-visible:ring-0 rounded-none"
+                          value={form.getValues("assignee")}
+                          onChange={(e) => {
+                            form.setValue("assignee", e.target.value);
+                          }}
+                        />
+                        <div>
+                          {[{ label: "John Doe", value: "John Doe" }].map(
+                            (option) => (
+                              <Button
+                                type="button"
+                                value={option.label}
+                                key={option.value}
+                                onClick={() => {
+                                  field.onChange(option.value);
+                                }}
+                                className="w-full justify-start border-0 text-left bg-transparent hover:bg-gray-100 rounded-none text-current"
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 grow-0 shrink-0 h-4 w-4",
+                                    option.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {option.label}
+                              </Button>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
+          </div>
         </form>
       </Form>
       <NewJobDialog />
@@ -228,7 +285,7 @@ function Action({ filter, setFilter }: { filter: any; setFilter: any }) {
 }
 
 const TaskTable = () => {
-  const { tasks = [] } = useUrgentTasks();
+  const { data: tasks = [] } = useUrgentTasks();
   return (
     <div className="rounded-md space-y-3 my-4">
       <h3 className="text-lg font-semibold text-gray-700">Urgent Tasks</h3>

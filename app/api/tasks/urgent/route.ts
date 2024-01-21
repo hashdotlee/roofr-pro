@@ -18,6 +18,7 @@ export const GET = catchAsync(async () => {
     .limit(LIMIT)
     .exec();
   const urgentTasks: TaskDTO[] = [];
+
   jobs.forEach((job) => {
     const { tasks, ...info } = job.toJSON();
     const taskWithJob = tasks.map((item: any) => {
@@ -28,6 +29,7 @@ export const GET = catchAsync(async () => {
     });
     urgentTasks.push(...taskWithJob);
   });
+
   return NextResponse.json({
     code: 200,
     message: "Get tasks successfully",

@@ -1,7 +1,7 @@
+import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import { cn } from "@/lib/utils";
 import { JobStage } from "@/types/job";
 import KanbanTab, { IKanbanTab } from "./(components)/KanbanTab";
-import { useJobs } from "@/hooks/useJobs";
 
 const tabs: IKanbanTab[] = [
   {
@@ -56,9 +56,13 @@ const tabs: IKanbanTab[] = [
   },
 ];
 
-export default function KanbanView({ filter }: { filter: any }) {
-  const { data: jobs = [], status } = useJobs();
-
+export default function KanbanView({
+  filter,
+  jobs,
+}: {
+  filter: any;
+  jobs: ComposeJobDTO[];
+}) {
   return (
     <div
       className={cn(
@@ -74,7 +78,6 @@ export default function KanbanView({ filter }: { filter: any }) {
                 key={tab.id}
                 tab={tab}
                 jobs={jobs.filter((job) => job.stage === tab.type)}
-                fetching={status === "pending"}
               />
             ),
         )}

@@ -9,16 +9,21 @@ export const GET = catchAsync(async (req) => {
   const search = searchParams.searchParams.get("search");
   const page = searchParams.searchParams.get("page");
   const limit = searchParams.searchParams.get("limit");
-  const query = CustomerModel.find();
-  if (!page || !limit) {
-    return NextResponse.json(await query.exec());
+  let query = CustomerModel.find();
+  if (page && limit) {
+    query = query
+      .skip((parseInt(page) - 1) * parseInt(limit))
+      .limit(parseInt(limit));
   }
-  query.skip((parseInt(page) - 1) * parseInt(limit)).limit(parseInt(limit));
 
   if (search) {
-    query.where({ fullname: new RegExp(search, "i") });
+    query = query.where({ fullname: new RegExp(search, "i") });
   }
 
   const customers: Customer[] = await query.exec();
-  return NextResponse.json(customers);
+  return NextResponse.json({
+    data: customers,
+    message: "Successfully fetched customers",
+    status: "success",
+  });
 });

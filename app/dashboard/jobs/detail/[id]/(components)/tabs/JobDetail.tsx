@@ -1,65 +1,61 @@
 import { updateJob } from "@/actions/job";
 import CustomComboBox from "@/components/custom/ComboBox";
 import CustomSelect from "@/components/custom/Select";
+import deepEql from "deep-eql";
 import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { replaceEqualDeep } from "@tanstack/react-query";
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import useJob from "@/hooks/useJob";
-import baseQueryKey from "@/lib/constants/queryKey";
-import { useJobStore } from "@/lib/stores/jobStore";
+import { Roles } from "@/types/account";
 import { defaultSources } from "@/types/default-sources";
 import { JobStage } from "@/types/job";
-import { useQueryClient } from "@tanstack/react-query";
 import { LightbulbIcon } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { UseFormReturn, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import AssigneePopover from "./AssigneePopover";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { isDeepStrictEqual } from "util";
 
 const formSchema = z.object({
-    assignee: z.object({
-        _id: z.string().optional(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        email: z.string().optional(),
-        phone: z.string().optional(),
-        }).optional(),
-    stage: z.nativeEnum(JobStage).optional(),
-    source: z.string().optional(),
-    jobValue: z.number().optional(),
-    details: z.string().optional(),
-    });
-
-const defaultValue = {
-        assignee: {
-        _id: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-            },
-        stage: JobStage.NEW_LEAD,
-        source: "",
-        jobValue: 0,
-        details: "",
-        };
-
+  assignee: z
+    .object({
+      _id: z.string(),
+      firstName: z.string(),
+      lastName: z.string(),
+      email: z.string(),
+      role: z.nativeEnum(Roles),
+    })
+    .optional(),
+  stage: z.nativeEnum(JobStage).optional(),
+  source: z.string().optional(),
+  jobValue: z.number().optional(),
+  details: z.string().optional(),
+});
 
 export default function JobDetails() {
   const id = useParams().id as string;
   const { data: job } = useJob(id);
-  const [isSaving, setIsSaving] = useState(false);
-  const [hasNotSavedChanges, setHasNotSavedChanges] = useState(false);
-  const modifyJob = useJobStore((state) => state.modifyJob);
 
   const form = useForm<z.infer<typeof formSchema>>({
-      resolver: zodResolver(formSchema),
-    });
+    defaultValues: {
+      assignee: {
+        _id: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        role: Roles.CONTRACTOR,
+      },
+      stage: JobStage.NEW_LEAD,
+      source: "",
+      jobValue: 0,
+      details: "",
+    },
+  });
 
   useEffect(() => {
     if (job) {
@@ -67,42 +63,18 @@ export default function JobDetails() {
     }
   }, [job]);
 
-  useEffect(() => {
-    if (JSON.stringify(form.getValues()) !== JSON.stringify(getJobDetails(job)))
-      setHasNotSavedChanges(true);
-    else setHasNotSavedChanges(false);
-  }, [form.watch()]);
-
-  const queryClient = useQueryClient();
-
-  const onSubmit = async (data: ) => {
-    if (JSON.stringify(data) === JSON.stringify(getJobDetails(job))) return;
-
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setIsSaving(true);
-      const res = await updateJob(job?._id!, data);
-      if (!res.ok) throw { message: res.message };
-      toast.success(res.message);
-      queryClient.setQueryData(
-        [...baseQueryKey.JOB_DETAILS, id],
-        (old: ComposeJobDTO) => ({
-          ...old,
-          ...payload,
-        }),
-      );
-      if (payload.stage) {
-        modifyJob(String(job?._id), {
-          stage: form.getValues().stage!,
-        });
-      }
-      setHasNotSavedChanges(false);
+      await updateJob(id, values);
+      toast.success("Job detail updated successfully!");
     } catch (error: any) {
-      console.log(error);
-      toast.error(error.message);
-    } finally {
-      setIsSaving(false);
+      toast.error(error?.message || "Something went wrong!");
     }
   };
+
+  const isChange = useMemo(() => {
+    return !deepEql(job, form.watch());
+  }, [job, form.getValues()]);
 
   return (
     <>
@@ -114,18 +86,13 @@ export default function JobDetails() {
             </p>
 
             <div className="space-x-4">
-              {hasNotSavedChanges && (
-                <span className="text-red-600 text-xs">
-                  * Changes have not been saved
-                </span>
-              )}
               <Button
                 type="submit"
                 variant={"default"}
                 className="rounded-full px-8 py-2 text-xs font-semibold bg-blue-500 hover:bg-blue-700 h-7"
-                disabled={isSaving || !hasNotSavedChanges}
+                disabled={!isChange || form.formState.isSubmitting}
               >
-                {isSaving ? "Saving..." : "Save"}
+                {form.formState.isSubmitting ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>
@@ -183,7 +150,7 @@ function JobValueInput({
   job,
 }: {
   form: UseFormReturn<any, any, undefined>;
-  job: ComposeJobDTO | null;
+  job?: ComposeJobDTO;
 }) {
   const [currencyValue, setCurrencyValue] = useState(
     job?.jobValue?.toLocaleString("en-US", {
@@ -229,7 +196,7 @@ function SourceSelector({
   job,
 }: {
   form: UseFormReturn<any, any, undefined>;
-  job: ComposeJobDTO | null;
+  job?: ComposeJobDTO;
 }) {
   return (
     <CustomComboBox

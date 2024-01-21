@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster as HotToaster } from "react-hot-toast";
 import "./globals.css";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default async function RootLayout({
           {children}
           <Toaster />
           <HotToaster />
+          <ReactQueryDevtools initialIsOpen={false} />
         </body>
       </Providers>
     </html>

@@ -36,10 +36,7 @@ export const GET = catchAsync(async (req) => {
   if (updatedAt) {
     query.where({
       updatedAt: {
-        $lte: new Date(updatedAt),
-        $gte: new Date(
-          new Date(updatedAt).setDate(new Date(updatedAt).getDate() - 1),
-        ),
+        $gte: new Date(updatedAt),
       },
     });
   }

@@ -1,5 +1,3 @@
-"use client";
-
 import { cn, getTimeAgo } from "@/lib/utils";
 import { Clipboard, Loader2, Mail, Plus, UserPlus, X } from "lucide-react";
 import { useState } from "react";
@@ -22,6 +20,8 @@ import dynamic from "next/dynamic";
 import { useQueryClient } from "@tanstack/react-query";
 import baseQueryKey from "@/lib/constants/queryKey";
 import { ComposeJobDTO } from "@/dtos/compose-job.dto";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 // use dynamic import to reduce bundle size
 const DeleteJobDialog = dynamic(
@@ -97,6 +97,9 @@ const InView = ({
   );
 };
 
+// common form for all tabs
+const formSchema = z.object({});
+
 export default function JobDetailPage({
   hasCloseButton = false,
 }: {
@@ -108,7 +111,7 @@ export default function JobDetailPage({
 
   const { data: job } = useJob(jobId);
 
-  const { tasks } = useTasks(jobId);
+  const { data: tasks = [] } = useTasks(jobId);
 
   const queryClient = useQueryClient();
 
@@ -138,6 +141,8 @@ export default function JobDetailPage({
     );
     toast.success("Customer removed successfully");
   };
+
+  const form = useForm<z.infer<typeof formSchema>>({});
 
   const numOfCompletedTasks = tasks.filter((task) => task?.done).length;
 
@@ -255,7 +260,7 @@ export default function JobDetailPage({
                   </div>
                 </div>
               )}
-              <div className="flex flex-col gap-3 bg-gray-100 border p-4 overflow-hidden h-full rounded-md">
+              <div className="flex flex-col justify-between gap-3 bg-gray-100 border p-4 overflow-hidden h-full rounded-md">
                 <NoteList />
               </div>
             </>

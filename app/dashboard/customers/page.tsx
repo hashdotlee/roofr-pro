@@ -4,43 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
+import { ComposeCustomerDTO } from "@/dtos/compose-customer.dto";
+import { useCustomer } from "@/hooks/useCustomer";
 import { PlusCircle, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import {
-  ComposeCustomerDTO,
-  toComposeCustomerDTO,
-} from "@/dtos/compose-customer.dto";
 
 export default function Customers() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [customers, setCustomers] = useState<ComposeCustomerDTO[]>([]);
   const pathname = usePathname();
 
-  const fetchCustomers = async () => {
-    const res = await fetch("/api/customers", {});
-    const data = await res.json();
-    setCustomers(data.map(toComposeCustomerDTO));
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
-
-  useEffect(() => {
-    if (pathname === "/dashboard/customers") {
-      fetchCustomers();
-    }
-  }, [pathname]);
+  const { data: customers = [], isLoading: loading } = useCustomer();
 
   return (
     <div className="h-screen w-full py-8 px-8 overflow-x-hidden">

@@ -1,5 +1,8 @@
 import { TaskDTO } from "@/dtos/compose-job.dto";
-import { useEffect, useState } from "react";
+import baseQueryKey from "@/lib/constants/queryKey";
+import { fetchWrapper } from "@/lib/fetchWrapper";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface TaskFilter {
   done?: boolean;
@@ -7,45 +10,36 @@ interface TaskFilter {
   limit?: number;
 }
 
-export const useTasks = (jobId: string, initFilter?: TaskFilter) => {
-  const [tasks, setTasks] = useState<TaskDTO[]>([]);
-  const [refetch, setRefetch] = useState(false);
-  const [filter, setFilter] = useState(initFilter);
-  const toggleRefetch = () => setRefetch((prev) => !prev);
+const fetchTasks = async (jobId: string, filter?: TaskFilter) => {
+  const { data } = await fetchWrapper.get(`/api/jobs/${jobId}/tasks`, {
+    params: filter,
+  });
+  return data;
+};
 
-  useEffect(() => {
-    async function fetchTasks() {
-      const params = new URLSearchParams({
-        done: filter?.done?.toString() || "",
-        page: filter?.page?.toString() || "1",
-        limit: filter?.limit?.toString() || "10",
-      });
-      const res = await fetch(`/api/jobs/${jobId}/tasks?${params.toString()}`);
-      const data = await res.json();
-      setTasks(data);
-    }
-    fetchTasks();
-  }, [refetch, filter]);
+const fetchUrgentTasks = async () => {
+  const { data } = await fetchWrapper.get(`/api/tasks/urgent`);
+  return data;
+};
+
+export const useTasks = (jobId: string, initFilter?: TaskFilter) => {
+  const [filter, setFilter] = useState(initFilter);
+
+  const query = useQuery<TaskDTO[]>({
+    queryKey: [...baseQueryKey.TASK_LIST, jobId, filter],
+    queryFn: () => fetchTasks(jobId, filter),
+  });
 
   return {
-    tasks,
+    ...query,
     filter,
     setFilter,
-    toggleRefetch,
   };
 };
 
 export const useUrgentTasks = () => {
-  const [tasks, setTasks] = useState([]);
-  useEffect(() => {
-    async function fetchTasks() {
-      const res = await fetch(`/api/tasks/urgent`);
-      const data = await res.json();
-      setTasks(data.data);
-    }
-    fetchTasks();
-  }, []);
-  return {
-    tasks,
-  };
+  return useQuery<TaskDTO[]>({
+    queryKey: [...baseQueryKey.URGENT_TASK_LIST],
+    queryFn: () => fetchUrgentTasks(),
+  });
 };

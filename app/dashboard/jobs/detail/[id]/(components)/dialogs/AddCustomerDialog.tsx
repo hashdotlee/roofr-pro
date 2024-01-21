@@ -13,7 +13,9 @@ import {
 import { Form } from "@/components/ui/form";
 import { useCustomer } from "@/hooks/useCustomer";
 import useJob from "@/hooks/useJob";
+import baseQueryKey from "@/lib/constants/queryKey";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -32,22 +34,29 @@ const formSchema = z.object({
     .optional(),
   phone: z
     .string()
-    .regex(/^[0-9]{10}$/, "Phone number must be 10 digits")
+    .regex(
+      /^([0-9]{3}|[0-9]{3}–)([0-9]{3}|[0-9]{3}–)[0-9]{4}$/,
+      "Phone number must be 10 digits",
+    )
     .optional(),
   ssn: z
     .string()
     .regex(/^[0-9]{4}$/, "SSN must be 4 digits")
-    .optional(),
+    .optional()
+    .or(z.literal("")),
 });
 
 const AddCustomerModal = ({ children }: { children: ReactNode }) => {
   const jobId = useParams().id as string;
-  const { customers, filter, setFilter } = useCustomer();
+  const { data: customers = [], filter, setFilter } = useCustomer();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
   });
-  const { setJob, job } = useJob();
+
+  const queryClient = useQueryClient();
+
+  const { data: job } = useJob(jobId);
 
   const [open, setOpen] = useState(false);
 
@@ -72,12 +81,9 @@ const AddCustomerModal = ({ children }: { children: ReactNode }) => {
         await updateJob(jobId, {
           customer: customer._id as any,
         });
-        setJob((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            customer: customer as any,
-          };
+        queryClient.setQueryData([...baseQueryKey.JOB_DETAILS, jobId], {
+          ...job,
+          customer: customer as any,
         });
       } else {
         const res = await createCustomer({
@@ -89,12 +95,9 @@ const AddCustomerModal = ({ children }: { children: ReactNode }) => {
         await updateJob(jobId, {
           customer: res.data._id,
         });
-        setJob((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            customer: res.data as any,
-          };
+        queryClient.setQueryData([...baseQueryKey.JOB_DETAILS, jobId], {
+          ...job,
+          customer: customer as any,
         });
       }
       toast.success("Customer updated successfully");
@@ -161,25 +164,25 @@ const AddCustomerModal = ({ children }: { children: ReactNode }) => {
               disabled={isDisabled}
               placeholder="Email"
             />
-
             <CustomInput
               name="phone"
               label="Phone (optional)"
               inputClassName="w-full"
               control={form.control}
+              format={`###–###–####`}
               disabled={isDisabled}
               placeholder="Phone"
             />
-
             <CustomInput
               name="ssn"
               label="SSN (4 digits)"
               inputClassName="w-full"
-              control={form.control}
               disabled={isDisabled}
+              format="####"
+              control={form.control}
               placeholder="SSN"
+              allowLeadingZeros
             />
-
             <Button type="submit" className="w-full mt-3">
               Add customer
             </Button>
