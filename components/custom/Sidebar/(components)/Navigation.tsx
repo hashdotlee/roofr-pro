@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { GoPeople } from "react-icons/go";
-import { RxDashboard } from "react-icons/rx";
-import { useCollapsed } from "../Sidebar";
+import { useCollapsed } from "../ClientSidebar";
+import { LayoutDashboard, ScrollText, UsersRound } from "lucide-react";
 
 export type TNavItem = {
   label: string;
@@ -14,13 +13,18 @@ export type TNavItem = {
 const navs: TNavItem[] = [
   {
     label: "Jobs",
-    icon: <RxDashboard />,
+    icon: <LayoutDashboard />,
     path: "/dashboard/jobs",
   },
   {
     label: "Customers",
-    icon: <GoPeople />,
+    icon: <UsersRound />,
     path: "/dashboard/customers",
+  },
+  {
+    label: "Invoices",
+    icon: <ScrollText />,
+    path: "/dashboard/invoices",
   },
 ];
 

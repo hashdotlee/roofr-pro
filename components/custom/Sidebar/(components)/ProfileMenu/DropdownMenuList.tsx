@@ -8,7 +8,7 @@ export default function DropdownMenuList() {
   return (
     <>
       <DropdownMenuItem className="cursor-pointer p-0">
-        <Link href={"/profile"} className="flex p-4 flex-row">
+        <Link href={"#"} className="flex p-2 flex-row">
           <User className="w-5 h-5 mr-3" /> User Profile
         </Link>
       </DropdownMenuItem>
@@ -16,7 +16,7 @@ export default function DropdownMenuList() {
         <button
           onClick={() => signOut()}
           type="submit"
-          className="w-full flex p-4 flex-row"
+          className="w-full flex p-2 flex-row"
         >
           <>
             <LogOut className="w-5 h-5 mr-3" />

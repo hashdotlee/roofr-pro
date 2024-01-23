@@ -66,7 +66,7 @@ export default function JobItem({ job }: { job: ComposeJobDTO }) {
             Updated {getTimeAgo(String(job?.updatedAt))}
           </div>
         </div>
-        <button className="w-8 h-8 rounded-full hover:ring-2 hover:bg-gray-200/80 hover:ring-gray-50">
+        <div className="w-8 h-8 rounded-full hover:ring-2 hover:bg-gray-200/80 hover:ring-gray-50">
           <SelectStagePopover
             position={job?.stage}
             setPosition={(pos) => {
@@ -77,7 +77,7 @@ export default function JobItem({ job }: { job: ComposeJobDTO }) {
               });
             }}
           />
-        </button>
+        </div>
       </div>
     </div>
   );

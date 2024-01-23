@@ -34,10 +34,10 @@ export default function Customers() {
           <PlusCircle /> Add Customer
         </Button>
       </div>
-      <div className="mt-8 rounded-xl border-2 border-gray-300">
+      <div className="mt-8 rounded-lg border border-gray-300">
         <Table>
           <TableHeader>
-            <TableRow className="border-b-gray-400">
+            <TableRow className="border-b-gray-300">
               <TableHead>Customer Name</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Email</TableHead>

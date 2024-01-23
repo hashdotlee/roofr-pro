@@ -180,7 +180,7 @@ export default function JobDetailPage({
       <div className="flex overflow-hidden items-stretch gap-4 h-full">
         <div className="overflow-y-auto h-full w-2/3" id="job_detail_root">
           {!job ? (
-            <Loader2 className="w-8 h-8 mx-auto animate-spin text-gray-500" />
+            <Loader2 className="w-6 h-6 mx-auto animate-spin text-gray-500" />
           ) : (
             <>
               {tabs.map((tab) => (
@@ -203,7 +203,7 @@ export default function JobDetailPage({
         </div>
         <div className="flex flex-col gap-4 w-1/3 h-full overflow-hidden">
           {!job ? (
-            <Loader2 className="w-8 h-8 mx-auto animate-spin text-gray-500" />
+            <Loader2 className="w-6 h-6 mx-auto animate-spin text-gray-500" />
           ) : (
             <>
               {!job?.customer ? (

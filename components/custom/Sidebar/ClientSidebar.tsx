@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { createContext, useContext, useState } from "react";
-import { IoIosMenu } from "react-icons/io";
 import ProfileMenu from "./(components)/ProfileMenu";
 import Navigation from "./(components)/Navigation";
 import Link from "next/link";
+import { Menu } from "lucide-react";
 
 const CollapsedSidebarContext = createContext(false);
 
@@ -15,7 +15,15 @@ export const useCollapsed = () => {
   return collapsed;
 };
 
-export default function Sidebar() {
+export default function ClientSidebar({
+  user,
+}: {
+  user: {
+    name: string;
+    image: string;
+    role: string;
+  };
+}) {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <CollapsedSidebarContext.Provider value={collapsed}>
@@ -25,7 +33,7 @@ export default function Sidebar() {
           {
             "w-sidebar": !collapsed,
             "w-sidebar-collapse": collapsed,
-          },
+          }
         )}
         aria-label="sidebar"
       >
@@ -38,7 +46,7 @@ export default function Sidebar() {
                 onClick={() => setCollapsed(!collapsed)}
               >
                 <span className="text-2xl">
-                  <IoIosMenu />
+                  <Menu />
                 </span>
               </Button>
               <Link
@@ -49,7 +57,7 @@ export default function Sidebar() {
                     "opacity-100": !collapsed,
                     "opacity-0": collapsed,
                     invisible: collapsed,
-                  },
+                  }
                 )}
                 aria-label="logo"
               >
@@ -58,7 +66,7 @@ export default function Sidebar() {
             </div>
           </div>
 
-          <ProfileMenu />
+          <ProfileMenu user={user} />
           <Navigation />
         </div>
       </aside>

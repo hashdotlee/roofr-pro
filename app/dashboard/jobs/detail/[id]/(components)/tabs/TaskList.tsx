@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useTasks } from "@/hooks/useTasks";
 import { Send } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TaskItem from "./TaskItem";
 import { useCreateTask } from "@/hooks/useCreateTask";
 
