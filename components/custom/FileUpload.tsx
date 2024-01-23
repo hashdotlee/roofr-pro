@@ -135,7 +135,7 @@ export default function FileUploader({
           accept="application/pdf,application/vnd.ms-excel"
           onChange={(e) => handleFileChange(e)}
         />
-        <span className="sr-only">resource upload</span>
+        <span className="hidden sr-only">resource upload</span>
         <div
           className={cn(
             "flex w-full flex-col gap-2 items-center justify-center text-neutral-500",

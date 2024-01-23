@@ -19,17 +19,17 @@ import TasksList from "./(components)/tabs/TaskList";
 
 // use dynamic import to reduce bundle size
 const DeleteJobDialog = dynamic(
-  () => import("./(components)/dialogs/DeleteJobDialog"),
+  () => import("./(components)/dialogs/DeleteJobDialog")
 );
 
 // use dynamic import to reduce bundle size
 const AddCustomerModal = dynamic(
-  () => import("./(components)/dialogs/AddCustomerDialog"),
+  () => import("./(components)/dialogs/AddCustomerDialog")
 );
 
 // use dynamic import to reduce bundle size
 const EditAddressDialog = dynamic(
-  () => import("./(components)/dialogs/EditAddressDialog"),
+  () => import("./(components)/dialogs/EditAddressDialog")
 );
 
 // use tabs to map the content to each tab
