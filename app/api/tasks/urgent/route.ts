@@ -8,25 +8,29 @@ const LIMIT = 5;
 
 export const GET = catchAsync(async () => {
   await dbConnect();
+
   const query = JobModel.find({})
     .select("tasks address _id")
     .populate("tasks.assignee")
     .populate("tasks.creator");
+
   let jobs = await query
     .where({ "tasks.done": false })
     .sort({ "tasks.dueDate": -1 })
     .limit(LIMIT)
     .exec();
+
   const urgentTasks: TaskDTO[] = [];
 
   jobs.forEach((job) => {
     const { tasks, ...info } = job.toJSON();
-    const taskWithJob = tasks.map((item: any) => {
-      return {
-        ...item,
-        job: info,
-      };
-    });
+    const taskWithJob =
+      tasks?.map((item: any) => {
+        return {
+          ...item,
+          job: info,
+        };
+      }) || [];
     urgentTasks.push(...taskWithJob);
   });
 

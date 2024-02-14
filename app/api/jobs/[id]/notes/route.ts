@@ -62,7 +62,7 @@ export const GET = catchAsync(
       .select("notes");
     return NextResponse.json({
       message: "Successfully!",
-      data: job.notes,
+      data: job?.notes || [],
     });
   },
 );

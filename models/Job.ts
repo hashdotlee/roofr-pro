@@ -1,10 +1,10 @@
 import { JobStage } from "@/types/job";
 import type { Ref } from "@typegoose/typegoose";
 import {
-  buildSchema,
-  getModelForClass,
-  modelOptions,
-  prop,
+    buildSchema,
+    getModelForClass,
+    modelOptions,
+    prop
 } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
@@ -12,6 +12,7 @@ import mongoose from "mongoose";
 
 import { Account } from "./Account";
 import { Customer } from "./Customer";
+import { getCachedSchema } from "@typegoose/typegoose/lib/internal/utils";
 
 export class Metric {
   @prop({ required: true, default: 0 })
@@ -130,5 +131,4 @@ export class Job extends TimeStamps {
   public metrics?: Metric;
 }
 
-export const JobModel =
-  mongoose.models.Job || mongoose.model("Job", buildSchema(Job));
+export const JobModel = getModelForClass(Job);

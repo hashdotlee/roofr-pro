@@ -2,7 +2,7 @@ import { catchAsync } from "@/app/api/utils";
 import { TaskDTO } from "@/dtos/compose-job.dto";
 import { auth } from "@/lib/auth";
 import dbConnect from "@/lib/dbConnect";
-import { JobModel } from "@/models/Job";
+import { JobModel, Task } from "@/models/Job";
 import { NextResponse } from "next/server";
 
 export const POST = catchAsync(
@@ -42,7 +42,7 @@ export const POST = catchAsync(
     return NextResponse.json({
       code: 200,
       message: "Successfully!",
-      data: job.tasks,
+      data: job?.tasks || [],
     });
   },
 );
@@ -74,10 +74,10 @@ export const GET = catchAsync(
 
     const job = await query.exec();
 
-    let tasks = job.tasks;
+    let tasks = job?.tasks || [];
 
     if (done === "true") {
-      tasks = tasks.filter((task: TaskDTO) => !task?.done);
+      tasks = tasks.filter((task: Task) => !task?.done);
     }
 
     return NextResponse.json({

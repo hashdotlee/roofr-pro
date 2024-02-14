@@ -42,9 +42,12 @@ export const createTask = ActionHandler<CreateTaskInput>(async (input) => {
     creator: session.user.id,
   };
 
-  job.tasks.push(newTask);
+  job.tasks?.push({
+    title: newTask.title,
+  });
 
   await job.save();
+
   return {
     ok: true,
     message: "Create task successfully!",

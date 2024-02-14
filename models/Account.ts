@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
-import {
-  buildSchema,
-  getModelForClass,
-  modelOptions,
-  prop,
-} from "@typegoose/typegoose";
 import { Roles } from "@/types/account";
+import {
+    buildSchema,
+    getModelForClass,
+    modelOptions,
+    prop
+} from "@typegoose/typegoose";
+import mongoose from "mongoose";
 
 @modelOptions({
   schemaOptions: { collection: "accounts", versionKey: false },
@@ -46,5 +46,4 @@ export class Account {
   public sourcePreferences?: string[];
 }
 
-export const AccountModel =
-  mongoose.models.Account || mongoose.model("Account", buildSchema(Account));
+export const AccountModel = getModelForClass(Account);

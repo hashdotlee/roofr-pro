@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
 import {
-  buildSchema,
-  getModelForClass,
-  modelOptions,
-  prop,
+    buildSchema,
+    getModelForClass,
+    modelOptions,
+    prop
 } from "@typegoose/typegoose";
+import mongoose from "mongoose";
 
 @modelOptions({
   schemaOptions: {
@@ -32,5 +32,4 @@ export class Customer {
   public createdAt?: Date;
 }
 
-export const CustomerModel =
-  mongoose.models.Customer || mongoose.model("Customer", buildSchema(Customer));
+export const CustomerModel = getModelForClass(Customer);
