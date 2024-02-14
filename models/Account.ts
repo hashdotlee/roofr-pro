@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
-import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import {
+  buildSchema,
+  getModelForClass,
+  modelOptions,
+  prop,
+} from "@typegoose/typegoose";
 import { Roles } from "@/types/account";
 
 @modelOptions({
@@ -42,4 +47,4 @@ export class Account {
 }
 
 export const AccountModel =
-  mongoose.models.Account || getModelForClass(Account);
+  mongoose.models.Account || mongoose.model("Account", buildSchema(Account));

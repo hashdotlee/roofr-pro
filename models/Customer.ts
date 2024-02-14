@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
-import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import {
+  buildSchema,
+  getModelForClass,
+  modelOptions,
+  prop,
+} from "@typegoose/typegoose";
 
 @modelOptions({
   schemaOptions: {
@@ -28,4 +33,4 @@ export class Customer {
 }
 
 export const CustomerModel =
-  mongoose.models.Customer || getModelForClass(Customer);
+  mongoose.models.Customer || mongoose.model("Customer", buildSchema(Customer));
