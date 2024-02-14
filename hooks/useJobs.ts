@@ -3,7 +3,7 @@ import baseQueryKey from "@/lib/constants/queryKey";
 import { fetchWrapper } from "@/lib/fetchWrapper";
 import { JobStage } from "@/types/job";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export enum SortBy {
   LAST_UPDATED = "updatedAt",
@@ -45,9 +45,12 @@ export const useJobs = (initFilter?: JobFilter) => {
     ...defaultFilter,
     ...initFilter,
   });
+
+  const memoizedFilter = useMemo(() => filter, [filter]);
+
   const query = useQuery<ComposeJobDTO[]>({
-    queryKey: [...baseQueryKey.JOB_LIST, filter],
-    queryFn: () => fetchJobs(filter),
+    queryKey: [...baseQueryKey.JOB_LIST, memoizedFilter],
+    queryFn: () => fetchJobs(memoizedFilter),
   });
 
   return {

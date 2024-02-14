@@ -93,7 +93,6 @@ export default function FileUploader({
                 onClick={() => {
                   onChange([
                     ...value.filter((v) => v !== url),
-                    ...Object.values(urls).filter((u) => u),
                   ]);
                 }}
               >

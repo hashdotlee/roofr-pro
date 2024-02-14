@@ -24,7 +24,11 @@ const fetchUrgentTasks = async () => {
 };
 
 export const useTasks = (jobId: string, initFilter?: TaskFilter) => {
-  const [filter, setFilter] = useState(initFilter);
+  const [filter, setFilter] = useState(
+    initFilter || {
+      done: true,
+    },
+  );
 
   const query = useQuery<TaskDTO[]>({
     queryKey: [...baseQueryKey.TASK_LIST, jobId, filter],

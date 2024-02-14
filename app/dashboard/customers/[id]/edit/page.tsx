@@ -7,7 +7,12 @@ import { useJobs } from "@/hooks/useJobs";
 import { getTimeAgo } from "@/lib/utils";
 import { useParams } from "next/navigation";
 import CustomerForm from "../../_components/CustomerForm";
-import DeleteCustomerDialog from "../../_components/DeleteCustomerDialog";
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
+
+const DeleteCustomerDialog = dynamic(
+  () => import("../../_components/DeleteCustomerDialog"),
+);
 
 export default function EditCustomerPage() {
   const id = useParams().id as string;
@@ -18,8 +23,12 @@ export default function EditCustomerPage() {
       <h2 className="text-2xl font-semibold">Edit Customer</h2>
       <div className="flex flex-row gap-12 mt-4 justify-start items-start">
         <div className="w-[400px] space-y-2">
-          <CustomerForm mode={ComposeMode.Edit} customer={customer} />
-          <DeleteCustomerDialog customerId={id} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <CustomerForm mode={ComposeMode.Edit} customer={customer} />
+          </Suspense>
+          <Suspense fallback={<div>Loading...</div>}>
+            <DeleteCustomerDialog customerId={id} />
+          </Suspense>
         </div>
         <div className="w-[400px] space-y-2">
           <h3 className="font-semibold">Jobs</h3>

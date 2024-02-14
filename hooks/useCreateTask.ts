@@ -13,9 +13,9 @@ export const useCreateTask = ({ jobId }: { jobId: string }) => {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [...baseQueryKey.JOB_DETAILS, jobId],
-        exact: false,
+        queryKey: [...baseQueryKey.TASK_LIST, jobId],
       });
+      toast.success("Task created successfully");
     },
     onError: (err: any) => {
       toast.error(err?.message || "Something went wrong");

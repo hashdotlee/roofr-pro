@@ -43,7 +43,7 @@ export default function Jobs({ session }: { session: Session }) {
           </TabsTrigger>
         </TabsList>
 
-        <div className="w-full mt-6 flex flex-row gap-3 items-center justify-between">
+        <div className="w-full mt-6 flex flex-wrap flex-row gap-3 items-center justify-between">
           <FilterForm filter={filter} setFilter={setFilter} session={session} />
           <NewJobDialog />
         </div>

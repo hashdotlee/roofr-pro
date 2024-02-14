@@ -7,7 +7,11 @@ import toast from "react-hot-toast";
 export const useUpdateJob = ({ jobId }: { jobId: string }) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ job }: { job: Partial<ComposeJobDTO> }) =>
+    mutationFn: ({
+      job,
+    }: {
+      job: Omit<Partial<ComposeJobDTO>, "customer"> & { customer?: any };
+    }) =>
       updateJob({
         jobId,
         job,

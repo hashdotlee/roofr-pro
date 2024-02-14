@@ -49,8 +49,8 @@ export default function EditTaskDialog({
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "fhefe",
-      description: "r97r389r43432rl3",
+      title: task?.title,
+      description: task?.description,
       dueDate: new Date(task?.dueDate || Date.now()),
       assignee: task?.assignee,
     },

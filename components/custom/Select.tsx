@@ -1,13 +1,13 @@
+import { cn } from "@/lib/utils";
 import { Select } from "@radix-ui/react-select";
-import { Control, FieldValues } from "react-hook-form";
+import { Control } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import {
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "../ui/select";
-import { cn } from "@/lib/utils";
 
 export default function CustomSelect({
   options,

@@ -56,29 +56,14 @@ export const deleteJob = async (jobId: string) => {
   }
 };
 
-export const updateJob = async ({
-  jobId,
-  job,
-}: {
+export const updateJob = ActionHandler<{
   jobId: string;
   job: Partial<ComposeJobDTO>;
-}) => {
-  try {
-    await dbConnect();
-    const updatedJob = await JobModel.updateOne({ _id: jobId }, job);
-    return {
-      ok: true,
-      code: 200,
-      message: "Job updated successfully",
-      data: updatedJob,
-    } satisfies ServerResponse;
-  } catch (error) {
-    console.error(error);
-    return {
-      ok: false,
-      code: 500,
-      message: "Internal server error",
-      data: error,
-    } satisfies ServerResponse;
-  }
-};
+}>(async ({ jobId, job }) => {
+  const updatedJob = await JobModel.updateOne({ _id: jobId }, job);
+  return {
+    ok: true,
+    message: "Job updated successfully",
+    data: updatedJob,
+  };
+});

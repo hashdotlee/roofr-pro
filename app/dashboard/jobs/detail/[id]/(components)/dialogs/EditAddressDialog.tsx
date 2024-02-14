@@ -1,6 +1,5 @@
 "use client";
 
-import { updateJob } from "@/actions/job";
 import CustomInput from "@/components/custom/Input";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,13 +11,11 @@ import {
 import { Form } from "@/components/ui/form";
 import useJob from "@/hooks/useJob";
 import { useUpdateJob } from "@/hooks/useUpdateJob";
-import { useJobStore } from "@/lib/stores/jobStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PenIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -34,7 +31,6 @@ export default function EditAddressDialog() {
     jobId: jobID,
   });
   const [open, setOpen] = useState(false);
-  const modifyJob = useJobStore((state) => state.modifyJob);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -44,7 +40,7 @@ export default function EditAddressDialog() {
   });
 
   return (
-    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={"ghost"} className="rounded-full w-10 h-10 p-2">
           <PenIcon className="w-5 h-5 text-blue-400" />
@@ -60,6 +56,7 @@ export default function EditAddressDialog() {
               updateJob({
                 job: { address: form.getValues().address! },
               });
+              setOpen(false);
             }}
           >
             <CustomInput

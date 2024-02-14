@@ -24,10 +24,8 @@ export const useUpdateTask = ({
         { queryKey: [...baseQueryKey.TASK_LIST, jobId] },
         (oldData?: TaskDTO[]) => {
           if (!oldData) return;
-          console.log(oldData);
           return oldData.map((t) => {
             if (t._id === taskId) {
-              console.log(t);
               return {
                 ...t,
                 ...variables,
@@ -37,6 +35,10 @@ export const useUpdateTask = ({
           });
         },
       );
+      queryClient.invalidateQueries({
+        queryKey: [...baseQueryKey.TASK_LIST, jobId],
+        exact: false,
+      });
       toast.success("Update task successfully!");
     },
     onError: (err: any) => {

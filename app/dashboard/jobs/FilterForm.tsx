@@ -2,36 +2,36 @@ import CustomInput from "@/components/custom/Input";
 import CustomSelect from "@/components/custom/Select";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
 } from "@/components/ui/command";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import useAccounts from "@/hooks/useAccount";
+import { useDebouncedCallback } from "use-debounce";
 import { SortBy, defaultFilter } from "@/hooks/useJobs";
 import { cn } from "@/lib/utils";
 import { Roles } from "@/types/account";
 import { JobStage } from "@/types/job";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    Check,
-    ChevronDown,
-    ChevronDownIcon,
-    Loader2,
-    Search,
+  Check,
+  ChevronDown,
+  ChevronDownIcon,
+  Loader2,
+  Search,
 } from "lucide-react";
 import { Session } from "next-auth";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -51,17 +51,16 @@ export default function FilterForm({
   setFilter: any;
   session: Session;
 }) {
-  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultFilter,
   });
+
+  const [open, setOpen] = useState(false);
+
   const onSubmit = useDebouncedCallback(() => {
-    const newData = form.getValues();
-    const { updatedAt, search } = newData;
-    if (search) {
-      newData.search = search.toLowerCase().replace(/\\/g, "");
-    }
+    const newData = form.watch();
+    const { updatedAt } = newData;
     if (updatedAt) {
       const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
       switch (updatedAt) {
@@ -88,20 +87,23 @@ export default function FilterForm({
           break;
       }
     }
+
     setFilter({
       ...filter,
       ...newData,
     });
   }, 500);
+
   const { data: assignees = [], isFetching } = useAccounts({
     page: 1,
     limit: 10,
   });
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        onChange={form.handleSubmit(onSubmit)}
+        onSubmit={onSubmit}
+        onChange={onSubmit}
         className="flex gap-4 flex-row items-center justify-start"
       >
         <Label className="relative block shrink-0">
@@ -109,13 +111,12 @@ export default function FilterForm({
             <Search className="w-4 h-4" />
           </div>
           <CustomInput
+            control={form.control}
             name="search"
             placeholder="Search jobs..."
-            control={form.control}
-            inputClassName="ps-12"
+            className="ps-12"
           />
         </Label>
-
         <div>
           <CustomSelect
             name="updatedAt"
@@ -164,8 +165,8 @@ export default function FilterForm({
                                     } else {
                                       field.onChange(
                                         field.value?.filter(
-                                          (item: any) => item !== stage
-                                        )
+                                          (item: any) => item !== stage,
+                                        ),
                                       );
                                     }
                                   }}
@@ -219,7 +220,7 @@ export default function FilterForm({
                         {field.value &&
                           ": " +
                             assignees.find(
-                              (assignee) => assignee._id === field.value
+                              (assignee) => assignee._id === field.value,
                             )?.lastName}
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </button>
@@ -240,7 +241,7 @@ export default function FilterForm({
                                     "assignee",
                                     currentValue === field.value
                                       ? ""
-                                      : currentValue
+                                      : currentValue,
                                   );
                                   form.handleSubmit(onSubmit)();
                                   setOpen(false);
@@ -251,7 +252,7 @@ export default function FilterForm({
                                     "mr-2 h-4 w-4",
                                     field.value === assignee._id
                                       ? "opacity-100"
-                                      : "opacity-0"
+                                      : "opacity-0",
                                   )}
                                 />
                                 {assignee.firstName} {assignee.lastName}

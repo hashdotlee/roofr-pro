@@ -1,4 +1,4 @@
-import { createCustomer } from "@/actions/customer";
+import { createCustomer, updateCustomer } from "@/actions/customer";
 import CustomComboBox from "@/components/custom/ComboBox";
 import CustomInput from "@/components/custom/Input";
 import { Button } from "@/components/ui/button";
@@ -76,7 +76,17 @@ const AddCustomerModal = ({ children }: { children: ReactNode }) => {
     const customer = customers.find(
       (customer) => customer._id.toString() === data.name,
     );
-    try {
+    if (job?.customer) {
+      updateCustomer({
+        id: job?.customer?._id,
+        customerPayload: {
+          fullname: data.name,
+          email: data.email,
+          phone: data.phone,
+          ssn: data.ssn,
+        },
+      });
+    } else {
       if (customer) {
         updateJob({
           job: {
@@ -98,12 +108,9 @@ const AddCustomerModal = ({ children }: { children: ReactNode }) => {
           },
         });
       }
-      toast.success("Customer updated successfully");
-      setOpen(false);
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
     }
+    toast.success("Customer updated successfully");
+    setOpen(false);
   };
 
   const [isDisabled, setIsDisabled] = useState(true);

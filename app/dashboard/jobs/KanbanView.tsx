@@ -2,6 +2,7 @@ import { ComposeJobDTO } from "@/dtos/compose-job.dto";
 import { cn } from "@/lib/utils";
 import { JobStage } from "@/types/job";
 import KanbanTab, { IKanbanTab } from "./(components)/KanbanTab";
+import { memo } from "react";
 
 const tabs: IKanbanTab[] = [
   {
@@ -56,7 +57,7 @@ const tabs: IKanbanTab[] = [
   },
 ];
 
-export default function KanbanView({
+function KanbanView({
   filter,
   jobs,
   isLoading,
@@ -93,3 +94,5 @@ export default function KanbanView({
     </div>
   );
 }
+
+export default memo(KanbanView);
