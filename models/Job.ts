@@ -1,9 +1,15 @@
 import { JobStage } from "@/types/job";
 import type { Ref } from "@typegoose/typegoose";
-import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import {
+  buildSchema,
+  getModelForClass,
+  modelOptions,
+  prop,
+} from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 import mongoose from "mongoose";
+
 import { Account } from "./Account";
 import { Customer } from "./Customer";
 
@@ -34,6 +40,44 @@ export class Metric {
 
   @prop({ required: true, default: 0 })
   public customerNote!: number;
+}
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+  },
+})
+export class Task extends TimeStamps {
+  @prop({ required: true })
+  public title!: string;
+
+  @prop({ ref: () => Account })
+  public creator?: Ref<Account>;
+
+  @prop({ default: false })
+  done?: boolean;
+
+  @prop()
+  description?: string;
+
+  @prop({ ref: () => Account })
+  assignee?: Ref<Account>;
+
+  @prop()
+  dueDate?: Date;
+}
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+  },
+})
+export class Note extends TimeStamps {
+  @prop({ required: true, ref: () => Account })
+  public writer!: Ref<Account>;
+
+  @prop({ required: true })
+  public content!: string;
 }
 
 @modelOptions({
@@ -86,42 +130,5 @@ export class Job extends TimeStamps {
   public metrics?: Metric;
 }
 
-@modelOptions({
-  schemaOptions: {
-    timestamps: true,
-  },
-})
-export class Task extends TimeStamps {
-  @prop({ required: true })
-  public title!: string;
-
-  @prop({ ref: () => Account })
-  public creator?: Ref<Account>;
-
-  @prop({ default: false })
-  done?: boolean;
-
-  @prop()
-  description?: string;
-
-  @prop({ ref: () => Account })
-  assignee?: Ref<Account>;
-
-  @prop()
-  dueDate?: Date;
-}
-
-@modelOptions({
-  schemaOptions: {
-    timestamps: true,
-  },
-})
-export class Note extends TimeStamps {
-  @prop({ required: true, ref: () => Account })
-  public writer!: Ref<Account>;
-
-  @prop({ required: true })
-  public content!: string;
-}
-
-export const JobModel = mongoose.models.Job || getModelForClass(Job);
+export const JobModel =
+  mongoose.models.Job || mongoose.model("Job", buildSchema(Job));
